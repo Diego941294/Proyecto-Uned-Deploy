@@ -1,47 +1,84 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <section class="employee-login-card">
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+        <div class="auth-brand">
+            <img src="{{ asset('images/guana-pollo-logo.png') }}" alt="Guana Pollo" class="auth-brand-logo">
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <h1>Guana Pollo</h1>
+            <div class="auth-subtitle">
+                <span></span>
+                <p>Sistema Preoperacional</p>
+                <span></span>
+            </div>
+
+            <p class="auth-welcome">
+                Bienvenido, inicia sesión para continuar con el sistema.
+            </p>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <x-auth-session-status class="mb-4" :status="session('status')" />
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+        <form method="POST" action="{{ route('login') }}" class="auth-form">
+            @csrf
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+            <div class="auth-field">
+                <span class="auth-icon">✉</span>
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    value="{{ old('email') }}"
+                    required
+                    autofocus
+                    autocomplete="username"
+                    placeholder="Correo electrónico"
+                >
+            </div>
+            <x-input-error :messages="$errors->get('email')" class="auth-error" />
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+            <div class="auth-field">
+                <span class="auth-icon">🔒</span>
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    required
+                    autocomplete="current-password"
+                    placeholder="Contraseña"
+                >
+            </div>
+            <x-input-error :messages="$errors->get('password')" class="auth-error" />
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+            <div class="auth-options">
+                <label class="auth-remember">
+                    <input id="remember_me" type="checkbox" name="remember">
+                    <span>Recordarme</span>
+                </label>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
+                @if (Route::has('password.request'))
+                    <a href="{{ route('password.request') }}">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+                @endif
+            </div>
+
+            <button type="submit" class="auth-submit">
+                Iniciar sesión
+            </button>
+
+            <div class="auth-security">
+                <div class="auth-line"></div>
+                <span>🛡</span>
+                <div class="auth-line"></div>
+            </div>
+
+            <p class="auth-access-text">
+                Acceso exclusivo para empleados autorizados
+            </p>
+        </form>
+    </section>
+
+    <footer class="auth-footer">
+        © {{ date('Y') }} Guana Pollo. Todos los derechos reservados.
+    </footer>
 </x-guest-layout>

@@ -1,39 +1,89 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('password.store') }}">
-        @csrf
+    <section class="employee-login-card">
 
-        <!-- Password Reset Token -->
-        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+        <div class="auth-brand">
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <img
+                src="{{ asset('images/guana-pollo-logo.png') }}"
+                alt="Guana Pollo"
+                class="auth-brand-logo"
+            >
+
+            <h1>Guana Pollo</h1>
+
+            <div class="auth-subtitle">
+                <span></span>
+                <p>Nueva contraseña</p>
+                <span></span>
+            </div>
+
+            <p class="auth-welcome">
+                Crea una nueva contraseña segura para continuar utilizando el sistema preoperacional.
+            </p>
+
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+        <form method="POST" action="{{ route('password.store') }}" class="auth-form">
+            @csrf
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+            <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                                type="password"
-                                name="password_confirmation" required autocomplete="new-password" />
+            <div class="auth-field">
+                <span class="auth-icon">✉</span>
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    value="{{ old('email', $request->email) }}"
+                    required
+                    autofocus
+                    autocomplete="username"
+                    placeholder="Correo electrónico"
+                >
+            </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
-        </div>
-    </form>
+            <x-input-error :messages="$errors->get('email')" class="auth-error" />
+
+            <div class="auth-field">
+                <span class="auth-icon">🔒</span>
+
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    required
+                    autocomplete="new-password"
+                    placeholder="Nueva contraseña"
+                >
+            </div>
+
+            <x-input-error :messages="$errors->get('password')" class="auth-error" />
+
+            <div class="auth-field">
+                <span class="auth-icon">🔐</span>
+
+                <input
+                    id="password_confirmation"
+                    type="password"
+                    name="password_confirmation"
+                    required
+                    autocomplete="new-password"
+                    placeholder="Confirmar contraseña"
+                >
+            </div>
+
+            <x-input-error :messages="$errors->get('password_confirmation')" class="auth-error" />
+
+            <button type="submit" class="auth-submit">
+                Restablecer contraseña
+            </button>
+
+        </form>
+
+        <p class="auth-access-text">
+            Acceso exclusivo para empleados autorizados
+        </p>
+
+    </section>
 </x-guest-layout>

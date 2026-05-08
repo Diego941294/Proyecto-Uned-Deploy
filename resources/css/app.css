@@ -61,7 +61,7 @@
     padding: 42px 46px;
     border-radius: 34px;
 
-    background: rgba(205, 230, 250, 0.34);
+    background: rgb(239, 242, 245);
     border: 2px solid rgba(255,255,255,0.42);
     box-shadow: 0 28px 70px rgba(3, 34, 76, 0.38);
     backdrop-filter: blur(16px);
@@ -73,8 +73,8 @@
 }
 
 .auth-brand-logo {
-    width: 170px;
-    max-width: 70%;
+    width: 200px;
+    max-width: 80%;
     height: auto;
     margin: 0 auto 8px;
     display: block;
@@ -216,11 +216,11 @@
     margin-top: 24px;
 
     border: none;
-    border-radius: 12px;
+    border-radius: 0px;
 
-    background: linear-gradient(180deg, #087df2 0%, #003c9b 100%);
+    background: linear-gradient(180deg, #087df2 0%, #051d45 100%);
     color: #ffffff;
-
+font-family: Arial;
     font-size: 20px;
     font-weight: 800;
     cursor: pointer;

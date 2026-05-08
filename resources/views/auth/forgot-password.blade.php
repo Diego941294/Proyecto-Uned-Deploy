@@ -1,25 +1,48 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
-    </div>
+    <section class="employee-login-card">
+        <div class="auth-brand">
+            <img src="{{ asset('images/guana-pollo-logo.png') }}" alt="Guana Pollo" class="auth-brand-logo">
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+            <h1>Guana Pollo</h1>
 
-    <form method="POST" action="{{ route('password.email') }}">
-        @csrf
+            <div class="auth-subtitle">
+                <span></span>
+                <p>Recuperar contraseña</p>
+                <span></span>
+            </div>
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <p class="auth-welcome">
+                Ingresa tu correo electrónico y te enviaremos un enlace seguro para restablecer tu contraseña.
+            </p>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
-    </form>
+        <x-auth-session-status class="mb-4" :status="session('status')" />
+
+        <form method="POST" action="{{ route('password.email') }}" class="auth-form">
+            @csrf
+
+            <div class="auth-field">
+                <span class="auth-icon">✉</span>
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    value="{{ old('email') }}"
+                    required
+                    autofocus
+                    placeholder="Correo electrónico"
+                >
+            </div>
+
+            <x-input-error :messages="$errors->get('email')" class="auth-error" />
+
+            <button type="submit" class="auth-submit">
+                Enviar enlace de recuperación
+            </button>
+
+            <p class="auth-access-text" style="margin-top: 18px;">
+                <a href="{{ route('login') }}">Volver al inicio de sesión</a>
+            </p>
+        </form>
+    </section>
 </x-guest-layout>

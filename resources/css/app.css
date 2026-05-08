@@ -298,3 +298,14 @@ font-family: Arial;
         align-items: flex-start;
     }
 }
+
+
+.auth-page::before,
+.auth-page::after {
+    pointer-events: none;
+}
+
+.auth-page > * {
+    position: relative;
+    z-index: 2;
+}

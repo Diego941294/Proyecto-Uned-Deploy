@@ -3,8 +3,6 @@
 
         <div class="auth-brand">
             <img src="{{ asset('images/guana-pollo-logo.png') }}" alt="Guana Pollo" class="auth-brand-logo">
-
-            <h1>Guana Pollo</h1>
             <div class="auth-subtitle">
                 <span></span>
                 <p>Sistema Preoperacional</p>

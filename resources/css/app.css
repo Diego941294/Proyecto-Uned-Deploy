@@ -247,7 +247,7 @@
     height: 62px;
     margin-top: 24px;
 
-    border: none;
+    border: rgb(32, 30, 28) 1px solid;
     border-radius: 4px;
 
     background-color:  #0660c0;

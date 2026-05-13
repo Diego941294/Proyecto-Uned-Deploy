@@ -21,31 +21,16 @@
         <form method="POST" action="{{ route('login') }}" class="auth-form">
             @csrf
 
-            <div class="auth-field">
-                <span class="auth-icon">✉</span>
-                <input
-                    id="email"
-                    type="email"
-                    name="email"
-                    value="{{ old('email') }}"
-                    required
-                    autofocus
-                    autocomplete="username"
-                    placeholder="Correo electrónico"
-                >
+            <div class="auth-field" mb-3>
+                <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
+                    autocomplete="username" placeholder="Correo electrónico" class="form-control form-control-lg">
             </div>
             <x-input-error :messages="$errors->get('email')" class="auth-error" />
 
             <div class="auth-field">
-                <span class="auth-icon">🔒</span>
-                <input
-                    id="password"
-                    type="password"
-                    name="password"
-                    required
-                    autocomplete="current-password"
-                    placeholder="Contraseña"
-                >
+
+                <input id="password" type="password" name="password" required autocomplete="current-password"
+                    placeholder="Contraseña">
             </div>
             <x-input-error :messages="$errors->get('password')" class="auth-error" />
 
@@ -66,15 +51,28 @@
                 Iniciar sesión
             </button>
 
+            <div class="text-center mt-4">
+                <a href="{{ route('register') }}">
+                    ¿No tienes una cuenta? Regístrate
+                </a>
+            </div>
+
+
+
             <div class="auth-security">
                 <div class="auth-line"></div>
                 <span>🛡</span>
                 <div class="auth-line"></div>
+
             </div>
+
+
+
 
             <p class="auth-access-text">
                 Acceso exclusivo para empleados autorizados
             </p>
+
         </form>
     </section>
 

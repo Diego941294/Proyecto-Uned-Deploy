@@ -22,7 +22,6 @@
             @csrf
 
             <div class="auth-field">
-                <span class="auth-icon">✉</span>
                 <input
                     id="email"
                     type="email"
@@ -45,4 +44,8 @@
             </p>
         </form>
     </section>
+    <footer class="auth-footer">
+        © {{ date('Y') }} Guana Pollo. Todos los derechos reservados.
+    </footer>
+    
 </x-guest-layout>

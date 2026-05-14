@@ -18,14 +18,13 @@
 
         <form method="POST" action="{{ route('login') }}" class="auth-form">
             @csrf
-
-            <div class="auth-field" mb-3>
+            <div class="auth-field mb-3">
                 <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
                     autocomplete="username" placeholder="Correo electrónico" class="form-control form-control-lg">
             </div>
             <x-input-error :messages="$errors->get('email')" class="auth-error" />
 
-            <div class="auth-field">
+            <div class="auth-field mb-3">
 
                 <input id="password" type="password" name="password" required autocomplete="current-password"
                     placeholder="Contraseña">

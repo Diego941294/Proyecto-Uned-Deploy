@@ -79,38 +79,10 @@
 
                         <td>
 
-                            <div class="flex gap-2">
-
-                                <a href="{{ route('check-items.edit', $item) }}"
-                                   class="gp-table-button">
-                                    Editar
-                                </a>
-
-                                <form method="POST"
-                                      action="{{ route('check-items.destroy', $item) }}">
-
-                                    @csrf
-                                    @method('DELETE')
-
-                                    @if($item->activo)
-
-                                        <button type="submit"
-                                                class="gp-table-button-danger">
-                                            Inactivar
-                                        </button>
-
-                                    @else
-
-                                        <button type="submit"
-                                                class="gp-table-button-success">
-                                            Activar
-                                        </button>
-
-                                    @endif
-
-                                </form>
-
-                            </div>
+                            <a href="{{ route('check-items.edit', $item) }}"
+                               class="gp-table-button">
+                                Editar
+                            </a>
 
                         </td>
 

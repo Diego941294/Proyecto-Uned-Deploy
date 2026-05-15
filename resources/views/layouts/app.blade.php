@@ -12,6 +12,13 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+@if(session('success'))
+
+    <div class="gp-alert-success">
+        {{ session('success') }}
+    </div>
+
+@endif
 
 <body class="gp-body">
     <div class="gp-app-shell">

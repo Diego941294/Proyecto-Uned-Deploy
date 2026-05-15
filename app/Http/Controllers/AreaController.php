@@ -56,10 +56,12 @@ class AreaController extends Controller
 
     public function destroy(Area $area)
     {
-        $area->delete();
+        $area->update([
+            'activo' => !$area->activo
+        ]);
 
         return redirect()
             ->route('areas.index')
-            ->with('success', 'Área eliminada correctamente.');
+            ->with('success', 'Estado del área actualizado correctamente.');
     }
 }

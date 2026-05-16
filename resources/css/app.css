@@ -802,3 +802,145 @@
     font-size: 12px;
     font-weight: 800;
 }
+
+
+/* ==============================
+   CHECKLIST REPORTES
+============================== */
+
+.gp-check-container {
+    margin-top: 30px;
+}
+
+.gp-empty-message {
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    padding: 24px;
+    border-radius: 18px;
+    text-align: center;
+    color: #64748b;
+    font-weight: 700;
+}
+
+.gp-section-card {
+    background: #f8fbff;
+    border: 1px solid #dbe8f3;
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.gp-section-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0b4380;
+    margin-bottom: 20px;
+}
+
+.gp-check-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 18px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.gp-check-item:last-child {
+    border-bottom: none;
+}
+
+.gp-check-controls {
+    display: flex;
+    gap: 12px;
+    width: 50%;
+}
+
+.gp-check-controls .gp-input {
+    margin: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+    .gp-check-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .gp-check-controls {
+        width: 100%;
+        flex-direction: column;
+    }
+}
+
+
+/* =========================
+   BADGES ESTADOS
+========================= */
+
+.gp-badge-success,
+.gp-badge-danger,
+.gp-badge-warning,
+.gp-badge-secondary {
+
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.gp-badge-success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.gp-badge-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.gp-badge-warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.gp-badge-secondary {
+    background: #e2e8f0;
+    color: #334155;
+}
+    /* Para estados como "En revisión" o "Pendiente" */
+
+    .gp-badge-secondary {
+    background: #e2e8f0;
+    color: #334155;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+
+/* =========================
+   FILTROS
+========================= */
+
+.gp-filter-container {
+    background: white;
+    padding: 24px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+
+.gp-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}

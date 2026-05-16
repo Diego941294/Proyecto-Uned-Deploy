@@ -6,24 +6,48 @@ use App\Models\Area;
 use App\Models\Reporte;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReporteController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $reportes = Reporte::with([
-                'area',
-                'usuario'
-            ])
+        $query = Reporte::with([
+            'area',
+            'usuario'
+        ]);
+
+        if ($request->filled('fecha')) {
+            $query->whereDate('fecha', $request->fecha);
+        }
+
+        if ($request->filled('area_id')) {
+            $query->where('area_id', $request->area_id);
+        }
+
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        $reportes = $query
             ->latest()
             ->get();
 
-        return view('reportes.index', compact('reportes'));
+        $areas = Area::where('activo', true)
+            ->orderBy('nombre')
+            ->get();
+
+        return view('reportes.index', compact('reportes', 'areas'));
     }
 
     public function create()
     {
         $areas = Area::where('activo', true)
+            ->with(['checkItems' => function ($query) {
+                $query->where('activo', true)
+                    ->orderBy('seccion')
+                    ->orderBy('orden');
+            }])
             ->orderBy('nombre')
             ->get();
 
@@ -36,9 +60,10 @@ class ReporteController extends Controller
             'area_id' => ['required', 'exists:areas,id'],
             'fecha' => ['required', 'date'],
             'observaciones' => ['nullable', 'string'],
+            'detalles' => ['required', 'array'],
         ]);
 
-        Reporte::create([
+        $reporte = Reporte::create([
             'user_id' => Auth::id(),
             'area_id' => $validated['area_id'],
             'fecha' => $validated['fecha'],
@@ -47,14 +72,28 @@ class ReporteController extends Controller
             'observaciones' => $validated['observaciones'] ?? null,
         ]);
 
+        foreach ($validated['detalles'] as $checkItemId => $detalle) {
+            $reporte->detalles()->create([
+                'check_item_id' => $checkItemId,
+                'estado' => $detalle['estado'],
+                'observacion' => $detalle['observacion'] ?? null,
+            ]);
+        }
+
         return redirect()
             ->route('reportes.index')
-            ->with('success', 'Reporte creado correctamente.');
+            ->with('success', 'Reporte creado.');
     }
 
     public function show(Reporte $reporte)
     {
-        //
+        $reporte->load([
+            'area',
+            'usuario',
+            'detalles.checkItem'
+        ]);
+
+        return view('reportes.show', compact('reporte'));
     }
 
     public function edit(Reporte $reporte)
@@ -71,4 +110,44 @@ class ReporteController extends Controller
     {
         //
     }
+
+    public function aprobar(Reporte $reporte)
+    {
+        $reporte->update([
+            'estado' => 'aprobado',
+            'aprobado_por' => Auth::id(),
+            'fecha_aprobacion' => now(),
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Reporte aprobado.');
+    }
+
+    public function rechazar(Reporte $reporte)
+    {
+        $reporte->update([
+            'estado' => 'rechazado',
+            'aprobado_por' => Auth::id(),
+            'fecha_aprobacion' => now(),
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', 'Reporte rechazado.');
+    }
+
+
+    public function pdf(Reporte $reporte)
+{
+    $reporte->load([
+        'area',
+        'usuario',
+        'detalles.checkItem'
+    ]);
+
+    $pdf = Pdf::loadView('reportes.pdf', compact('reporte'));
+
+    return $pdf->download('reporte-preoperacional-' . $reporte->id . '.pdf');
+}
 }

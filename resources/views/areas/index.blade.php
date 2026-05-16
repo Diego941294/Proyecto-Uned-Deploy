@@ -1,26 +1,30 @@
 <x-app-layout>
 
     <x-slot name="header">
+
         <div>
             <h2 class="gp-header-title">
-                Check Items
+                Gestión de Áreas
             </h2>
 
             <p class="gp-header-subtitle">
-                Administración de elementos de verificación.
+                Administración de áreas preoperacionales del sistema.
             </p>
         </div>
+
     </x-slot>
 
     <div class="flex justify-between items-center mb-6">
 
         <h3 class="text-xl font-bold text-slate-700">
-            Elementos registrados
+            Áreas registradas
         </h3>
 
-        <a href="{{ route('check-items.create') }}"
+        <a href="{{ route('areas.create') }}"
            class="gp-card-button">
-            Nuevo Item
+
+            Nueva Área
+
         </a>
 
     </div>
@@ -32,85 +36,57 @@
             <thead>
 
                 <tr>
+
                     <th>ID</th>
-                    <th>Área</th>
-                    <th>Sección</th>
                     <th>Nombre</th>
-                    <th>Orden</th>
+                    <th>Descripción</th>
                     <th>Estado</th>
                     <th>Acciones</th>
+
                 </tr>
 
             </thead>
 
             <tbody>
 
-                @forelse($checkItems as $item)
+                @forelse($areas as $area)
 
                     <tr>
 
-                        <td>{{ $item->id }}</td>
+                        <td>{{ $area->id }}</td>
 
-                        <td>{{ $item->area->nombre }}</td>
+                        <td>{{ $area->nombre }}</td>
 
-                        <td>{{ $item->seccion }}</td>
-
-                        <td>{{ $item->nombre }}</td>
-
-                        <td>{{ $item->orden }}</td>
+                        <td>
+                            {{ $area->descripcion ?? 'Sin descripción' }}
+                        </td>
 
                         <td>
 
-                            @if($item->activo)
+                            @if($area->activo)
 
                                 <span class="gp-badge-success">
-                                    Activo
+                                    Activa
                                 </span>
 
                             @else
 
                                 <span class="gp-badge-danger">
-                                    Inactivo
+                                    Inactiva
                                 </span>
 
                             @endif
 
                         </td>
 
-                        <td>
+                        <td class="flex gap-2">
 
-                            <div class="flex gap-2">
+                            <a href="{{ route('areas.edit', $area) }}"
+                               class="gp-table-button">
 
-                                <a href="{{ route('check-items.edit', $item) }}"
-                                   class="gp-table-button">
-                                    Editar
-                                </a>
+                                Editar
 
-                                <form method="POST"
-                                      action="{{ route('check-items.destroy', $item) }}">
-
-                                    @csrf
-                                    @method('DELETE')
-
-                                    @if($item->activo)
-
-                                        <button type="submit"
-                                                class="gp-table-button-danger">
-                                            Inactivar
-                                        </button>
-
-                                    @else
-
-                                        <button type="submit"
-                                                class="gp-table-button-success">
-                                            Activar
-                                        </button>
-
-                                    @endif
-
-                                </form>
-
-                            </div>
+                            </a>
 
                         </td>
 
@@ -120,10 +96,10 @@
 
                     <tr>
 
-                        <td colspan="7"
+                        <td colspan="5"
                             class="text-center py-6">
 
-                            No hay items registrados.
+                            No hay áreas registradas.
 
                         </td>
 

@@ -7,6 +7,10 @@ use App\Models\Reporte;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\ReportesExport;
+use App\Exports\ReporteDetalleExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class ReporteController extends Controller
 {
@@ -96,6 +100,8 @@ class ReporteController extends Controller
         return view('reportes.show', compact('reporte'));
     }
 
+
+
     public function edit(Reporte $reporte)
     {
         //
@@ -137,17 +143,61 @@ class ReporteController extends Controller
             ->with('success', 'Reporte rechazado.');
     }
 
+    public function excel()
+    {
+        return Excel::download(
+            new ReportesExport,
+            'reportes.xlsx'
+        );
+    }
 
+    public function excelDetalle(Reporte $reporte)
+    {
+        return Excel::download(
+            new ReporteDetalleExport($reporte),
+            'reporte-' . $reporte->id . '.xlsx'
+        );
+    }
     public function pdf(Reporte $reporte)
-{
-    $reporte->load([
-        'area',
-        'usuario',
-        'detalles.checkItem'
-    ]);
+    {
+        $reporte->load([
+            'area',
+            'usuario',
+            'detalles.checkItem'
+        ]);
 
-    $pdf = Pdf::loadView('reportes.pdf', compact('reporte'));
+        $pdf = Pdf::loadView('reportes.pdf', compact('reporte'));
 
-    return $pdf->download('reporte-preoperacional-' . $reporte->id . '.pdf');
-}
+        return $pdf->download('reporte-preoperacional-' . $reporte->id . '.pdf');
+    }
+
+    public function dashboardAdmin()
+    {
+        $totalReportes = Reporte::count();
+
+        $aprobados = Reporte::where(
+            'estado',
+            'aprobado'
+        )->count();
+
+        $rechazados = Reporte::where(
+            'estado',
+            'rechazado'
+        )->count();
+
+        $borradores = Reporte::where(
+            'estado',
+            'borrador'
+        )->count();
+
+        return view(
+            'dashboard.administrador',
+            compact(
+                'totalReportes',
+                'aprobados',
+                'rechazados',
+                'borradores'
+            )
+        );
+    }
 }

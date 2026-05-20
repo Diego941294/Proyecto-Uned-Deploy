@@ -1,57 +1,74 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <div>
-            <h2 class="gp-header-title">
-                Check Items
-            </h2>
+        <div class="gp-page-title-row">
 
-            <p class="gp-header-subtitle">
-                Administración de elementos de verificación.
-            </p>
+            <div class="flex items-center gap-4">
+                <div>
+                    <h2 class="gp-header-title">
+                        Check Items
+                    </h2>
+
+
+
+                    <p class="gp-header-subtitle">
+                        Administración de elementos de verificación por área.
+                    </p>
+
+                </div>
+            </div>
+            <div class="flex items-center gap-2">   
+
+
+            <a href="{{ route('administrador.dashboard') }}"
+            class="gp-action-btn primary">
+                ← Volver
+            </a>
+
+            <a href="{{ route('check-items.create') }}"
+                class="gp-action-btn primary">
+                + Nuevo Item
+            </a>
+                </div>
+
         </div>
     </x-slot>
 
-    <div class="flex justify-between items-center mb-6">
+    <div class="gp-reports-panel">
 
-        <h3 class="text-xl font-bold text-slate-700">
-            Elementos registrados
-        </h3>
+        <div class="gp-reports-toolbar">
+            <div>
+                <h3>Elementos registrados</h3>
+                <p>Consulta los elementos de verificación del sistema preoperacional.</p>
+            </div>
+        </div>
 
-        <a href="{{ route('check-items.create') }}"
-           class="gp-card-button">
-            Nuevo Item
-        </a>
+        <div class="gp-table-modern-wrap">
 
-    </div>
+            <table class="gp-table-modern">
 
-    <div class="gp-table-container">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Área</th>
+                        <th>Sección</th>
+                        <th>Nombre</th>
+                        <th>Orden</th>
+                        <th>Estado</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
 
-        <table class="gp-table">
+                <tbody>
 
-            <thead>
-
-                <tr>
-                    <th>ID</th>
-                    <th>Área</th>
-                    <th>Sección</th>
-                    <th>Nombre</th>
-                    <th>Orden</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                @forelse($checkItems as $item)
+                    @forelse($checkItems as $item)
 
                     <tr>
+                        <td>#{{ $item->id }}</td>
 
-                        <td>{{ $item->id }}</td>
-
-                        <td>{{ $item->area->nombre }}</td>
+                        <td>
+                            <strong>{{ $item->area->nombre }}</strong>
+                        </td>
 
                         <td>{{ $item->seccion }}</td>
 
@@ -60,52 +77,40 @@
                         <td>{{ $item->orden }}</td>
 
                         <td>
-
                             @if($item->activo)
-
-                                <span class="gp-badge-success">
-                                    Activo
-                                </span>
-
+                            <span class="gp-badge-success">
+                                Activo
+                            </span>
                             @else
-
-                                <span class="gp-badge-danger">
-                                    Inactivo
-                                </span>
-
+                            <span class="gp-badge-danger">
+                                Inactivo
+                            </span>
                             @endif
-
                         </td>
 
-                        <td>
-
+                        <td class="text-center">
                             <a href="{{ route('check-items.edit', $item) }}"
-                               class="gp-table-button">
+                                class="gp-view-button">
                                 Editar
                             </a>
-
                         </td>
-
                     </tr>
 
-                @empty
+                    @empty
 
                     <tr>
-
-                        <td colspan="7"
-                            class="text-center py-6">
-
+                        <td colspan="7" class="gp-empty-table">
                             No hay items registrados.
-
                         </td>
-
                     </tr>
 
-                @endforelse
+                    @endforelse
 
-            </tbody>
+                </tbody>
 
-        </table>
+            </table>
+
+        </div>
 
     </div>
 

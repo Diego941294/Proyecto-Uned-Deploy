@@ -1406,3 +1406,150 @@
     background: linear-gradient(135deg, #16a34a, #14532d);
     color: white;
 }
+
+/*----------------------------------------------------------------*/
+
+
+.gp-page-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+}
+
+.gp-reports-panel {
+    background: #ffffff;
+    border: 1px solid #dbe8f3;
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, .08);
+}
+
+.gp-reports-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.gp-reports-toolbar h3 {
+    color: #0f2f5f;
+    font-size: 22px;
+    font-weight: 900;
+    margin: 0;
+}
+
+.gp-reports-toolbar p {
+    margin: 5px 0 0;
+    color: #64748b;
+    font-weight: 700;
+}
+
+.gp-filter-card {
+    background: #f8fbff;
+    border: 1px solid #dbe8f3;
+    border-radius: 20px;
+    padding: 22px;
+    margin-bottom: 24px;
+}
+
+.gp-filter-grid-clean {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.gp-filter-field label {
+    display: block;
+    color: #0f2f5f;
+    font-weight: 900;
+    margin-bottom: 8px;
+}
+
+.gp-filter-field input,
+.gp-filter-field select {
+    width: 100%;
+    height: 46px;
+    border: 1px solid #cbd5e1;
+    border-radius: 14px;
+    padding: 0 14px;
+    background: white;
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.gp-filter-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.gp-table-modern-wrap {
+    overflow-x: auto;
+    border-radius: 18px;
+    border: 1px solid #dbe8f3;
+}
+
+.gp-table-modern {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.gp-table-modern thead {
+    background: linear-gradient(135deg, #0f2f5f, #0b63d8);
+    color: white;
+}
+
+.gp-table-modern th,
+.gp-table-modern td {
+    padding: 18px 20px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: 700;
+}
+
+.gp-table-modern tbody tr:hover {
+    background: #f8fbff;
+}
+
+.gp-view-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #eaf2ff;
+    color: #0b63d8;
+    padding: 9px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 900;
+    text-decoration: none;
+    transition: .2s ease;
+}
+
+.gp-view-button:hover {
+    background: #0b63d8;
+    color: white;
+}
+
+.gp-empty-table {
+    text-align: center;
+    padding: 30px !important;
+    color: #64748b;
+}
+
+@media (max-width: 900px) {
+    .gp-page-title-row,
+    .gp-reports-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .gp-filter-grid-clean {
+        grid-template-columns: 1fr;
+    }
+
+    .gp-reports-panel {
+        padding: 18px;
+    }
+}

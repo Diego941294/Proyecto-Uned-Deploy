@@ -17,19 +17,19 @@
 
                 </div>
             </div>
-            <div class="flex items-center gap-2">   
+            <div class="flex items-center gap-2">
 
 
-            <a href="{{ route('administrador.dashboard') }}"
-            class="gp-action-btn primary">
-                ← Volver
-            </a>
+                <a href="{{ route('administrador.dashboard') }}"
+                    class="gp-action-btn primary">
+                    ← Volver
+                </a>
 
-            <a href="{{ route('check-items.create') }}"
-                class="gp-action-btn primary">
-                + Nuevo Item
-            </a>
-                </div>
+                <a href="{{ route('check-items.create') }}"
+                    class="gp-action-btn primary">
+                    + Nuevo Item
+                </a>
+            </div>
 
         </div>
     </x-slot>
@@ -89,10 +89,34 @@
                         </td>
 
                         <td class="text-center">
-                            <a href="{{ route('check-items.edit', $item) }}"
-                                class="gp-view-button">
-                                Editar
-                            </a>
+
+                            <div class="gp-action-group">
+
+                                <a href="{{ route('check-items.edit', $item) }}"
+                                    class="gp-view-button">
+
+                                    ✏️ Editar
+
+                                </a>
+
+                                <form method="POST"
+                                    action="{{ route('check-items.destroy', $item) }}"
+                                    onsubmit="return confirm('¿Está seguro de eliminar este Check Item? Esta acción no se puede deshacer.');">
+
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button type="submit"
+                                        class="gp-delete-button">
+
+                                        🗑 Eliminar
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
                         </td>
                     </tr>
 

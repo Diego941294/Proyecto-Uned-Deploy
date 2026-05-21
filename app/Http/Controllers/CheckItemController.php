@@ -70,14 +70,21 @@ class CheckItemController extends Controller
             ->with('success', 'Check Item actualizado correctamente.');
     }
 
-    public function destroy(CheckItem $checkItem)
-    {
-        $checkItem->update([
-            'activo' => !$checkItem->activo
-        ]);
-
+ public function destroy(CheckItem $checkItem)
+{
+    if ($checkItem->detalles()->exists()) {
         return redirect()
             ->route('check-items.index')
-            ->with('success', 'Estado del Check Item actualizado.');
+            ->with(
+                'error',
+                'No se puede eliminar este Check Item porque ya está asociado a uno o más reportes.'
+            );
     }
+
+    $checkItem->delete();
+
+    return redirect()
+        ->route('check-items.index')
+        ->with('success', 'Check Item eliminado correctamente.');
+}
 }

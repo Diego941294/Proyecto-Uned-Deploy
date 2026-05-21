@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,13 +13,6 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-@if(session('success'))
-
-    <div class="gp-alert-success">
-        {{ session('success') }}
-    </div>
-
-@endif
 
 <body class="gp-body">
     <div class="gp-app-shell">
@@ -26,17 +20,37 @@
         @include('layouts.navigation')
 
         <main class="gp-main">
-            @isset($header)
-                <section class="gp-page-header">
-                    {{ $header }}
-                </section>
-            @endisset
+
+            @if(session('success') || session('error'))
+            <div class="gp-modal-alert" id="gpModalAlert">
+                <div class="gp-modal-box">
+                    <div class="gp-modal-icon">
+                        {{ session('success') ? '✓' : '!' }}
+                    </div>
+
+                    <h3>
+                        {{ session('success') ? 'Acción realizada' : 'Aviso del sistema' }}
+                    </h3>
+
+                    <p>
+                        {{ session('success') ?? session('error') }}
+                    </p>
+
+                    <button type="button"
+                        onclick="document.getElementById('gpModalAlert').style.display='none'">
+                        Aceptar
+                    </button>
+                </div>
+            </div>
+            @endif
 
             <section class="gp-content">
                 {{ $slot }}
             </section>
+
         </main>
 
     </div>
 </body>
+
 </html>

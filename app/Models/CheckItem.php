@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Area;
+use App\Models\ReporteDetalle;
 
 class CheckItem extends Model
 {
@@ -27,4 +28,9 @@ class CheckItem extends Model
     {
         return $this->hasMany(ReporteDetalle::class);
     }
+
+    public function detalles()
+{
+    return $this->hasMany(ReporteDetalle::class);
+}
 }

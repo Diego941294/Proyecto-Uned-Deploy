@@ -938,7 +938,9 @@
 
 
 
-/*Graph*/
+/* =========================
+   GRÁFICOS  resources views dashboards
+========================= */
 
 .gp-chart-layout {
     display: flex;
@@ -1000,7 +1002,9 @@
     background: #65c466;
 }
 
-
+/* =========================
+   DASHBOARD ADMINISTRADOR  resources views dashboard   
+========================= */
 
 .gp-admin-topbar {
     display: grid;
@@ -1552,4 +1556,100 @@
     .gp-reports-panel {
         padding: 18px;
     }
+}
+
+
+/* ==========================
+   ESTILOS PARA CHECK ITEMS
+========================== */
+.gp-action-group{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.gp-delete-button{
+    border:none;
+    cursor:pointer;
+
+    padding:10px 14px;
+
+    border-radius:12px;
+
+    background:#fee2e2;
+    color:#b91c1c;
+
+    font-size:13px;
+    font-weight:800;
+
+    transition:.2s ease;
+}
+
+.gp-delete-button:hover{
+    background:#dc2626;
+    color:white;
+
+    transform:translateY(-2px);
+}
+
+
+/*==========================
+   ESTILOS PARA el pop-up de confirmación de eliminación admin check items
+==========================*/
+.gp-modal-alert {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.gp-modal-box {
+    width: min(420px, 90%);
+    background: #ffffff;
+    border-radius: 22px;
+    padding: 28px;
+    text-align: center;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, .25);
+}
+
+.gp-modal-icon {
+    width: 54px;
+    height: 54px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: #fee2e2;
+    color: #991b1b;
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    font-weight: 900;
+}
+
+.gp-modal-box h3 {
+    color: #0f2f5f;
+    font-size: 22px;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.gp-modal-box p {
+    color: #334155;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.gp-modal-box button {
+    margin-top: 20px;
+    border: none;
+    background: linear-gradient(135deg, #0b63d8, #0f2f5f);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 14px;
+    font-weight: 900;
+    cursor: pointer;
 }

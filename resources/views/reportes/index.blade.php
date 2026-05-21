@@ -12,14 +12,18 @@
                 </p>
             </div>
 
-                     <div class="flex items-center gap-2">   
+                    <div class="flex justify-between items-center mb-6">
 
+    <h3 class="text-xl font-bold text-slate-700">
+        Elementos registrados
+    </h3>
 
-            <a href="{{ route('administrador.dashboard') }}"
-            class="gp-action-btn primary">
-                ← Volver
-            </a>
-                </div>
+    <a href="{{ route('check-items.create') }}"
+       class="gp-card-button">
+        Nuevo Item
+    </a>
+
+</div>
 
         </div>
 

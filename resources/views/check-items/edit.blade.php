@@ -1,29 +1,27 @@
 <x-app-layout>
 
-    <x-slot name="header">
+    <section class="gp-page-header">
         <div class="gp-page-title-row">
 
-            <div class="flex items-center gap-4">
-                <a href="{{ route('check-items.index') }}"
-                   class="gp-back-button-light">
-                    ← Volver
-                </a>
+            <div>
+                <h2 class="gp-header-title">
+                    Editar Check Item
+                </h2>
 
-                <div>
-                    <h2 class="gp-header-title">
-                        Editar Check Item
-                    </h2>
-
-                    <p class="gp-header-subtitle">
-                        Actualizar elemento de verificación.
-                    </p>
-                </div>
+                <p class="gp-header-subtitle">
+                    Actualizar elemento de verificación del sistema.
+                </p>
             </div>
 
-        </div>
-    </x-slot>
+            <a href="{{ route('check-items.index') }}"
+               class="gp-action-btn secondary">
+                ← Volver
+            </a>
 
-    <div class="gp-form-container">
+        </div>
+    </section>
+
+       <div class="gp-form-container">
 
         <form method="POST"
               action="{{ route('check-items.update', $checkItem) }}">
@@ -103,3 +101,6 @@
     </div>
 
 </x-app-layout>
+
+
+

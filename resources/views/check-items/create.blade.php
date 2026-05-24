@@ -1,129 +1,100 @@
 <x-app-layout>
 
-    <x-slot name="header">
-        <div>
-            <h2 class="gp-header-title">
-                Nuevo Check Item
-            </h2>
+    <section class="gp-page-header">
+        <div class="gp-page-title-row">
 
-            <p class="gp-header-subtitle">
-                Crear nuevo elemento de verificación.
-            </p>
+            <div>
+                <h2 class="gp-header-title">
+                    Nuevo Item
+                </h2>
+
+                <p class="gp-header-subtitle">
+                    Registrar un nuevo elemento de verificación para el checklist.
+                </p>
+            </div>
+
+            <a href="{{ route('check-items.index') }}"
+               class="gp-action-btn secondary">
+                ← Volver
+            </a>
+
         </div>
-    </x-slot>
+    </section>
 
-    <div class="gp-form-container">
+    <div class="gp-form-shell">
 
-        <form method="POST"
-              action="{{ route('check-items.store') }}">
+        <div class="gp-form-card">
 
-            @csrf
+            <form method="POST" action="{{ route('check-items.store') }}">
 
-            <div class="gp-form-group">
+                @csrf
 
-                <label class="gp-label">
-                    Área
-                </label>
+                <div class="gp-form-group">
+                    <label class="gp-label">Área</label>
 
-                <select name="area_id"
-                        class="gp-input"
-                        required>
+                    <select name="area_id" class="gp-input" required>
+                        <option value="">Seleccione un área</option>
 
-                    <option value="">
-                        Seleccione un área
-                    </option>
+                        @foreach($areas as $area)
+                            <option value="{{ $area->id }}">
+                                {{ $area->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-                    @foreach($areas as $area)
+                <div class="gp-form-group">
+                    <label class="gp-label">Sección</label>
 
-                        <option value="{{ $area->id }}">
-                            {{ $area->nombre }}
-                        </option>
+                    <input type="text"
+                           name="seccion"
+                           class="gp-input"
+                           placeholder="Ejemplo: Infraestructura"
+                           required>
+                </div>
 
-                    @endforeach
+                <div class="gp-form-group">
+                    <label class="gp-label">Nombre</label>
 
-                </select>
+                    <input type="text"
+                           name="nombre"
+                           class="gp-input"
+                           placeholder="Ejemplo: Pisos"
+                           required>
+                </div>
 
-            </div>
+                <div class="gp-form-group">
+                    <label class="gp-label">Orden</label>
 
-            <div class="gp-form-group">
+                    <input type="number"
+                           name="orden"
+                           class="gp-input"
+                           placeholder="Ejemplo: 1"
+                           required>
+                </div>
 
-                <label class="gp-label">
-                    Sección
-                </label>
+                <div class="gp-form-group">
+                    <label class="gp-label">Estado</label>
 
-                <input type="text"
-                       name="seccion"
-                       class="gp-input"
-                       required>
+                    <select name="activo" class="gp-input" required>
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                </div>
 
-            </div>
+                <div class="gp-report-actions">
+                    <button type="submit" class="gp-action-btn primary">
+                        Guardar Item
+                    </button>
 
-            <div class="gp-form-group">
+                    <a href="{{ route('check-items.index') }}" class="gp-action-btn secondary">
+                        Cancelar
+                    </a>
+                </div>
 
-                <label class="gp-label">
-                    Nombre
-                </label>
+            </form>
 
-                <input type="text"
-                       name="nombre"
-                       class="gp-input"
-                       required>
-
-            </div>
-
-            <div class="gp-form-group">
-
-                <label class="gp-label">
-                    Orden
-                </label>
-
-                <input type="number"
-                       name="orden"
-                       class="gp-input"
-                       required>
-
-            </div>
-
-            <div class="gp-form-group">
-
-                <label class="gp-label">
-                    Estado
-                </label>
-
-                <select name="activo"
-                        class="gp-input">
-
-                    <option value="1">
-                        Activo
-                    </option>
-
-                    <option value="0">
-                        Inactivo
-                    </option>
-
-                </select>
-
-            </div>
-
-            <div class="flex gap-4 mt-6">
-
-                <button type="submit"
-                        class="gp-card-button">
-
-                    Guardar Item
-
-                </button>
-
-                <a href="{{ route('check-items.index') }}"
-                   class="gp-secondary-button">
-
-                    Cancelar
-
-                </a>
-
-            </div>
-
-        </form>
+        </div>
 
     </div>
 

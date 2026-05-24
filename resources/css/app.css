@@ -1653,3 +1653,19 @@
     font-weight: 900;
     cursor: pointer;
 }
+/*==========================
+   CREATE CHECK ITEM - ESTILOS PARA EL FORMULARIO
+==========================*/
+.gp-form-shell {
+    display: flex;
+    justify-content: center;
+}
+
+.gp-form-card {
+    width: min(720px, 100%);
+    background: #ffffff;
+    border: 1px solid #dbe8f3;
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, .08);
+}

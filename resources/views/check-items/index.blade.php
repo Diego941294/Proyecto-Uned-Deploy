@@ -1,38 +1,32 @@
 <x-app-layout>
 
-    <x-slot name="header">
-        <div class="gp-page-title-row">
+    <section class="gp-page-header">
+       <div class="gp-page-title-row">
 
-            <div class="flex items-center gap-4">
-                <div>
-                    <h2 class="gp-header-title">
-                        Check Items
-                    </h2>
+        <div>
+            <h2 class="gp-header-title">
+                Check Items
+            </h2>
 
-
-
-                    <p class="gp-header-subtitle">
-                        Administración de elementos de verificación por área.
-                    </p>
-
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-
-
-                <a href="{{ route('administrador.dashboard') }}"
-                    class="gp-action-btn primary">
-                    ← Volver
-                </a>
-
-                <a href="{{ route('check-items.create') }}"
-                    class="gp-action-btn primary">
-                    + Nuevo Item
-                </a>
-            </div>
-
+            <p class="gp-header-subtitle">
+                Administración de elementos de verificación por área.
+            </p>
         </div>
-    </x-slot>
+
+        <div class="gp-header-actions">
+            <a href="{{ route('administrador.dashboard') }}"
+               class="gp-action-btn secondary">
+                ← Volver
+            </a>
+
+            <a href="{{ route('check-items.create') }}"
+               class="gp-action-btn primary">
+                + Nuevo Item
+            </a>
+        </div>
+
+    </div>
+    </section>
 
     <div class="gp-reports-panel">
 
@@ -137,5 +131,7 @@
         </div>
 
     </div>
+
+    
 
 </x-app-layout>

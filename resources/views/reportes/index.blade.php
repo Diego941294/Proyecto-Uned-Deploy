@@ -1,7 +1,8 @@
 <x-app-layout>
 
-    <x-slot name="header">
+    <section class="gp-page-header">
         <div class="gp-page-title-row">
+
             <div>
                 <h2 class="gp-header-title">
                     Reportes Preoperacionales
@@ -12,20 +13,27 @@
                 </p>
             </div>
 
-                     <div class="flex items-center gap-2">   
+            <div class="gp-header-actions">
 
+                <a href="{{ route('administrador.dashboard') }}"
+                   class="gp-action-btn secondary">
+                    ← Volver
+                </a>
 
-            <a href="{{ route('administrador.dashboard') }}"
-            class="gp-action-btn primary">
-                ← Volver
-            </a>
-                </div>
+                <a href="{{ route('reportes.pdf-general') }}"
+                   class="gp-action-btn pdf">
+                    📄 PDF
+                </a>
+
+                <a href="{{ route('reportes.excel') }}"
+                   class="gp-action-btn excel">
+                    📊 Excel
+                </a>
+
+            </div>
 
         </div>
-
-
-
-    </x-slot>
+    </section>
 
     <div class="gp-reports-panel">
 
@@ -36,18 +44,13 @@
             </div>
         </div>
 
-        <form method="GET"
-              action="{{ route('reportes.index') }}"
-              class="gp-filter-card">
+        <form method="GET" action="{{ route('reportes.index') }}" class="gp-filter-card">
 
             <div class="gp-filter-grid-clean">
 
                 <div class="gp-filter-field">
                     <label>Fecha</label>
-
-                    <input type="date"
-                           name="fecha"
-                           value="{{ request('fecha') }}">
+                    <input type="date" name="fecha" value="{{ request('fecha') }}">
                 </div>
 
                 <div class="gp-filter-field">
@@ -70,21 +73,9 @@
 
                     <select name="estado">
                         <option value="">Todos los estados</option>
-
-                        <option value="borrador"
-                            @selected(request('estado') == 'borrador')>
-                            Borrador
-                        </option>
-
-                        <option value="aprobado"
-                            @selected(request('estado') == 'aprobado')>
-                            Aprobado
-                        </option>
-
-                        <option value="rechazado"
-                            @selected(request('estado') == 'rechazado')>
-                            Rechazado
-                        </option>
+                        <option value="borrador" @selected(request('estado') == 'borrador')>Borrador</option>
+                        <option value="aprobado" @selected(request('estado') == 'aprobado')>Aprobado</option>
+                        <option value="rechazado" @selected(request('estado') == 'rechazado')>Rechazado</option>
                     </select>
                 </div>
 
@@ -103,9 +94,7 @@
         </form>
 
         <div class="gp-table-modern-wrap">
-
             <table class="gp-table-modern">
-
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -119,26 +108,16 @@
 
                 <tbody>
                     @forelse($reportes as $reporte)
-
                         <tr>
                             <td>#{{ $reporte->id }}</td>
-
-                            <td>
-                                <strong>{{ $reporte->area->nombre }}</strong>
-                            </td>
-
+                            <td><strong>{{ $reporte->area->nombre }}</strong></td>
                             <td>{{ $reporte->fecha->format('d/m/Y') }}</td>
 
                             <td>
                                 @if($reporte->estado == 'aprobado')
                                     <span class="gp-badge-success">Aprobado</span>
-
                                 @elseif($reporte->estado == 'rechazado')
                                     <span class="gp-badge-danger">Rechazado</span>
-
-                                @elseif($reporte->estado == 'enviado')
-                                    <span class="gp-badge-warning">Enviado</span>
-
                                 @else
                                     <span class="gp-badge-secondary">Borrador</span>
                                 @endif
@@ -147,26 +126,20 @@
                             <td>{{ $reporte->usuario->name }}</td>
 
                             <td class="text-center">
-                                <a href="{{ route('reportes.show', $reporte) }}"
-                                   class="gp-view-button">
+                                <a href="{{ route('reportes.show', $reporte) }}" class="gp-view-button">
                                     Ver detalle
                                 </a>
                             </td>
                         </tr>
-
                     @empty
-
                         <tr>
                             <td colspan="6" class="gp-empty-table">
                                 No hay reportes registrados.
                             </td>
                         </tr>
-
                     @endforelse
                 </tbody>
-
             </table>
-
         </div>
 
     </div>

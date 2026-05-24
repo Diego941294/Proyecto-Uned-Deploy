@@ -93,6 +93,10 @@ Route::middleware(['auth', 'administrador'])->group(function () {
         [ReporteController::class, 'excelDetalle']
     )
         ->name('reportes.excel-detalle');
+
+
+    Route::get('/reportes-pdf', [ReporteController::class, 'pdfGeneral'])
+        ->name('reportes.pdf-general');
 });
 
 require __DIR__ . '/auth.php';

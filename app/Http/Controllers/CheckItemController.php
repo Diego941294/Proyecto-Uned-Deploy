@@ -39,10 +39,27 @@ class CheckItemController extends Controller
 
         CheckItem::create($validated);
 
+        $existe = CheckItem::where('area_id', $validated['area_id'])
+            ->where('seccion', $validated['seccion'])
+            ->where('nombre', $validated['nombre'])
+            ->exists();
+
+        if ($existe) {
+            return back()
+                ->withInput()
+                ->with('error', 'Ya existe un Check Item con la misma área, sección y nombre.');
+        }
+
         return redirect()
             ->route('check-items.index')
             ->with('success', 'Check Item creado correctamente.');
     }
+
+
+
+
+
+
 
     public function edit(CheckItem $checkItem)
     {
@@ -65,26 +82,39 @@ class CheckItemController extends Controller
 
         $checkItem->update($validated);
 
+
+        $existe = CheckItem::where('area_id', $validated['area_id'])
+            ->where('seccion', $validated['seccion'])
+            ->where('nombre', $validated['nombre'])
+            ->where('id', '!=', $checkItem->id)
+            ->exists();
+
+        if ($existe) {
+            return back()
+                ->withInput()
+                ->with('error', 'Ya existe otro Check Item con la misma área, sección y nombre.');
+        }
+
         return redirect()
             ->route('check-items.index')
             ->with('success', 'Check Item actualizado correctamente.');
     }
 
- public function destroy(CheckItem $checkItem)
-{
-    if ($checkItem->detalles()->exists()) {
+    public function destroy(CheckItem $checkItem)
+    {
+        if ($checkItem->detalles()->exists()) {
+            return redirect()
+                ->route('check-items.index')
+                ->with(
+                    'error',
+                    'No se puede eliminar este Check Item porque ya está asociado a uno o más reportes.'
+                );
+        }
+
+        $checkItem->delete();
+
         return redirect()
             ->route('check-items.index')
-            ->with(
-                'error',
-                'No se puede eliminar este Check Item porque ya está asociado a uno o más reportes.'
-            );
+            ->with('success', 'Check Item eliminado correctamente.');
     }
-
-    $checkItem->delete();
-
-    return redirect()
-        ->route('check-items.index')
-        ->with('success', 'Check Item eliminado correctamente.');
-}
 }

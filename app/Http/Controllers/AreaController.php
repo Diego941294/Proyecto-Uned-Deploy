@@ -54,23 +54,25 @@ class AreaController extends Controller
             ->with('success', 'Área actualizada correctamente.');
     }
 
-    public function destroy(Area $area)
-    {
-        if ($area->checkItems()->exists()) {
-
-            return back()->with(
-                'error',
-                'No se puede eliminar un área que tiene Check Items asociados.'
-            );
-        }
-
-        $area->delete();
+  public function destroy(Area $area)
+{
+    if ($area->checkItems()->exists()) {
 
         return redirect()
             ->route('areas.index')
             ->with(
-                'success',
-                'Área eliminada correctamente.'
+                'error',
+                'No se puede eliminar esta área porque tiene Check Items asociados.'
             );
     }
+
+    $area->delete();
+
+    return redirect()
+        ->route('areas.index')
+        ->with(
+            'success',
+            'Área eliminada correctamente.'
+        );
+}
 }

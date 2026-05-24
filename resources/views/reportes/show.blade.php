@@ -1,51 +1,126 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div>
-            <h2 class="gp-header-title">
-                Detalle del Reporte #{{ $reporte->id }}
-            </h2>
 
-            <p class="gp-header-subtitle">
-                Revisión completa del reporte preoperacional.
-            </p>
+    <section class="gp-page-header">
+        <div class="gp-page-title-row">
+
+            <div>
+                <h2 class="gp-header-title">
+                    Detalle del Reporte #{{ $reporte->id }}
+                </h2>
+
+                <p class="gp-header-subtitle">
+                    Revisión completa del reporte preoperacional.
+                </p>
+            </div>
+
+            <div class="gp-header-actions">
+
+                <a href="{{ route('reportes.index') }}"
+                   class="gp-action-btn secondary">
+                    ← Volver
+                </a>
+
+                <a href="{{ route('reportes.pdf', $reporte) }}"
+                   class="gp-action-btn pdf">
+                    📄 PDF
+                </a>
+
+                <a href="{{ route('reportes.excel-detalle', $reporte) }}"
+                   class="gp-action-btn excel">
+                    📊 Excel
+                </a>
+
+                @role('Administrador')
+
+                    @if($reporte->estado != 'aprobado')
+                        <form method="POST"
+                              action="{{ route('reportes.aprobar', $reporte) }}">
+                            @csrf
+
+                            <button type="submit" class="gp-action-btn success">
+                                ✓ Aprobar
+                            </button>
+                        </form>
+                    @endif
+
+                    @if($reporte->estado != 'rechazado')
+                        <form method="POST"
+                              action="{{ route('reportes.rechazar', $reporte) }}">
+                            @csrf
+
+                            <button type="submit" class="gp-action-btn danger">
+                                ✕ Rechazar
+                            </button>
+                        </form>
+                    @endif
+
+                @endrole
+
+            </div>
+
         </div>
-    </x-slot>
+    </section>
 
-    <div class="gp-form-container">
+    <div class="gp-detail-panel">
 
-        <div class="gp-dashboard-grid mb-6">
-            <div class="gp-dashboard-card">
-                <h3>Área</h3>
-                <p>{{ $reporte->area->nombre }}</p>
+        <div class="gp-detail-summary">
+
+            <div class="gp-detail-card">
+                <span>Área</span>
+                <strong>{{ $reporte->area->nombre }}</strong>
             </div>
 
-            <div class="gp-dashboard-card">
-                <h3>Supervisor</h3>
-                <p>{{ $reporte->usuario->name }}</p>
+            <div class="gp-detail-card">
+                <span>Supervisor</span>
+                <strong>{{ $reporte->usuario->name }}</strong>
             </div>
 
-            <div class="gp-dashboard-card">
-                <h3>Fecha</h3>
-                <p>{{ $reporte->fecha->format('d/m/Y') }}</p>
+            <div class="gp-detail-card">
+                <span>Fecha</span>
+                <strong>{{ $reporte->fecha->format('d/m/Y') }}</strong>
+            </div>
+
+            <div class="gp-detail-card">
+                <span>Estado</span>
+
+                @if($reporte->estado == 'aprobado')
+                    <strong class="gp-text-success">Aprobado</strong>
+                @elseif($reporte->estado == 'rechazado')
+                    <strong class="gp-text-danger">Rechazado</strong>
+                @else
+                    <strong class="gp-text-secondary">Borrador</strong>
+                @endif
             </div>
 
             @if($reporte->aprobado_por)
-                <div class="gp-dashboard-card">
-                    <h3>Aprobado por</h3>
-                    <p>{{ \App\Models\User::find($reporte->aprobado_por)?->name }}</p>
+
+                <div class="gp-detail-card">
+                    <span>Aprobado por</span>
+                    <strong>
+                        {{ \App\Models\User::find($reporte->aprobado_por)?->name }}
+                    </strong>
                 </div>
 
-                <div class="gp-dashboard-card">
-                    <h3>Fecha aprobación</h3>
-                    <p>{{ $reporte->fecha_aprobacion?->format('d/m/Y H:i') }}</p>
+                <div class="gp-detail-card">
+                    <span>Fecha aprobación</span>
+                    <strong>
+                        {{ $reporte->fecha_aprobacion?->format('d/m/Y H:i') }}
+                    </strong>
                 </div>
+
             @endif
+
         </div>
 
-        <h3 class="gp-section-title">Checklist registrado</h3>
+        <div class="gp-detail-section-title">
+            <h3>Checklist registrado</h3>
+            <p>Detalle de los elementos revisados en el reporte.</p>
+        </div>
 
-        <div class="gp-table-container">
-            <table class="gp-table">
+        <div class="gp-table-modern-wrap">
+
+            <table class="gp-table-modern">
+
                 <thead>
                     <tr>
                         <th>Sección</th>
@@ -65,52 +140,16 @@
                         </tr>
                     @endforeach
                 </tbody>
+
             </table>
+
         </div>
 
-        <div class="gp-form-group mt-6">
-            <label class="gp-label">Observaciones generales</label>
+        <div class="gp-observation-box">
+            <h3>Observaciones generales</h3>
             <p>{{ $reporte->observaciones ?? 'Sin observaciones generales.' }}</p>
         </div>
 
-        <div class="gp-report-actions">
-
-            @role('Administrador')
-
-                @if($reporte->estado != 'aprobado')
-                    <form method="POST" action="{{ route('reportes.aprobar', $reporte) }}">
-                        @csrf
-
-                        <button type="submit" class="gp-action-btn success">
-                            ✓ Aprobar
-                        </button>
-                    </form>
-                @endif
-
-                @if($reporte->estado != 'rechazado')
-                    <form method="POST" action="{{ route('reportes.rechazar', $reporte) }}">
-                        @csrf
-
-                        <button type="submit" class="gp-action-btn danger">
-                            ✕ Rechazar
-                        </button>
-                    </form>
-                @endif
-
-            @endrole
-
-            <a href="{{ route('reportes.index') }}" class="gp-action-btn secondary">
-                ← Volver
-            </a>
-
-            <a href="{{ route('reportes.pdf', $reporte) }}" class="gp-action-btn primary">
-                📄 PDF
-            </a>
-
-            <a href="{{ route('reportes.excel-detalle', $reporte) }}" class="gp-action-btn excel">
-                📊 Excel
-            </a>
-
-        </div>
     </div>
+
 </x-app-layout>

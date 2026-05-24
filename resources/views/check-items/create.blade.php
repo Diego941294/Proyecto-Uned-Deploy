@@ -6,7 +6,7 @@
             <div>
                 <h2 class="gp-header-title">
                     Nuevo Item
-                </h2>
+                </h2>   
 
                 <p class="gp-header-subtitle">
                     Registrar un nuevo elemento de verificación para el checklist.

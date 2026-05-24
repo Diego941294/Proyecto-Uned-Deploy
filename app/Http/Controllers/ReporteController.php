@@ -99,7 +99,16 @@ class ReporteController extends Controller
 
         return view('reportes.show', compact('reporte'));
     }
+    public function pdfGeneral()
+    {
+        $reportes = Reporte::with(['area', 'usuario'])
+            ->latest()
+            ->get();
 
+        $pdf = Pdf::loadView('reportes.pdf-general', compact('reportes'));
+
+        return $pdf->download('reportes-preoperacionales.pdf');
+    }
 
 
     public function edit(Reporte $reporte)

@@ -25,7 +25,7 @@
         </div>
 
         <div class="gp-nav-actions">
-            <button onclick="toggleDarkMode()" class="gp-dark-toggle">
+            <button onclick="toggleDarkMode()" class="gp-dark-toggle" style="margin-right: 40px;">
                 🌙 Modo oscuro
             </button>
 

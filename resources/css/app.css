@@ -571,7 +571,10 @@ body.dark-mode .gp-action-btn.excel {
     font-size: 14px;
     text-align: center;
 }
-
+/* ==============================
+   RESPONSIVE - LOGIN EMPLEADOS
+   Ajustes para pantallas pequeñas: reducción de padding, tamaño de logo y reestructuración de opciones.            
+============================== */
 /* Mobile */
 @media (max-width: 640px) {
     .auth-page {
@@ -752,8 +755,10 @@ body.dark-mode .gp-action-btn.excel {
     border: 1px solid #d6e4ec;
     border-radius: 22px;
     padding: 26px;
-    box-shadow: 0 14px 34px rgba(3, 34, 76, 0.08);
+    box-shadow: 0 14px 34px rgba(5, 58, 133, 0.08);
     min-height: 420px;
+    height: auto;
+    width: 100%;
 }
 
 .gp-mobile-btn {
@@ -787,7 +792,7 @@ body.dark-mode .gp-action-btn.excel {
 
 @media (max-width: 900px) {
     .gp-nav-links,
-    .gp-user-box {
+    .gp-user-box {  
         display: none;
     }
 
@@ -964,10 +969,10 @@ body.dark-mode .gp-action-btn.excel {
 
 .gp-input,
 .gp-textarea {
+    border: 2px solid #dbe8f3;
+padding: 14px 16px;
     width: 100%;
-    border: 2px soli #dbe8f3;
     border-radius: 14px;
-    padding: 14px 16pxd;
     font-size: 15px;
     font-weight: 600;
     color: #334155;
@@ -1712,9 +1717,9 @@ body.dark-mode .gp-action-btn.excel {
     );
     color:white;
 }
-/*----------------``-----------------*/
+/*----------------``-----------------
 FORMULARIOS CHECKLIST REPORTES
-/*--------------------------------------*/
+--------------------------------------*/
 .gp-page-title-row {
     display: flex;
     justify-content: space-between;
@@ -2081,5 +2086,290 @@ FORMULARIOS CHECKLIST REPORTES
 
     .gp-page-header .gp-header-actions {
         justify-content: flex-start !important;
+    }
+}
+
+
+
+/* =====================================================
+   RESPONSIVE GLOBAL - GUANA POLLO
+===================================================== */
+
+
+.gp-main,
+.gp-navbar-inner {
+    width: 100%;
+    max-width: 1500px;
+}
+
+.gp-nav-actions {
+    gap: 14px !important;
+}
+
+/* Pantallas muy grandes */
+@media (min-width: 1600px) {
+    .gp-main,
+    .gp-navbar-inner {
+        max-width: 92vw;
+    }
+
+    .gp-main {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+
+    .gp-content {
+        min-height: calc(100vh - 150px);
+    }
+
+    .gp-admin-dashboard-v2 {
+        min-height: calc(100vh - 190px);
+    }
+
+    .gp-kpi-grid-v2 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .gp-admin-main-grid {
+        grid-template-columns: 1.6fr 1fr;
+        align-items: stretch;
+    }
+
+    .gp-chart-card-v2,
+    .gp-action-list-v2 {
+        min-height: 430px;
+    }
+
+    .gp-chart-wrapper-v2 {
+        height: 360px;
+    }
+
+    .gp-chart-content-v2 {
+        grid-template-columns: 1fr 190px;
+    }
+
+    .gp-action-list-v2 a {
+        min-height: 92px;
+    }
+}
+
+/* Pantallas ultra grandes */
+@media (min-width: 2200px) {
+    .gp-main,
+    .gp-navbar-inner {
+        max-width: 94vw;
+    }
+
+    .gp-chart-wrapper-v2 {
+        height: 430px;
+    }
+
+    .gp-kpi-v2 {
+        min-height: 130px;
+    }
+
+    .gp-action-list-v2 a {
+        min-height: 110px;
+    }
+}
+
+
+
+
+
+
+
+/* Laptop */
+@media (max-width: 1200px) {
+    .gp-main {
+        padding: 22px;
+    }
+
+    .gp-kpi-grid-v2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .gp-admin-main-grid,
+    .gp-chart-content-v2 {
+        grid-template-columns: 1fr;
+    }
+
+    .gp-chart-legend-v2 {
+        max-width: 100%;
+    }
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+    .gp-navbar-inner {
+        padding: 0 16px;
+    }
+
+    .gp-nav-links,
+    .gp-nav-actions,
+    .gp-user-box {
+        display: none !important;
+    }
+
+    .gp-mobile-btn {
+        display: block;
+    }
+
+    .gp-page-title-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+
+    .gp-header-actions {
+        width: 100%;
+        justify-content: flex-start !important;
+    }
+
+    .gp-kpi-grid-v2,
+    .gp-dashboard-grid,
+    .gp-detail-summary,
+    .gp-filter-grid-clean {
+        grid-template-columns: 1fr;
+    }
+
+    .gp-reports-panel,
+    .gp-detail-panel,
+    .gp-form-card,
+    .gp-page-header {
+        padding: 20px;
+    }
+}
+
+/* Celular */
+@media (max-width: 640px) {
+    .gp-main {
+        padding: 12px;
+    }
+
+    .gp-content {
+        padding: 14px;
+        border-radius: 18px;
+    }
+
+    .gp-page-header {
+        padding: 16px;
+        border-radius: 18px;
+    }
+
+    .gp-header-title {
+        font-size: 22px;
+    }
+
+    .gp-header-subtitle {
+        font-size: 13px;
+    }
+
+    .gp-header-actions,
+    .gp-report-actions,
+    .gp-filter-actions {
+        flex-direction: column !important;
+        width: 100%;
+    }
+
+    .gp-action-btn,
+    .gp-card-button,
+    .gp-secondary-button {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .gp-table-modern-wrap,
+    .gp-table-container {
+        overflow-x: auto;
+    }
+
+    .gp-table-modern,
+    .gp-table {
+        min-width: 760px;
+    }
+
+    .gp-chart-content-v2 {
+        grid-template-columns: 1fr !important;
+    }
+
+    .gp-chart-wrapper-v2 {
+        height: 260px;
+    }
+
+    .gp-chart-legend-v2 {
+        max-width: 100%;
+    }
+
+    .gp-kpi-v2 {
+        padding: 16px;
+    }
+
+    .gp-kpi-v2 strong {
+        font-size: 28px;
+    }
+
+    .gp-form-card {
+        padding: 18px;
+        border-radius: 20px;
+    }
+}
+
+/* =====================================================
+   DASHBOARD - AJUSTE PANTALLAS GRANDES
+===================================================== */
+
+@media (min-width: 1600px) {
+
+    .gp-kpi-grid-v2 {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 28px;
+    }
+
+    .gp-kpi-v2 {
+        min-height: 145px;
+        padding: 30px;
+    }
+
+    .gp-kpi-icon {
+        width: 64px;
+        height: 64px;
+        font-size: 28px;
+        border-radius: 20px;
+    }
+
+    .gp-kpi-v2 span {
+        font-size: 17px;
+    }
+
+    .gp-kpi-v2 strong {
+        font-size: 48px;
+    }
+
+    .gp-kpi-v2 small {
+        font-size: 14px;
+    }
+
+    .gp-admin-main-grid {
+        grid-template-columns: 1.55fr .95fr;
+        gap: 28px;
+    }
+
+    .gp-chart-card-v2 {
+        min-height: 520px;
+        padding: 30px;
+    }
+
+    .gp-chart-wrapper-v2 {
+        height: 430px;
+    }
+
+    .gp-action-list-v2 {
+        gap: 22px;
+    }
+
+    .gp-action-list-v2 a {
+        min-height: 118px;
+        padding: 28px;
     }
 }

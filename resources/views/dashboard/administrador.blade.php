@@ -31,7 +31,7 @@
                 <div>
                     <span>Aprobados</span>
                     <strong>{{ $aprobados }}</strong>
-                    <small>Sin aprobar</small>
+                    <small>Aprobaciones</small>
                 </div>
             </div>
 
@@ -40,7 +40,7 @@
                 <div>
                     <span>Rechazados</span>
                     <strong>{{ $rechazados }}</strong>
-                    <small>Sin rechazos</small>
+                    <small>Rechazos</small>
                 </div>
             </div>
 

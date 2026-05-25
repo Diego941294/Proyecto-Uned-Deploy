@@ -51,6 +51,31 @@
         </main>
 
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const darkMode = localStorage.getItem('dark-mode');
+
+            if (darkMode === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+
+        });
+
+        function toggleDarkMode() {
+
+            document.body.classList.toggle('dark-mode');
+
+            localStorage.setItem(
+                'dark-mode',
+                document.body.classList.contains('dark-mode')
+            );
+        }
+    </script>
+
+
+
 </body>
 
 </html>

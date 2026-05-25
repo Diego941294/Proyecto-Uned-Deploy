@@ -15,6 +15,252 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+
+
+/* =========================
+   MODO OSCURO - ESTRUCTURA GENERAL
+   Define estilos para el modo oscuro, aplicados a través de la clase .dark-mode en el body.
+   Afecta fondo, colores, bordes y sombras de los principales contenedores y componentes.
+========================= */
+
+body.dark-mode {
+    background: #07111f;
+    color: #eaf3ff;
+}
+
+body.dark-mode .gp-app-shell {
+    background:
+        radial-gradient(circle at 15% 10%, rgba(63, 145, 240, 0.2), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(40, 110, 255, .12), transparent 30%),
+        linear-gradient(135deg, #07111f 0%, #0b1528 100%);
+}
+
+body.dark-mode .gp-navbar,
+body.dark-mode .gp-page-header,
+body.dark-mode .gp-content,
+body.dark-mode .gp-reports-panel,
+body.dark-mode .gp-detail-panel,
+body.dark-mode .gp-form-card,
+body.dark-mode .gp-dashboard-card,
+body.dark-mode .gp-kpi-v2,
+body.dark-mode .gp-chart-card-v2,
+body.dark-mode .gp-action-list-v2 a,
+body.dark-mode .gp-detail-card,
+body.dark-mode .gp-observation-box {
+    background: rgba(13, 25, 45, .96) !important;
+    border-color: rgba(99, 170, 255, .20) !important;
+    color: #eaf3ff !important;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, .35);
+}
+
+body.dark-mode .gp-header-title,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode strong {
+    color: #ffffff !important;
+}
+
+body.dark-mode p,
+body.dark-mode label,
+
+body.dark-mode small {
+    color: #b8c7dd !important;
+}
+
+body.dark-mode .gp-input,
+body.dark-mode .gp-textarea,
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+    background: #07111f !important;
+    color: #ffffff !important;
+    border-color: rgba(99, 170, 255, .35) !important;
+}
+
+body.dark-mode .gp-table-modern,
+body.dark-mode .gp-table {
+    background: #0d192d !important;
+}
+
+body.dark-mode .gp-table-modern thead,
+body.dark-mode .gp-table thead {
+    background: linear-gradient(135deg, #0d6efd, #003c9b) !important;
+}
+
+body.dark-mode .gp-table-modern td,
+body.dark-mode .gp-table td {
+    background: #0d192d !important;
+    color: #eaf3ff !important;
+    border-color: rgba(148, 163, 184, .22) !important;
+}
+
+body.dark-mode .gp-action-btn.primary,
+body.dark-mode .gp-logout-btn {
+    background: linear-gradient(135deg, #178bff, #004de6) !important;
+    box-shadow: 0 10px 28px rgba(23, 139, 255, .35);
+}
+
+body.dark-mode .gp-action-btn.secondary,
+body.dark-mode .gp-back-button-light {
+    background: #14233d !important;
+    color: #eaf3ff !important;
+    border: 1px solid rgba(99, 170, 255, .25) !important;
+}
+
+body.dark-mode .gp-view-button {
+    background: #14233d !important;
+    color: #69b6ff !important;
+}
+
+body.dark-mode .gp-filter-card {
+    background: rgba(13, 25, 45, .80) !important;
+    border-color: rgba(99, 170, 255, .20) !important;
+}
+
+
+.gp-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 100px;
+}
+
+@media (max-width: 900px) {
+    .gp-nav-links,
+    .gp-nav-actions {
+        display: none;
+    }
+}
+
+
+
+
+/* =========================
+MODO OSCURO - BADGES, ICONOS Y TEXTOS
+========================= */
+body,
+.gp-page-header,
+.gp-reports-panel,
+.gp-dashboard-card,
+.gp-table-modern,
+.gp-table,
+.gp-navbar {
+    transition: all .25s ease;
+}
+
+/* Navbar */
+body.dark-mode .gp-nav-link,
+body.dark-mode .gp-dark-toggle,
+body.dark-mode .gp-user-info strong,
+body.dark-mode .gp-user-info span {
+    color: #eaf3ff !important;
+}
+
+body.dark-mode .gp-nav-link:hover {
+    background: #14233d !important;
+}
+
+/* Títulos y textos suaves */
+body.dark-mode .gp-header-subtitle,
+body.dark-mode .gp-reports-toolbar p,
+body.dark-mode .gp-detail-section-title p,
+body.dark-mode .gp-action-content p {
+    color: #b8c7dd !important;
+}
+
+/* Iconos dashboard */
+body.dark-mode .gp-kpi-icon,
+body.dark-mode .gp-action-icon,
+body.dark-mode .gp-action-list-v2 a > span {
+    background: linear-gradient(135deg, #17345f, #0d6efd) !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 24px rgba(13, 110, 253, .30);
+}
+
+/* Cards dashboard */
+body.dark-mode .gp-kpi-v2,
+body.dark-mode .gp-action-list-v2 a,
+body.dark-mode .gp-chart-card-v2 {
+    background: linear-gradient(180deg, #0f1d33, #0a1425) !important;
+    border: 1px solid rgba(99, 170, 255, .30) !important;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, .35);
+}
+
+/* Tabla gráfica / contenedor */
+body.dark-mode .gp-chart-card-v2 {
+    border-radius: 22px !important;
+}
+
+body.dark-mode .gp-chart-wrapper-v2 {
+    background: #0b1528 !important;
+    border-radius: 18px;
+    padding: 12px;
+    border: 1px solid rgba(99, 170, 255, .18);
+}
+
+/* Dona / canvas */
+body.dark-mode #reportesChart {
+    background: #0b1528 !important;
+    border-radius: 18px;
+}
+
+/* Leyenda */
+body.dark-mode .gp-chart-legend-v2 {
+    background: #0b1528 !important;
+    border: 1px solid rgba(99, 170, 255, .35) !important;
+    border-radius: 16px !important;
+}
+
+body.dark-mode .gp-chart-legend-v2 div {
+    color: #eaf3ff !important;
+    border-bottom: 1px solid rgba(99, 170, 255, .18) !important;
+}
+
+body.dark-mode .gp-chart-legend-v2 strong {
+    color: #ffffff !important;
+}
+
+/* Badges */
+body.dark-mode .gp-badge-success {
+    background: #bbf7d0 !important;
+    color: #14532d !important;
+}
+
+body.dark-mode .gp-badge-danger {
+    background: #fecaca !important;
+    color: #7f1d1d !important;
+}
+
+body.dark-mode .gp-badge-secondary {
+    background: #dbeafe !important;
+    color: #1e3a8a !important;
+}
+
+/* Botones */
+body.dark-mode .gp-action-btn.primary,
+body.dark-mode .gp-logout-btn {
+    background: linear-gradient(135deg, #178bff, #004de6) !important;
+    color: white !important;
+}
+
+body.dark-mode .gp-action-btn.secondary {
+    background: #14233d !important;
+    color: #eaf3ff !important;
+    border: 1px solid rgba(99, 170, 255, .30) !important;
+}
+
+body.dark-mode .gp-action-btn.pdf {
+    background: linear-gradient(135deg, #ef4444, #991b1b) !important;
+    color: white !important;
+}
+
+body.dark-mode .gp-action-btn.excel {
+    background: linear-gradient(135deg, #22c55e, #15803d) !important;
+    color: white !important;
+}
+
+
+
 /* ==============================
     GUANA POLLO - LOGIN EMPLEADOS
     Sección: estilos para la pantalla de autenticación / login de empleados.
@@ -24,6 +270,9 @@
 /* Contenedor principal del body de autenticación
     - Resetea márgenes, asegura altura mínima y define la tipografía.
 */
+
+
+
 .auth-body {
      margin: 0;
      min-height: 100vh;

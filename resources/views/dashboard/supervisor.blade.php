@@ -62,5 +62,33 @@
 
         </div>
 
+        
+
     </div>
+    <div class="gp-dashboard-card" style="margin-top:30px;">
+    <h3>Informe diario</h3>
+
+    <div class="gp-alert-grid">
+        {{-- Área Caliente --}}
+        <div class="gp-alert {{ $reporteCaliente ? 'gp-alert-success' : 'gp-alert-warning' }}">
+            <span class="gp-alert-icon">🔥</span>
+            @if($reporteCaliente)
+                <span>Área Caliente: ✅ Reporte registrado hoy</span>
+            @else
+                <span>Área Caliente: ⚠️ Falta el reporte de hoy</span>
+            @endif
+        </div>
+
+        {{-- Área Fría --}}
+        <div class="gp-alert {{ $reporteFrio ? 'gp-alert-success' : 'gp-alert-warning' }}">
+            <span class="gp-alert-icon">❄️</span>
+            @if($reporteFrio)
+                <span>Área Fría: ✅ Reporte registrado hoy</span>
+            @else
+                <span>Área Fría: ⚠️ Falta el reporte de hoy</span>
+            @endif
+        </div>
+    </div>
+</div>
+
 </x-app-layout>

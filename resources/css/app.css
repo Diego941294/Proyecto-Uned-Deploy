@@ -841,35 +841,43 @@ body.dark-mode .gp-action-btn.excel {
 }
 
 .gp-dashboard-card {
-    background: linear-gradient(180deg, #ffffff, #f3f8fb);
-    border: 1px solid #d6e4ec;
-    border-radius: 22px;
-    padding: 26px;
-    box-shadow: 0 14px 34px rgba(3, 34, 76, 0.08);
+
+    background: #fff;
+    border-radius: 0; /* bordes cuadrados */
+    border: 2px solid #f97316; /* borde naranja */
+    padding: 1.5rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .gp-dashboard-card h3 {
-    margin: 0 0 10px;
-    color: #073f89;
     font-size: 22px;
-    font-weight: 900;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #f97316; /* naranja */
+    
 }
 
 .gp-dashboard-card p {
-    color: #5b7c94;
+    color: #171718;
     font-weight: 600;
     line-height: 1.5;
 }
 
 .gp-card-button {
-    display: inline-block;
+   display: inline-block;
     margin-top: 16px;
     padding: 11px 16px;
-    border-radius: 12px;
-    background: linear-gradient(180deg, #087df2 0%, #003c9b 100%);
-    color: white;
+    border-radius: 0;                /* cuadrado */
+    background: #f97316;             /* naranja */
+    color: #fff;
     font-weight: 800;
     text-decoration: none;
+    transition: background 0.2s ease;
+     text-align: center;
 }
 
 
@@ -2372,4 +2380,44 @@ FORMULARIOS CHECKLIST REPORTES
         min-height: 118px;
         padding: 28px;
     }
+
+
+
+
+
+
+/* rviasr */
+
+/* Títulos y textos */
+
+
+.gp-dashboard-card p {
+    flex-grow: 1;
+    font-size: 0.95rem;
+    color: #374151;
+    margin-bottom: 1rem;
+}
+
+
+
+.gp-card-button:hover {
+    background: #ea580c; /* naranja más oscuro */
+}
+
+/* Responsivo */
+@media (max-width: 640px) {
+    .gp-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .gp-dashboard-card {
+        padding: 1.25rem;
+    }
+}
+
+
+
+
+
+
+    
 }

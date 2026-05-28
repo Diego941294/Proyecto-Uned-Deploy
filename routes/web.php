@@ -97,6 +97,13 @@ Route::middleware(['auth', 'administrador'])->group(function () {
 
     Route::get('/reportes-pdf', [ReporteController::class, 'pdfGeneral'])
         ->name('reportes.pdf-general');
+    
+
+    // Ver cuales reportes faltan.
+    Route::get('/supervisor/dashboard', [ReporteController::class, 'dashboardSupervisor'])
+    ->name('supervisor.dashboard');
+
+        
 });
 
 require __DIR__ . '/auth.php';

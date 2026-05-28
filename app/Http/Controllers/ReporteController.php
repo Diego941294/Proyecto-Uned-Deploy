@@ -209,4 +209,28 @@ class ReporteController extends Controller
             )
         );
     }
+
+public function dashboardSupervisor()
+{
+    $hoy = \Carbon\Carbon::today()->format('Y-m-d');
+
+    $reporteFrio = Reporte::whereHas('area', function($q){
+        $q->where('nombre', 'Área Fría');
+    })->whereDate('fecha', $hoy)->exists();
+
+    $reporteCaliente = Reporte::whereHas('area', function($q){
+        $q->where('nombre', 'Área Caliente');
+    })->whereDate('fecha', $hoy)->exists();
+
+    $faltanReportes = !($reporteFrio && $reporteCaliente);
+
+    $reportes = Reporte::with(['area','usuario'])->get();
+
+    // IMPORTANTE: enviar las tres variables
+    return view('dashboard.supervisor', compact('reportes','faltanReportes','reporteFrio','reporteCaliente'));
+}
+
+
+
+
 }

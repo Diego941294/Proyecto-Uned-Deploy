@@ -75,4 +75,7 @@ class AreaController extends Controller
             'Área eliminada correctamente.'
         );
 }
+
+
+
 }

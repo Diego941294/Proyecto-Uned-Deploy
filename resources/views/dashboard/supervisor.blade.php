@@ -20,7 +20,7 @@
             </p>
 
             <a href="{{ route('reportes.create') }}"
-               class="gp-card-button">
+                class="gp-card-button">
 
                 Nuevo reporte
 
@@ -36,8 +36,8 @@
                 Consultar reportes guardados pendientes de revisión.
             </p>
 
-            <a href="{{ route('supervisor.edit_supervisor') }}"
-               class="gp-card-button">
+            <a href="{{ route('reportes.index') }}?estado=borrador"
+                class="gp-card-button">
 
                 Ver pendientes
 
@@ -54,7 +54,7 @@
             </p>
 
             <a href="{{ route('reportes.index') }}"
-               class="gp-card-button">
+                class="gp-card-button">
 
                 Consultar
 
@@ -62,33 +62,33 @@
 
         </div>
 
-        
+
 
     </div>
     <div class="gp-dashboard-card" style="margin-top:30px;">
-    <h3>Informe diario</h3>
+        <h3>Informe diario</h3>
 
-    <div class="gp-alert-grid">
-        {{-- Área Caliente --}}
-        <div class="gp-alert {{ $reporteCaliente ? 'gp-alert-success' : 'gp-alert-warning' }}">
-            <span class="gp-alert-icon">🔥</span>
-            @if($reporteCaliente)
+        <div class="gp-alert-grid">
+            {{-- Área Caliente --}}
+            <div class="gp-alert {{ $reporteCaliente ? 'gp-alert-success' : 'gp-alert-warning' }}">
+                <span class="gp-alert-icon">🔥</span>
+                @if($reporteCaliente)
                 <span>Área Caliente: ✅ Reporte registrado hoy</span>
-            @else
+                @else
                 <span>Área Caliente: ⚠️ Falta el reporte de hoy</span>
-            @endif
-        </div>
+                @endif
+            </div>
 
-        {{-- Área Fría --}}
-        <div class="gp-alert {{ $reporteFrio ? 'gp-alert-success' : 'gp-alert-warning' }}">
-            <span class="gp-alert-icon">❄️</span>
-            @if($reporteFrio)
+            {{-- Área Fría --}}
+            <div class="gp-alert {{ $reporteFrio ? 'gp-alert-success' : 'gp-alert-warning' }}">
+                <span class="gp-alert-icon">❄️</span>
+                @if($reporteFrio)
                 <span>Área Fría: ✅ Reporte registrado hoy</span>
-            @else
+                @else
                 <span>Área Fría: ⚠️ Falta el reporte de hoy</span>
-            @endif
+                @endif
+            </div>
         </div>
     </div>
-</div>
 
 </x-app-layout>

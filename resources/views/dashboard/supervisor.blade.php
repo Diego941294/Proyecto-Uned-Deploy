@@ -36,7 +36,7 @@
                 Consultar reportes guardados pendientes de revisión.
             </p>
 
-            <a href="{{ route('reportes.index') }}"
+            <a href="{{ route('supervisor.edit_supervisor') }}"
                class="gp-card-button">
 
                 Ver pendientes

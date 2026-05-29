@@ -2414,7 +2414,69 @@ FORMULARIOS CHECKLIST REPORTES
     }
 }
 
+/* estilo editar */
 
+ /* Contenedor general de la tabla */
+.gp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    font-family: 'Rubik', sans-serif;
+}
+
+/* Encabezado */
+.gp-table thead {
+    background-color: #f97316; /* naranja corporativo */
+    color: #ffffff;
+    text-align: left;
+    font-weight: 600;
+}
+
+.gp-table th {
+    padding: 14px 18px;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+    background-color: #f97316; /* fuerza el naranja */
+}
+
+/* Filas */
+.gp-table td {
+    padding: 12px 18px;
+    font-size: 14px;
+    color: #374151; /* gris oscuro */
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Alternar colores en filas */
+.gp-table tbody tr:nth-child(even) {
+    background-color: #fdf2e9; /* naranja muy suave */
+}
+
+/* Hover en filas (solo cuerpo, no encabezado) */
+.gp-table tbody tr:hover {
+    background-color: #ffedd5; /* naranja pastel */
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Botón de acción */
+.gp-action-link {
+    color: #f97316;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background-color: #fff7ed;
+    transition: all 0.2s ease-in-out;
+}
+
+.gp-action-link:hover {
+    background-color: #f97316;
+    color: #ffffff;
+}
 
 
 

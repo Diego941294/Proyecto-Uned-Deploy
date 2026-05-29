@@ -1,155 +1,134 @@
 <?php
 
+use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\CheckItemController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReporteController;
-use App\Models\Reporte;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EditarReporteController;
 
-/*
-|--------------------------------------------------------------------------
-| Rutas públicas
-|--------------------------------------------------------------------------
-*/
-
+// Rutas públicas principales del sitio.
 Route::get('/', function () {
     return view('welcome');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Redirección principal después del login
-|--------------------------------------------------------------------------
-*/
-
+// Dashboard accesible solo para usuarios autenticados y verificados.
 Route::get('/dashboard', function () {
-    $user = Auth::user();
-
-    if ($user && $user->hasRole('administrador')) {
-        return redirect()->route('administrador.dashboard');
-    }
-
-    if ($user && $user->hasRole('supervisor')) {
-        return redirect()->route('supervisor.dashboard');
-    }
-
-    return redirect('/');
+    return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-/*
-|--------------------------------------------------------------------------
-| Perfil de usuario autenticado
-|--------------------------------------------------------------------------
-*/
-
+// Grupo de rutas comunes para usuarios autenticados.
 Route::middleware('auth')->group(function () {
+
+    // Edición del perfil de usuario.
     Route::get('/profile', [ProfileController::class, 'edit'])
         ->name('profile.edit');
 
+    // Actualización de datos del perfil.
     Route::patch('/profile', [ProfileController::class, 'update'])
         ->name('profile.update');
 
+    // Eliminación de la cuenta del usuario.
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
 });
 
-/*
-|--Rutas------------------------------------------------------------------------
-|  del Supervisor
-|--------------------------------------------------------------------------
-| El supervisor puede crear y guardar reportes preoperacionales.
-*/
-
+// Rutas para usuarios con rol supervisor.
 Route::middleware(['auth', 'supervisor'])->group(function () {
+
+    // Panel específico del supervisor.
     Route::get('/supervisor/dashboard', function () {
-        $hoy = now()->toDateString();
-
-        $reporteCaliente = Reporte::whereDate('fecha', $hoy)
-            ->whereHas('area', function ($query) {
-                $query->where('nombre', 'like', '%Caliente%');
-            })
-            ->exists();
-
-        $reporteFrio = Reporte::whereDate('fecha', $hoy)
-            ->whereHas('area', function ($query) {
-                $query->where('nombre', 'like', '%Fría%')
-                    ->orWhere('nombre', 'like', '%Fria%');
-            })
-            ->exists();
-
-        return view('dashboard.supervisor', compact(
-            'reporteCaliente',
-            'reporteFrio'
-        ));
+        return view('dashboard.supervisor');
     })->name('supervisor.dashboard');
 
-    Route::get('/reportes/create', [ReporteController::class, 'create'])
-        ->name('reportes.create');
-
-    Route::post('/reportes', [ReporteController::class, 'store'])
-        ->name('reportes.store');
+    // CRUD básico de reportes permitidos para supervisores.
+    Route::resource('reportes', ReporteController::class)
+        ->only(['index', 'show', 'create', 'store']);
 });
 
-/*
-|--------------------------------------------------------------------------
-| Rutas del Administrador
-|--------------------------------------------------------------------------
-| El administrador gestiona áreas, ítems, revisión, aprobación y exportación.
-*/
-
+// Rutas para usuarios con rol administrador.
 Route::middleware(['auth', 'administrador'])->group(function () {
-    Route::get('/administrador/dashboard', [ReporteController::class, 'dashboardAdmin'])
+
+    // Panel de control del administrador.
+    Route::get(
+        '/administrador/dashboard',
+        [ReporteController::class, 'dashboardAdmin']
+    )
         ->name('administrador.dashboard');
 
+    // Gestión completa de áreas.
     Route::resource('areas', AreaController::class);
 
+    // Gestión completa de check items.
     Route::resource('check-items', CheckItemController::class);
 
-    Route::post('/reportes/{reporte}/aprobar', [ReporteController::class, 'aprobar'])
+    // Visualización de reportes para administradores.
+    Route::resource('reportes', ReporteController::class)
+        ->only(['index', 'show']);
+
+    // Aprobar un reporte específico.
+    Route::post(
+        '/reportes/{reporte}/aprobar',
+        [ReporteController::class, 'aprobar']
+    )
         ->name('reportes.aprobar');
 
-    Route::post('/reportes/{reporte}/rechazar', [ReporteController::class, 'rechazar'])
+    // Rechazar un reporte específico.
+    Route::post(
+        '/reportes/{reporte}/rechazar',
+        [ReporteController::class, 'rechazar']
+    )
         ->name('reportes.rechazar');
 
+    // Generar o descargar PDF de un reporte.
     Route::get('/reportes/{reporte}/pdf', [ReporteController::class, 'pdf'])
         ->name('reportes.pdf');
 
+    // Generar o descargar EXCEL de un reporte.
     Route::get('/reportes-excel', [ReporteController::class, 'excel'])
         ->name('reportes.excel');
 
-    Route::get('/reportes/{reporte}/excel', [ReporteController::class, 'excelDetalle'])
+    // Generar o descargar EXCEL detallado de un reporte.
+    Route::get(
+        '/reportes/{reporte}/excel',
+        [ReporteController::class, 'excelDetalle']
+    )
         ->name('reportes.excel-detalle');
+
 
     Route::get('/reportes-pdf', [ReporteController::class, 'pdfGeneral'])
         ->name('reportes.pdf-general');
+    
+
+    // Ver cuales reportes faltan.
+    Route::get('/supervisor/dashboard', [ReporteController::class, 'dashboardSupervisor'])
+    ->name('supervisor.dashboard');
+
+
+    //supervisor 
+Route::get('/supervisor/edit', function () {
+    return view('supervisor.edit_supervisor');
+})->name('supervisor.edit_supervisor');
+
+
+Route::get('/supervisor/edit', [EditarReporteController::class, 'editHoy'])
+    ->name('supervisor.edit_supervisor');
+
+
+    Route::get('/reportes/{reporte}/edit', [EditarReporteController::class, 'edit'])
+    ->name('reportes.edit');
+
+Route::put('/reportes/{reporte}', [EditarReporteController::class, 'update'])
+    ->name('reportes.update');
+
+
+
+
+
+
+
+
+        
 });
-
-
-/*
-|--------------------------------------------------------------------------
-| Reportes compartidos
-|--------------------------------------------------------------------------
-| Estas rutas pueden ser consultadas tanto por supervisor como administrador.
-*/
-
-Route::middleware('auth')->group(function () {
-    Route::get('/reportes', [ReporteController::class, 'index'])
-        ->name('reportes.index');
-
-    Route::get('/reportes/{reporte}', [ReporteController::class, 'show'])
-        ->name('reportes.show');
-});
-
-
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Rutas de autenticación
-|--------------------------------------------------------------------------
-*/
 
 require __DIR__ . '/auth.php';

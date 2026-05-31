@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 /*
@@ -29,14 +29,13 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = Auth::user();
 
-    if ($user && $user->hasRole('administrador')) {
-        return redirect()->route('administrador.dashboard');
-    }
+   if ($user && $user->hasAnyRole(['administrador', 'Administrador'])) {
+    return redirect()->route('administrador.dashboard');
+}
 
-    if ($user && $user->hasRole('supervisor')) {
-        return redirect()->route('supervisor.dashboard');
-    }
-
+if ($user && $user->hasAnyRole(['supervisor', 'Supervisor'])) {
+    return redirect()->route('supervisor.dashboard');
+}
     return redirect('/');
 })->middleware(['auth', 'verified'])->name('dashboard');
 

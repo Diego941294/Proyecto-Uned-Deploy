@@ -2,7 +2,6 @@
 
     <section class="gp-page-header">
         <div class="gp-page-title-row">
-
             <div>
                 <h2 class="gp-header-title">
                     Detalle del Reporte #{{ $reporte->id }}
@@ -14,50 +13,38 @@
             </div>
 
             <div class="gp-header-actions">
-
-                <a href="{{ route('reportes.index') }}"
-                   class="gp-action-btn secondary">
+                <a href="{{ route('reportes.index') }}" class="gp-action-btn secondary">
                     ← Volver
                 </a>
 
-                <a href="{{ route('reportes.pdf', $reporte) }}"
-                   class="gp-action-btn pdf">
+                <a href="{{ route('reportes.pdf', $reporte) }}" class="gp-action-btn pdf">
                     📄 PDF
                 </a>
 
-                <a href="{{ route('reportes.excel-detalle', $reporte) }}"
-                   class="gp-action-btn excel">
+                <a href="{{ route('reportes.excel-detalle', $reporte) }}" class="gp-action-btn excel">
                     📊 Excel
                 </a>
 
                 @role('Administrador')
+                @if($reporte->estado !== 'aprobado')
+                <form method="POST" action="{{ route('reportes.aprobar', $reporte) }}">
+                    @csrf
+                    <button type="submit" class="gp-action-btn success">
+                        ✓ Aprobar
+                    </button>
+                </form>
+                @endif
 
-                    @if($reporte->estado != 'aprobado')
-                        <form method="POST"
-                              action="{{ route('reportes.aprobar', $reporte) }}">
-                            @csrf
-
-                            <button type="submit" class="gp-action-btn success">
-                                ✓ Aprobar
-                            </button>
-                        </form>
-                    @endif
-
-                    @if($reporte->estado != 'rechazado')
-                        <form method="POST"
-                              action="{{ route('reportes.rechazar', $reporte) }}">
-                            @csrf
-
-                            <button type="submit" class="gp-action-btn danger">
-                                ✕ Rechazar
-                            </button>
-                        </form>
-                    @endif
-
+                @if($reporte->estado !== 'rechazado')
+                <form method="POST" action="{{ route('reportes.rechazar', $reporte) }}">
+                    @csrf
+                    <button type="submit" class="gp-action-btn danger">
+                        ✕ Rechazar
+                    </button>
+                </form>
+                @endif
                 @endrole
-
             </div>
-
         </div>
     </section>
 
@@ -84,43 +71,83 @@
                 <span>Estado</span>
 
                 @if($reporte->estado == 'aprobado')
-                    <strong class="gp-text-success">Aprobado</strong>
+                <strong class="gp-text-success">Aprobado</strong>
                 @elseif($reporte->estado == 'rechazado')
-                    <strong class="gp-text-danger">Rechazado</strong>
+                <strong class="gp-text-danger">Rechazado</strong>
                 @else
-                    <strong class="gp-text-secondary">Borrador</strong>
+                <strong class="gp-text-warning">Pendiente</strong>
                 @endif
             </div>
 
-            @if($reporte->aprobado_por)
+        </div>
 
-                <div class="gp-detail-card">
-                    <span>Aprobado por</span>
-                    <strong>
-                        {{ \App\Models\User::find($reporte->aprobado_por)?->name }}
-                    </strong>
-                </div>
+        <div class="gp-review-info">
 
-                <div class="gp-detail-card">
-                    <span>Fecha aprobación</span>
-                    <strong>
-                        {{ $reporte->fecha_aprobacion?->format('d/m/Y H:i') }}
-                    </strong>
-                </div>
+            @if($reporte->estado === 'aprobado')
+
+            <div class="gp-review-card success">
+                <strong>Aprobado por:</strong>
+                {{ $reporte->aprobador?->name ?? 'No registrado' }}
+            </div>
+
+            <div class="gp-review-card success">
+                <strong>Fecha de aprobación:</strong>
+                {{ $reporte->fecha_aprobacion?->format('d/m/Y H:i') }}
+            </div>
+
+            @elseif($reporte->estado === 'rechazado')
+
+            <div class="gp-review-card danger">
+                <strong>Rechazado por:</strong>
+                {{ $reporte->aprobador?->name ?? 'No registrado' }}
+            </div>
+
+            <div class="gp-review-card danger">
+                <strong>Fecha de rechazo:</strong>
+                {{ $reporte->fecha_aprobacion?->format('d/m/Y H:i') }}
+            </div>
 
             @endif
 
         </div>
 
+        <div class="gp-observation-box">
+            <h3>Revisión administrativa</h3>
+
+            @if($reporte->estado === 'aprobado')
+            <p>
+                <strong>Aprobado por:</strong>
+                {{ $reporte->aprobador?->name ?? 'No registrado' }}
+            </p>
+
+            <p>
+                <strong>Fecha de aprobación:</strong>
+                {{ $reporte->fecha_aprobacion?->format('d/m/Y H:i') ?? 'No registrada' }}
+            </p>
+            @elseif($reporte->estado === 'rechazado')
+            <p>
+                <strong>Rechazado por:</strong>
+                {{ $reporte->aprobador?->name ?? 'No registrado' }}
+            </p>
+
+            <p>
+                <strong>Fecha de rechazo:</strong>
+                {{ $reporte->fecha_aprobacion?->format('d/m/Y H:i') ?? 'No registrada' }}
+            </p>
+            @else
+            <p>
+                Este reporte todavía está pendiente de revisión administrativa.
+            </p>
+            @endif
+        </div>
+
         <div class="gp-detail-section-title">
             <h3>Checklist registrado</h3>
-            <p>Detalle de los elementos revisados en el reporte.</p>
+            <p>Elementos verificados por el supervisor.</p>
         </div>
 
         <div class="gp-table-modern-wrap">
-
             <table class="gp-table-modern">
-
                 <thead>
                     <tr>
                         <th>Sección</th>
@@ -131,18 +158,32 @@
                 </thead>
 
                 <tbody>
-                    @foreach($reporte->detalles as $detalle)
-                        <tr>
-                            <td>{{ $detalle->checkItem->seccion }}</td>
-                            <td>{{ $detalle->checkItem->nombre }}</td>
-                            <td>{{ $detalle->estado }}</td>
-                            <td>{{ $detalle->observacion ?? 'Sin observación' }}</td>
-                        </tr>
-                    @endforeach
+                    @forelse($reporte->detalles as $detalle)
+                    <tr>
+                        <td>{{ $detalle->checkItem->seccion }}</td>
+                        <td>{{ $detalle->checkItem->nombre }}</td>
+                        <td>
+                            @if($detalle->estado === 'A')
+                            <span class="gp-badge-success">A</span>
+                            @elseif($detalle->estado === 'NC')
+                            <span class="gp-badge-danger">NC</span>
+                            @elseif($detalle->estado === 'NA')
+                            <span class="gp-badge-secondary">NA</span>
+                            @else
+                            <span class="gp-badge-warning">NFR</span>
+                            @endif
+                        </td>
+                        <td>{{ $detalle->observacion ?? 'Sin observación' }}</td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="gp-empty-table">
+                            No hay detalles registrados para este reporte.
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
-
             </table>
-
         </div>
 
         <div class="gp-observation-box">

@@ -37,8 +37,6 @@ class CheckItemController extends Controller
             'activo' => ['required', 'boolean'],
         ]);
 
-        CheckItem::create($validated);
-
         $existe = CheckItem::where('area_id', $validated['area_id'])
             ->where('seccion', $validated['seccion'])
             ->where('nombre', $validated['nombre'])
@@ -50,6 +48,7 @@ class CheckItemController extends Controller
                 ->with('error', 'Ya existe un Check Item con la misma área, sección y nombre.');
         }
 
+        CheckItem::create($validated);
         return redirect()
             ->route('check-items.index')
             ->with('success', 'Check Item creado correctamente.');
@@ -80,9 +79,6 @@ class CheckItemController extends Controller
             'activo' => ['required', 'boolean'],
         ]);
 
-        $checkItem->update($validated);
-
-
         $existe = CheckItem::where('area_id', $validated['area_id'])
             ->where('seccion', $validated['seccion'])
             ->where('nombre', $validated['nombre'])
@@ -94,6 +90,8 @@ class CheckItemController extends Controller
                 ->withInput()
                 ->with('error', 'Ya existe otro Check Item con la misma área, sección y nombre.');
         }
+
+        $checkItem->update($validated);
 
         return redirect()
             ->route('check-items.index')

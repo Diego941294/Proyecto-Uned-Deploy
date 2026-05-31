@@ -180,35 +180,29 @@ class ReporteController extends Controller
         return $pdf->download('reporte-preoperacional-' . $reporte->id . '.pdf');
     }
 
-    public function dashboardAdmin()
-    {
-        $totalReportes = Reporte::count();
+   public function dashboardAdmin()
+{
+    $totalReportes = Reporte::count();
 
-        $aprobados = Reporte::where(
-            'estado',
-            'aprobado'
-        )->count();
+    $aprobados = Reporte::where('estado', 'aprobado')->count();
 
-        $rechazados = Reporte::where(
-            'estado',
-            'rechazado'
-        )->count();
+    $rechazados = Reporte::where('estado', 'rechazado')->count();
 
-        $borradores = Reporte::where(
-            'estado',
-            'borrador'
-        )->count();
+    $borradores = Reporte::where('estado', 'borrador')->count();
 
-        return view(
-            'dashboard.administrador',
-            compact(
-                'totalReportes',
-                'aprobados',
-                'rechazados',
-                'borradores'
-            )
-        );
-    }
+    $pendientes = $borradores;
+
+    return view(
+        'dashboard.administrador',
+        compact(
+            'totalReportes',
+            'aprobados',
+            'rechazados',
+            'borradores',
+            'pendientes'
+        )
+    );
+}
 
 public function dashboardSupervisor()
 {

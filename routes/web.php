@@ -4,6 +4,8 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\CheckItemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\EditarReporteController;
+
 use App\Models\Reporte;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -90,6 +92,17 @@ Route::middleware(['auth', 'supervisor'])->group(function () {
 
     Route::post('/reportes', [ReporteController::class, 'store'])
         ->name('reportes.store');
+
+
+       //mias 
+    Route::get('/supervisor/edit', [EditarReporteController::class, 'editHoy'])
+        ->name('supervisor.edit_supervisor');
+
+    Route::get('/reportes/{reporte}/edit', [EditarReporteController::class, 'edit'])
+        ->name('reportes.edit');
+
+
+
 });
 
 /*
@@ -151,5 +164,11 @@ Route::middleware('auth')->group(function () {
 | Rutas de autenticación
 |--------------------------------------------------------------------------
 */
+
+//supervisor 
+
+
+
+
 
 require __DIR__ . '/auth.php';

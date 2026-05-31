@@ -30,13 +30,14 @@
 
         <div class="gp-dashboard-card">
 
-            <h3>Reportes pendientes</h3>
+            <h3>Editar Reportes</h3>
 
             <p>
-                Consultar reportes guardados pendientes de revisión.
+                Editar
+                 reportes guardados pendientes de revisión.
             </p>
 
-            <a href="{{ route('reportes.index') }}?estado=borrador"
+            <a href="{{ route('supervisor.edit_supervisor') }}?estado=borrador"
                 class="gp-card-button">
 
                 Ver pendientes

@@ -97,6 +97,23 @@
                     </div>
                     <div class="gp-action-arrow">→</div>
                 </a>
+                <a href="{{ route('infraestructuras.index') }}"
+                    class="gp-action-card">
+
+                    <div class="gp-action-icon orange">
+                        🏢
+                    </div>
+
+                    <div class="gp-action-content">
+                        <strong>Infraestructura</strong>
+                        <p>Administrar secciones e infraestructura.</p>
+                    </div>
+
+                    <div class="gp-action-arrow">
+                        →
+                    </div>
+
+                </a>
 
                 <a href="{{ route('check-items.index') }}" class="gp-action-card">
                     <div class="gp-action-icon green">✅</div>
@@ -125,7 +142,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const canvas = document.getElementById('reportesChart');
 
             if (!canvas) return;

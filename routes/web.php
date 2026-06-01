@@ -2,13 +2,13 @@
 
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\CheckItemController;
+use App\Http\Controllers\EditarReporteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReporteController;
-use App\Http\Controllers\EditarReporteController;
-
 use App\Models\Reporte;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InfraestructuraController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +17,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    if (Auth::check()) {
+        return redirect()->route('dashboard');
+    }
+
     return redirect()->route('login');
 });
 
@@ -29,15 +33,20 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = Auth::user();
 
-   if ($user && $user->hasAnyRole(['administrador', 'Administrador'])) {
-    return redirect()->route('administrador.dashboard');
-}
+    if ($user && $user->hasAnyRole(['administrador', 'Administrador'])) {
+        return redirect()->route('administrador.dashboard');
+    }
 
-if ($user && $user->hasAnyRole(['supervisor', 'Supervisor'])) {
-    return redirect()->route('supervisor.dashboard');
-}
-    return redirect('/');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    if ($user && $user->hasAnyRole(['supervisor', 'Supervisor'])) {
+        return redirect()->route('supervisor.dashboard');
+    }
+
+    Auth::logout();
+
+    return redirect()
+        ->route('login')
+        ->with('error', 'El usuario no tiene un rol asignado.');
+})->middleware(['auth'])->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
@@ -57,10 +66,9 @@ Route::middleware('auth')->group(function () {
 });
 
 /*
-|--Rutas------------------------------------------------------------------------
-|  del Supervisor
 |--------------------------------------------------------------------------
-| El supervisor puede crear y guardar reportes preoperacionales.
+| Rutas del Supervisor
+|--------------------------------------------------------------------------
 */
 
 Route::middleware(['auth', 'supervisor'])->group(function () {
@@ -92,23 +100,17 @@ Route::middleware(['auth', 'supervisor'])->group(function () {
     Route::post('/reportes', [ReporteController::class, 'store'])
         ->name('reportes.store');
 
-
-       //mias 
     Route::get('/supervisor/edit', [EditarReporteController::class, 'editHoy'])
         ->name('supervisor.edit_supervisor');
 
     Route::get('/reportes/{reporte}/edit', [EditarReporteController::class, 'edit'])
         ->name('reportes.edit');
-
-
-
 });
 
 /*
 |--------------------------------------------------------------------------
 | Rutas del Administrador
 |--------------------------------------------------------------------------
-| El administrador gestiona áreas, ítems, revisión, aprobación y exportación.
 */
 
 Route::middleware(['auth', 'administrador'])->group(function () {
@@ -116,6 +118,8 @@ Route::middleware(['auth', 'administrador'])->group(function () {
         ->name('administrador.dashboard');
 
     Route::resource('areas', AreaController::class);
+
+    Route::resource('infraestructuras', InfraestructuraController::class);
 
     Route::resource('check-items', CheckItemController::class);
 
@@ -138,12 +142,10 @@ Route::middleware(['auth', 'administrador'])->group(function () {
         ->name('reportes.pdf-general');
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | Reportes compartidos
 |--------------------------------------------------------------------------
-| Estas rutas pueden ser consultadas tanto por supervisor como administrador.
 */
 
 Route::middleware('auth')->group(function () {
@@ -154,20 +156,10 @@ Route::middleware('auth')->group(function () {
         ->name('reportes.show');
 });
 
-
-
-
-
 /*
 |--------------------------------------------------------------------------
 | Rutas de autenticación
 |--------------------------------------------------------------------------
 */
-
-//supervisor 
-
-
-
-
 
 require __DIR__ . '/auth.php';

@@ -24,4 +24,9 @@ class Area extends Model
     {
         return $this->hasMany(Reporte::class);
     }
+
+    public function infraestructuras()
+    {
+        return $this->hasMany(Infraestructura::class);
+    }
 }

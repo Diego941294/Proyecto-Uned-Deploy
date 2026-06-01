@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Area;
-use App\Models\ReporteDetalle;
 
 class CheckItem extends Model
 {
@@ -13,6 +11,7 @@ class CheckItem extends Model
 
     protected $fillable = [
         'area_id',
+        'infraestructura_id',
         'seccion',
         'nombre',
         'orden',
@@ -24,13 +23,13 @@ class CheckItem extends Model
         return $this->belongsTo(Area::class);
     }
 
-    public function reporteDetalles()
+    public function infraestructura()
     {
-        return $this->hasMany(ReporteDetalle::class);
+        return $this->belongsTo(Infraestructura::class);
     }
 
     public function detalles()
-{
-    return $this->hasMany(ReporteDetalle::class);
-}
+    {
+        return $this->hasMany(ReporteDetalle::class);
+    }
 }

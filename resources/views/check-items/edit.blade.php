@@ -86,11 +86,7 @@
             <div class="gp-form-group">
                 <label class="gp-label">Orden</label>
 
-                <input type="number"
-                    name="orden"
-                    class="gp-input"
-                    value="{{ old('orden', $checkItem->orden) }}"
-                    required>
+                
             </div>
 
             <div class="gp-form-group">

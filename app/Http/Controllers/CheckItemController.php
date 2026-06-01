@@ -41,7 +41,6 @@ class CheckItemController extends Controller
             'area_id' => ['required', 'exists:areas,id'],
             'infraestructura_id' => ['required', 'exists:infraestructuras,id'],
             'nombre' => ['required', 'string', 'max:255'],
-            'orden' => ['required', 'integer'],
             'activo' => ['required', 'boolean'],
         ]);
 
@@ -65,6 +64,11 @@ class CheckItemController extends Controller
                 ->withInput()
                 ->with('error', 'Ya existe un Check Item con la misma área, infraestructura y nombre.');
         }
+
+        $ultimoOrden = CheckItem::where('area_id', $validated['area_id'])
+            ->max('orden');
+
+        $validated['orden'] = ($ultimoOrden ?? 0) + 1;
 
         CheckItem::create($validated);
 
@@ -94,7 +98,6 @@ class CheckItemController extends Controller
             'area_id' => ['required', 'exists:areas,id'],
             'infraestructura_id' => ['required', 'exists:infraestructuras,id'],
             'nombre' => ['required', 'string', 'max:255'],
-            'orden' => ['required', 'integer'],
             'activo' => ['required', 'boolean'],
         ]);
 

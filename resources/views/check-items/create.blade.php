@@ -85,14 +85,9 @@
                 </div>
 
                 <div class="gp-form-group">
-                    <label class="gp-label">Orden</label>
+                    <label class="gp-label">El orden se asignará automáticamente.</label>
 
-                    <input type="number"
-                        name="orden"
-                        class="gp-input"
-                        placeholder="Ejemplo: 1"
-                        required>
-                </div>
+
 
                 <div class="gp-form-group">
                     <label class="gp-label">Estado</label>

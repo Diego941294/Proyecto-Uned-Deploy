@@ -2582,3 +2582,22 @@ FORMULARIOS CHECKLIST REPORTES
     font-size: 13px;
     font-weight: 600;
 }
+/*/* =====================================================
+  ESTILOS PARA EL PANEL DE EDIT Infraestructura
+===================================================== */
+.gp-code-preview {
+    background: #f8fbff;
+    border: 2px dashed #93c5fd;
+    color: #0f3f84;
+    padding: 14px 16px;
+    border-radius: 14px;
+    font-weight: 900;
+    font-size: 18px;
+}
+
+.gp-help-text {
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+}

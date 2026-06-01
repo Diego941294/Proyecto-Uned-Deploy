@@ -6,7 +6,7 @@
             <div>
                 <h2 class="gp-header-title">
                     Nuevo Item
-                </h2>   
+                </h2>
 
                 <p class="gp-header-subtitle">
                     Registrar un nuevo elemento de verificación para el checklist.
@@ -14,7 +14,7 @@
             </div>
 
             <a href="{{ route('check-items.index') }}"
-               class="gp-action-btn secondary">
+                class="gp-action-btn secondary">
                 ← Volver
             </a>
 
@@ -36,41 +36,62 @@
                         <option value="">Seleccione un área</option>
 
                         @foreach($areas as $area)
-                            <option value="{{ $area->id }}">
-                                {{ $area->nombre }}
-                            </option>
+                        <option value="{{ $area->id }}">
+                            {{ $area->nombre }}
+                        </option>
                         @endforeach
                     </select>
                 </div>
 
+            
                 <div class="gp-form-group">
-                    <label class="gp-label">Sección</label>
 
-                    <input type="text"
-                           name="seccion"
-                           class="gp-input"
-                           placeholder="Ejemplo: Infraestructura"
-                           required>
+                    <label class="gp-label">
+                        Infraestructura
+                    </label>
+
+                    <select name="infraestructura_id"
+                        class="gp-input"
+                        required>
+
+                        <option value="">
+                            Seleccione una infraestructura
+                        </option>
+
+                        @foreach($infraestructuras as $infraestructura)
+
+                        <option value="{{ $infraestructura->id }}">
+
+                            {{ $infraestructura->area->nombre }}
+                            -
+                            {{ $infraestructura->nombre }}
+
+                        </option>
+
+                        @endforeach
+
+                    </select>
+
                 </div>
 
                 <div class="gp-form-group">
                     <label class="gp-label">Nombre</label>
 
                     <input type="text"
-                           name="nombre"
-                           class="gp-input"
-                           placeholder="Ejemplo: Pisos"
-                           required>
+                        name="nombre"
+                        class="gp-input"
+                        placeholder="Ejemplo: Pisos"
+                        required>
                 </div>
 
                 <div class="gp-form-group">
                     <label class="gp-label">Orden</label>
 
                     <input type="number"
-                           name="orden"
-                           class="gp-input"
-                           placeholder="Ejemplo: 1"
-                           required>
+                        name="orden"
+                        class="gp-input"
+                        placeholder="Ejemplo: 1"
+                        required>
                 </div>
 
                 <div class="gp-form-group">

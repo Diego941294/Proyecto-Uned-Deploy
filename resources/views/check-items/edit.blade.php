@@ -14,17 +14,17 @@
             </div>
 
             <a href="{{ route('check-items.index') }}"
-               class="gp-action-btn secondary">
+                class="gp-action-btn secondary">
                 ← Volver
             </a>
 
         </div>
     </section>
 
-       <div class="gp-form-container">
+    <div class="gp-form-container">
 
         <form method="POST"
-              action="{{ route('check-items.update', $checkItem) }}">
+            action="{{ route('check-items.update', $checkItem) }}">
 
             @csrf
             @method('PUT')
@@ -34,42 +34,63 @@
 
                 <select name="area_id" class="gp-input" required>
                     @foreach($areas as $area)
-                        <option value="{{ $area->id }}"
-                            @selected(old('area_id', $checkItem->area_id) == $area->id)>
-                            {{ $area->nombre }}
-                        </option>
+                    <option value="{{ $area->id }}"
+                        @selected(old('area_id', $checkItem->area_id) == $area->id)>
+                        {{ $area->nombre }}
+                    </option>
                     @endforeach
                 </select>
             </div>
 
             <div class="gp-form-group">
-                <label class="gp-label">Sección</label>
 
-                <input type="text"
-                       name="seccion"
-                       class="gp-input"
-                       value="{{ old('seccion', $checkItem->seccion) }}"
-                       required>
+                <label class="gp-label">
+                    Infraestructura
+                </label>
+
+                <select name="infraestructura_id"
+                    class="gp-input"
+                    required>
+
+                    <option value="">
+                        Seleccione una infraestructura
+                    </option>
+
+                    @foreach($infraestructuras as $infraestructura)
+
+                    <option value="{{ $infraestructura->id }}"
+                        {{ $checkItem->infraestructura_id == $infraestructura->id ? 'selected' : '' }}>
+
+                        {{ $infraestructura->area->nombre }}
+                        -
+                        {{ $infraestructura->nombre }}
+
+                    </option>
+
+                    @endforeach
+
+                </select>
+
             </div>
 
             <div class="gp-form-group">
                 <label class="gp-label">Nombre</label>
 
                 <input type="text"
-                       name="nombre"
-                       class="gp-input"
-                       value="{{ old('nombre', $checkItem->nombre) }}"
-                       required>
+                    name="nombre"
+                    class="gp-input"
+                    value="{{ old('nombre', $checkItem->nombre) }}"
+                    required>
             </div>
 
             <div class="gp-form-group">
                 <label class="gp-label">Orden</label>
 
                 <input type="number"
-                       name="orden"
-                       class="gp-input"
-                       value="{{ old('orden', $checkItem->orden) }}"
-                       required>
+                    name="orden"
+                    class="gp-input"
+                    value="{{ old('orden', $checkItem->orden) }}"
+                    required>
             </div>
 
             <div class="gp-form-group">
@@ -101,6 +122,3 @@
     </div>
 
 </x-app-layout>
-
-
-

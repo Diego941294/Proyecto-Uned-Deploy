@@ -180,51 +180,67 @@ class ReporteController extends Controller
         return $pdf->download('reporte-preoperacional-' . $reporte->id . '.pdf');
     }
 
-   public function dashboardAdmin()
+    public function dashboardAdmin()
+    {
+        $totalReportes = Reporte::count();
+
+        $aprobados = Reporte::where('estado', 'aprobado')->count();
+
+        $rechazados = Reporte::where('estado', 'rechazado')->count();
+
+        $borradores = Reporte::where('estado', 'borrador')->count();
+
+        $pendientes = $borradores;
+
+        return view(
+            'dashboard.administrador',
+            compact(
+                'totalReportes',
+                'aprobados',
+                'rechazados',
+                'borradores',
+                'pendientes'
+            )
+        );
+    }
+
+   public function guardarFirmas(Request $request, Reporte $reporte)
 {
-    $totalReportes = Reporte::count();
+    $validated = $request->validate([
+        'inspector_calidad' => ['nullable', 'string', 'max:255'],
+        'firma_inspector' => ['nullable', 'string'],
 
-    $aprobados = Reporte::where('estado', 'aprobado')->count();
+        'verificador_calidad' => ['nullable', 'string', 'max:255'],
+        'firma_verificador' => ['nullable', 'string'],
+    ]);
 
-    $rechazados = Reporte::where('estado', 'rechazado')->count();
+    $reporte->update($validated);
 
-    $borradores = Reporte::where('estado', 'borrador')->count();
-
-    $pendientes = $borradores;
-
-    return view(
-        'dashboard.administrador',
-        compact(
-            'totalReportes',
-            'aprobados',
-            'rechazados',
-            'borradores',
-            'pendientes'
-        )
-    );
-}
-
-public function dashboardSupervisor()
-{
-    $hoy = \Carbon\Carbon::today()->format('Y-m-d');
-
-    $reporteFrio = Reporte::whereHas('area', function($q){
-        $q->where('nombre', 'Área Fría');
-    })->whereDate('fecha', $hoy)->exists();
-
-    $reporteCaliente = Reporte::whereHas('area', function($q){
-        $q->where('nombre', 'Área Caliente');
-    })->whereDate('fecha', $hoy)->exists();
-
-    $faltanReportes = !($reporteFrio && $reporteCaliente);
-
-    $reportes = Reporte::with(['area','usuario'])->get();
-
-    // IMPORTANTE: enviar las tres variables
-    return view('dashboard.supervisor', compact('reportes','faltanReportes','reporteFrio','reporteCaliente'));
+    return redirect()
+        ->route('reportes.show', $reporte)
+        ->with('success', 'Se han guardado las firmas correctamente.');
 }
 
 
 
 
+    public function dashboardSupervisor()
+    {
+        $hoy = \Carbon\Carbon::today()->format('Y-m-d');
+
+        $reporteFrio = Reporte::whereHas('area', function ($q) {
+            $q->where('nombre', 'Área Fría');
+        })->whereDate('fecha', $hoy)->exists();
+
+        $reporteCaliente = Reporte::whereHas('area', function ($q) {
+            $q->where('nombre', 'Área Caliente');
+        })->whereDate('fecha', $hoy)->exists();
+
+        $faltanReportes = !($reporteFrio && $reporteCaliente);
+
+        $reportes = Reporte::with(['area', 'usuario'])->get();
+
+        // IMPORTANTE: enviar las tres variables
+        return view('dashboard.supervisor', compact('reportes', 'faltanReportes', 'reporteFrio', 'reporteCaliente'));
+    }
 }

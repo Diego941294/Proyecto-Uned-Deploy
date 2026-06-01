@@ -140,6 +140,9 @@ Route::middleware(['auth', 'administrador'])->group(function () {
 
     Route::get('/reportes-pdf', [ReporteController::class, 'pdfGeneral'])
         ->name('reportes.pdf-general');
+
+    Route::post('/reportes/{reporte}/firmas', [ReporteController::class, 'guardarFirmas'])
+        ->name('reportes.firmas');
 });
 
 /*

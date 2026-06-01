@@ -13,14 +13,15 @@ class Reporte extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
         'area_id',
+        'usuario_id',
         'fecha',
-        'semana',
         'estado',
         'observaciones',
-        'aprobado_por',
-        'fecha_aprobacion',
+        'inspector_calidad',
+        'firma_inspector',
+        'verificador_calidad',
+        'firma_verificador',
     ];
 
     protected $casts = [

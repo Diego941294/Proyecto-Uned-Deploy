@@ -2601,3 +2601,65 @@ FORMULARIOS CHECKLIST REPORTES
     font-size: 13px;
     font-weight: 600;
 }
+
+/* =========================
+   Firmas Digitales
+========================= */
+
+.gp-signature-section {
+    margin-top: 32px;
+}
+
+.gp-signature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.gp-signature-card {
+    background: #ffffff;
+    border: 1px solid #dbe8f3;
+    border-radius: 20px;
+    padding: 24px;
+}
+
+.gp-signature-card h3 {
+    color: #0f3f84;
+    font-weight: 900;
+    margin-bottom: 16px;
+}
+
+.gp-signature-canvas {
+    width: 100%;
+    height: 180px;
+    border: 2px dashed #93c5fd;
+    border-radius: 16px;
+    background: #ffffff;
+    margin: 16px 0;
+    touch-action: none;
+}
+
+.gp-current-signature {
+    margin-top: 16px;
+    background: #f8fbff;
+    border-radius: 14px;
+    padding: 14px;
+}
+
+.gp-current-signature p {
+    margin: 0 0 8px;
+    color: #64748b;
+    font-weight: 700;
+}
+
+.gp-signature-img {
+    max-width: 100%;
+    max-height: 120px;
+    object-fit: contain;
+}
+
+@media (max-width: 768px) {
+    .gp-signature-grid {
+        grid-template-columns: 1fr;
+    }
+}

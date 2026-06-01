@@ -191,6 +191,143 @@
             <p>{{ $reporte->observaciones ?? 'Sin observaciones generales.' }}</p>
         </div>
 
+        @role('Administrador')
+
+        @if($reporte->estado === 'aprobado' || $reporte->estado === 'rechazado')
+
+        <div class="gp-signature-section">
+            <form method="POST" action="{{ route('reportes.firmas', $reporte) }}">
+                @csrf
+
+                <div class="gp-signature-grid">
+
+                    <div class="gp-signature-card">
+                        <h3>Inspector de Calidad</h3>
+
+                        <input
+                            type="text"
+                            name="inspector_calidad"
+                            class="gp-input"
+                            placeholder="Nombre del inspector"
+                            value="{{ old('inspector_calidad', $reporte->inspector_calidad) }}">
+
+                        <canvas id="firmaInspectorCanvas" class="gp-signature-canvas"></canvas>
+
+                        <input
+                            type="hidden"
+                            name="firma_inspector"
+                            id="firmaInspectorInput"
+                            value="{{ old('firma_inspector', $reporte->firma_inspector) }}">
+
+                        <button type="button" class="gp-action-btn secondary" id="limpiarInspector">
+                            Limpiar firma
+                        </button>
+
+                        @if($reporte->firma_inspector)
+                        <div class="gp-current-signature">
+                            <p>Firma registrada:</p>
+                            <img src="{{ $reporte->firma_inspector }}" class="gp-signature-img">
+                        </div>
+                        @endif
+                    </div>
+
+                    <div class="gp-signature-card">
+                        <h3>Verificador Jefe de Calidad</h3>
+
+                        <input
+                            type="text"
+                            name="verificador_calidad"
+                            class="gp-input"
+                            placeholder="Nombre del verificador"
+                            value="{{ old('verificador_calidad', $reporte->verificador_calidad) }}">
+
+                        <canvas id="firmaVerificadorCanvas" class="gp-signature-canvas"></canvas>
+
+                        <input
+                            type="hidden"
+                            name="firma_verificador"
+                            id="firmaVerificadorInput"
+                            value="{{ old('firma_verificador', $reporte->firma_verificador) }}">
+
+                        <button type="button" class="gp-action-btn secondary" id="limpiarVerificador">
+                            Limpiar firma
+                        </button>
+
+                        @if($reporte->firma_verificador)
+                        <div class="gp-current-signature">
+                            <p>Firma registrada:</p>
+                            <img src="{{ $reporte->firma_verificador }}" class="gp-signature-img">
+                        </div>
+                        @endif
+                    </div>
+
+                </div>
+
+                <button type="submit" class="gp-action-btn success" style="margin-top:20px;">
+                    Guardar firmas digitales
+                </button>
+            </form>
+        </div>
+
+        @endif
+
+        @endrole
+
     </div>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!window.SignaturePad) return;
+
+            function setupSignature(canvasId, inputId, clearButtonId) {
+                const canvas = document.getElementById(canvasId);
+                const input = document.getElementById(inputId);
+                const clearButton = document.getElementById(clearButtonId);
+
+                if (!canvas || !input || !clearButton) return;
+
+                const signaturePad = new window.SignaturePad(canvas, {
+                    backgroundColor: 'rgb(255, 255, 255)',
+                    penColor: 'rgb(15, 47, 95)'
+                });
+
+                function resizeCanvas() {
+                    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                    const rect = canvas.getBoundingClientRect();
+
+                    canvas.width = rect.width * ratio;
+                    canvas.height = rect.height * ratio;
+                    canvas.getContext('2d').scale(ratio, ratio);
+                }
+
+                resizeCanvas();
+
+                window.addEventListener('resize', resizeCanvas);
+
+                signaturePad.addEventListener('endStroke', function() {
+                    input.value = signaturePad.toDataURL('image/png');
+                });
+
+                clearButton.addEventListener('click', function() {
+                    signaturePad.clear();
+                    input.value = '';
+                });
+            }
+
+            setupSignature(
+                'firmaInspectorCanvas',
+                'firmaInspectorInput',
+                'limpiarInspector'
+            );
+
+            setupSignature(
+                'firmaVerificadorCanvas',
+                'firmaVerificadorInput',
+                'limpiarVerificador'
+            );
+        });
+    </script>
 
 </x-app-layout>

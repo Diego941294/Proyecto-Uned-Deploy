@@ -164,6 +164,13 @@ Route::middleware('auth')->group(function () {
 
 
 //supervisor 
+// Formulario de edición de un reporte específico
+Route::get('/supervisor/reportes/{reporte}/edit', [EditarReporteController::class, 'edit'])
+    ->name('supervisor.reportes.edit');
+
+// Guardar cambios
+Route::put('/supervisor/reportes/{reporte}', [EditarReporteController::class, 'update'])
+    ->name('supervisor.reportes.update');
 
 
 require __DIR__ . '/auth.php';

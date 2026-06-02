@@ -12,17 +12,19 @@ class Reporte extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'area_id',
-        'usuario_id',
-        'fecha',
-        'estado',
-        'observaciones',
-        'inspector_calidad',
-        'firma_inspector',
-        'verificador_calidad',
-        'firma_verificador',
-    ];
+   protected $fillable = [
+    'user_id',
+    'area_id',
+    'fecha',
+    'estado',
+    'observaciones',
+    'aprobado_por',
+    'fecha_aprobacion',
+    'inspector_calidad',
+    'firma_inspector',
+    'verificador_calidad',
+    'firma_verificador',
+];
 
     protected $casts = [
         'fecha' => 'date',

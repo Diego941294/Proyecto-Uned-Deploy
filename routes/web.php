@@ -72,27 +72,11 @@ Route::middleware('auth')->group(function () {
 */
 
 Route::middleware(['auth', 'supervisor'])->group(function () {
-    Route::get('/supervisor/dashboard', function () {
-        $hoy = now()->toDateString();
+    Route::middleware(['auth', 'supervisor'])->group(function () {
+    Route::get('/supervisor/dashboard', [ReporteController::class, 'dashboardSupervisor'])
+        ->name('supervisor.dashboard');
+});
 
-        $reporteCaliente = Reporte::whereDate('fecha', $hoy)
-            ->whereHas('area', function ($query) {
-                $query->where('nombre', 'like', '%Caliente%');
-            })
-            ->exists();
-
-        $reporteFrio = Reporte::whereDate('fecha', $hoy)
-            ->whereHas('area', function ($query) {
-                $query->where('nombre', 'like', '%Fría%')
-                    ->orWhere('nombre', 'like', '%Fria%');
-            })
-            ->exists();
-
-        return view('dashboard.supervisor', compact(
-            'reporteCaliente',
-            'reporteFrio'
-        ));
-    })->name('supervisor.dashboard');
 
     Route::get('/reportes/create', [ReporteController::class, 'create'])
         ->name('reportes.create');

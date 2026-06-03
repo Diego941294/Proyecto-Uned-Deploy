@@ -133,5 +133,13 @@
                 selectedChecklist.classList.remove('hidden');
             }
         });
+
+        @if($errors->any())
+    <div class="gp-error-message">
+        {{ $errors->first() }}
+    </div>
+@endif
+
+        
     </script>
 </x-app-layout>

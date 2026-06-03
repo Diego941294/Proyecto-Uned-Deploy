@@ -44,19 +44,40 @@ class ReporteController extends Controller
         return view('reportes.index', compact('reportes', 'areas'));
     }
 
-    public function create()
-    {
-        $areas = Area::where('activo', true)
-            ->with(['checkItems' => function ($query) {
-                $query->where('activo', true)
-                    ->orderBy('seccion')
-                    ->orderBy('orden');
-            }])
-            ->orderBy('nombre')
+public function create()
+{
+    $hoy = \Carbon\Carbon::today()->format('Y-m-d');
+
+    $areas = Area::where('activo', true)
+        ->with(['checkItems' => function ($query) {
+            $query->where('activo', true)
+                ->orderBy('seccion')
+                ->orderBy('orden');
+        }])
+        ->orderBy('nombre')
+        ->get();
+
+    // Filtrar: excluir áreas que ya tienen reporte hoy,
+    // excepto si TODOS los reportes de ese día están en estado 'rechazado'
+    $areas = $areas->filter(function ($area) use ($hoy) {
+        $reportesHoy = Reporte::where('area_id', $area->id)
+            ->whereDate('fecha', $hoy)
             ->get();
 
-        return view('reportes.create', compact('areas'));
-    }
+        if ($reportesHoy->isEmpty()) {
+            return true; // no hay reportes, mostrar área
+        }
+
+        // Mostrar área solo si todos los reportes de hoy están rechazados
+        return $reportesHoy->every(function ($reporte) {
+            return $reporte->estado === 'rechazado';
+        });
+    });
+
+    return view('reportes.create', compact('areas'));
+}
+
+
 
     public function store(Request $request)
     {
@@ -222,25 +243,36 @@ class ReporteController extends Controller
 }
 
 
+public function dashboardSupervisor()
+{
+    $hoy = now()->toDateString();
+
+    // Área Caliente: cuenta solo si no está rechazado
+    $reporteCaliente = Reporte::whereDate('fecha', $hoy)
+        ->whereHas('area', function ($query) {
+            $query->where('nombre', 'like', '%Caliente%');
+        })
+        ->where('estado', '!=', 'rechazado') // 🔹 ignorar rechazados
+        ->exists();
+
+    // Área Fría: cuenta solo si no está rechazado
+    $reporteFrio = Reporte::whereDate('fecha', $hoy)
+        ->whereHas('area', function ($query) {
+            $query->where('nombre', 'like', '%Fría%')
+                  ->orWhere('nombre', 'like', '%Fria%');
+        })
+        ->where('estado', '!=', 'rechazado') // 🔹 ignorar rechazados
+        ->exists();
+
+    return view('dashboard.supervisor', compact(
+        'reporteCaliente',
+        'reporteFrio'
+    ));
+}
 
 
-    public function dashboardSupervisor()
-    {
-        $hoy = \Carbon\Carbon::today()->format('Y-m-d');
 
-        $reporteFrio = Reporte::whereHas('area', function ($q) {
-            $q->where('nombre', 'Área Fría');
-        })->whereDate('fecha', $hoy)->exists();
 
-        $reporteCaliente = Reporte::whereHas('area', function ($q) {
-            $q->where('nombre', 'Área Caliente');
-        })->whereDate('fecha', $hoy)->exists();
 
-        $faltanReportes = !($reporteFrio && $reporteCaliente);
-
-        $reportes = Reporte::with(['area', 'usuario'])->get();
-
-        // IMPORTANTE: enviar las tres variables
-        return view('dashboard.supervisor', compact('reportes', 'faltanReportes', 'reporteFrio', 'reporteCaliente'));
-    }
+    
 }

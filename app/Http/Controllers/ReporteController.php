@@ -270,6 +270,18 @@ public function dashboardSupervisor()
     ));
 }
 
+public function misReportes()
+{
+    $userId = Auth::id();
+
+    $reportes = Reporte::with('area')
+        ->where('user_id', $userId)
+        ->orderBy('fecha', 'desc')
+        ->get();
+
+    return view('supervisor.mis_reportes', compact('reportes'));
+}
+
 
 
 

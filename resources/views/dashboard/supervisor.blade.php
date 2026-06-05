@@ -54,7 +54,7 @@
                 Buscar reportes anteriores por fecha, área o estado.
             </p>
 
-            <a href="{{ route('reportes.index') }}"
+            <a href="{{ route('supervisor.mis_reportes') }}"
                 class="gp-card-button">
 
                 Consultar

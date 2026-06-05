@@ -101,9 +101,7 @@
                     Guardar Reporte
                 </button>
 
-                <a href="{{ route('reportes.index') }}" class="gp-secondary-button">
-                    Cancelar
-                </a>
+               
             </div>
         </form>
     </div>

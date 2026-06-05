@@ -9,21 +9,28 @@
             @csrf
             @method('PUT')
 
-            {{-- Área (solo lectura, no editable) --}}
             <div class="gp-form-group">
                 <label class="gp-label">Área</label>
-                <input type="text" value="{{ $reporte->area->nombre }}" class="gp-input" readonly>
+                <select name="area_id" class="gp-input" required>
+                    @foreach($areas as $area)
+                        <option value="{{ $area->id }}" @selected($reporte->area_id == $area->id)>
+                            {{ $area->nombre }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
-            {{-- Fecha (solo lectura, no editable) --}}
             <div class="gp-form-group">
                 <label class="gp-label">Fecha</label>
-                <input type="text" value="{{ $reporte->fecha->format('d/m/Y') }}" class="gp-input" readonly>
+                <input type="date" name="fecha" class="gp-input"
+                       value="{{ $reporte->fecha->format('Y-m-d') }}" required>
             </div>
 
             <div class="gp-form-group">
                 <label class="gp-label">Observaciones generales</label>
-                <textarea name="observaciones" rows="4" class="gp-textarea">{{ $reporte->observaciones }}</textarea>
+                <textarea name="observaciones" rows="4" class="gp-textarea">
+                    {{ $reporte->observaciones }}
+                </textarea>
             </div>
 
             <!-- Detalles -->
@@ -60,4 +67,3 @@
         </form>
     </div>
 </x-app-layout>
-

@@ -160,4 +160,20 @@ Route::put('/supervisor/reportes/{reporte}', [EditarReporteController::class, 'u
     ->name('supervisor.reportes.update');
 
 
+
+Route::middleware(['auth', 'supervisor'])->group(function () {
+    Route::get('/supervisor/mis-reportes', [ReporteController::class, 'misReportes'])
+        ->name('supervisor.mis_reportes');
+});
+
+
+
+
+
+
+
+
+    
 require __DIR__ . '/auth.php';
+
+

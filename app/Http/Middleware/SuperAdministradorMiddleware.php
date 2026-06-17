@@ -6,19 +6,13 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class SupervisorMiddleware
+class SuperAdministradorMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
 
-        if (
-            $user &&
-            (
-                $user->hasRole('Supervisor') ||
-                $user->hasRole('Super Administrador')
-            )
-        ) {
+        if ($user && $user->hasRole('Super Administrador')) {
             return $next($request);
         }
 

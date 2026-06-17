@@ -14,6 +14,7 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800&display=swap');
 
 
 
@@ -276,7 +277,7 @@ body.dark-mode .gp-action-btn.excel {
 .auth-body {
      margin: 0;
      min-height: 100vh;
-     font-family: "Figtree", system-ui, sans-serif;
+     font-family: 'Exo 2', sans-serif;
 }
 
 /* Página de autenticación
@@ -523,7 +524,7 @@ body.dark-mode .gp-action-btn.excel {
 
     background-color:  #0660c0;
     color: #ffffff;
-    font-family: Arial;
+   font-family: 'Exo 2', sans-serif;
     font-size: 20px;
     font-weight: 800;
     cursor: pointer;
@@ -624,7 +625,7 @@ body.dark-mode .gp-action-btn.excel {
 .gp-body {
     margin: 0;
     min-height: 100vh;
-    font-family: "Figtree", system-ui, sans-serif;
+     font-family: 'Exo 2', sans-serif;
     background: #edf4f8;
     color: #073f89;
 }
@@ -2453,7 +2454,7 @@ FORMULARIOS CHECKLIST REPORTES
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    font-family: 'Rubik', sans-serif;
+    font-family: 'Exo 2', sans-serif;
 }
 
 /* Encabezado */
@@ -2663,3 +2664,196 @@ FORMULARIOS CHECKLIST REPORTES
         grid-template-columns: 1fr;
     }
 }
+
+
+/* =====================================================
+   DASHBOARD SUPER ADMIN
+===================================================== */
+
+.gp-superadmin-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr 430px;
+    gap: 24px;
+}
+
+.gp-superadmin-sidebar,
+.gp-superadmin-main,
+.gp-superadmin-chart {
+    background: #ffffff;
+    border: 1px solid #dbe8f3;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, .08);
+}
+
+.gp-superadmin-sidebar h3,
+.gp-superadmin-chart h3 {
+    color: #0f2f5f;
+    font-size: 20px;
+    font-weight: 900;
+    margin-bottom: 18px;
+}
+
+.gp-superadmin-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.gp-superadmin-sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    text-decoration: none;
+    color: #0f2f5f;
+    font-weight: 900;
+    background: #f8fbff;
+    border: 1px solid #e2ebf4;
+}
+
+.gp-superadmin-sidebar a:hover,
+.gp-superadmin-sidebar a.active {
+    background: linear-gradient(135deg, #0b63d8, #0f2f5f);
+    color: #ffffff;
+}
+
+.gp-superadmin-main {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+.gp-superadmin-card {
+    border-radius: 18px;
+    padding: 22px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+}
+
+.gp-superadmin-card h3 {
+    margin: 0;
+    color: white;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.gp-superadmin-card p {
+    margin: 6px 0 0;
+    color: rgba(255,255,255,.88);
+    font-weight: 700;
+}
+
+.gp-superadmin-card.green {
+    background: linear-gradient(135deg, #10b981, #047857);
+}
+
+.gp-superadmin-card.blue {
+    background: linear-gradient(135deg, #0ea5e9, #1d4ed8);
+}
+
+.gp-superadmin-card.cyan {
+    background: linear-gradient(135deg, #06b6d4, #0f766e);
+}
+
+.gp-superadmin-card.red {
+    background: linear-gradient(135deg, #ef4444, #991b1b);
+}
+
+.gp-mini-action {
+    background: rgba(255,255,255,.18);
+    color: white;
+    border: 1px solid rgba(255,255,255,.35);
+    padding: 10px 14px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 900;
+}
+
+.gp-superadmin-chart-box {
+    height: 320px;
+}
+
+.gp-superadmin-legend {
+    margin-top: 18px;
+    display: grid;
+    gap: 10px;
+    font-weight: 800;
+    color: #0f2f5f;
+}
+
+.gp-superadmin-legend div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.gp-superadmin-legend span {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+}
+
+.gp-superadmin-legend .green {
+    background: #c2820b;
+}
+
+.gp-superadmin-legend .blue {
+    background: #043483;
+}
+
+.gp-superadmin-legend .yellow {
+    background: #fdcf7a;
+}
+
+/* Dark mode */
+body.dark-mode .gp-superadmin-sidebar,
+body.dark-mode .gp-superadmin-main,
+body.dark-mode .gp-superadmin-chart {
+    background: rgba(13, 25, 45, .96) !important;
+    border-color: rgba(99, 170, 255, .25) !important;
+}
+
+body.dark-mode .gp-superadmin-sidebar a {
+    background: #0b1528;
+    color: #eaf3ff;
+    border-color: rgba(99, 170, 255, .20);
+}
+
+body.dark-mode .gp-superadmin-sidebar h3,
+body.dark-mode .gp-superadmin-chart h3,
+body.dark-mode .gp-superadmin-legend {
+    color: #ffffff !important;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .gp-superadmin-layout {
+        grid-template-columns: 240px 1fr;
+    }
+
+    .gp-superadmin-chart {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 800px) {
+    .gp-superadmin-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .gp-superadmin-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .gp-mini-action {
+        width: 100%;
+        text-align: center;
+    }
+}
+

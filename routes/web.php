@@ -9,7 +9,7 @@ use App\Models\Reporte;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InfraestructuraController;
-
+use App\Http\Controllers\UsuarioController;
 /*
 |--------------------------------------------------------------------------
 | Rutas públicas
@@ -33,11 +33,15 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = Auth::user();
 
-    if ($user && $user->hasAnyRole(['administrador', 'Administrador'])) {
+    if ($user && $user->hasRole('Super Administrador')) {
+        return redirect()->route('super-admin.dashboard');
+    }
+
+    if ($user && $user->hasRole('Administrador')) {
         return redirect()->route('administrador.dashboard');
     }
 
-    if ($user && $user->hasAnyRole(['supervisor', 'Supervisor'])) {
+    if ($user && $user->hasRole('Supervisor')) {
         return redirect()->route('supervisor.dashboard');
     }
 
@@ -65,6 +69,22 @@ Route::middleware('auth')->group(function () {
         ->name('profile.destroy');
 });
 
+
+/*|--------------------------------------------------------------------------
+| Rutas del Superadministrador
+|--------------------------------------------------------------------------*/
+
+Route::middleware(['auth', 'superadministrador'])
+    ->group(function () {
+        Route::get('/super-admin/dashboard', function () {
+            return view('dashboard.super-admin');
+        })->name('super-admin.dashboard');
+        Route::resource('usuarios', UsuarioController::class);
+    });
+
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Rutas del Supervisor
@@ -89,6 +109,15 @@ Route::middleware(['auth', 'supervisor'])->group(function () {
 
     Route::get('/reportes/{reporte}/edit', [EditarReporteController::class, 'edit'])
         ->name('reportes.edit');
+
+    //supervisor 
+    // Formulario de edición para el reporte del día
+    Route::get('/supervisor/reportes/{reporte}/edit', [EditarReporteController::class, 'edit'])
+        ->name('supervisor.reportes.edit');
+
+    // Guardar cambios
+    Route::put('/supervisor/reportes/{reporte}', [EditarReporteController::class, 'update'])
+        ->name('supervisor.reportes.update');
 });
 
 /*
@@ -168,12 +197,4 @@ Route::middleware(['auth', 'supervisor'])->group(function () {
 
 
 
-
-
-
-
-
-    
 require __DIR__ . '/auth.php';
-
-

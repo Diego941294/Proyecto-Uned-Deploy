@@ -17,12 +17,6 @@ use Illuminate\Support\Facades\Route;
  * Incluyen registro, login y recuperación de contraseña
  */
 Route::middleware('guest')->group(function () {
-    // Mostrar formulario de registro
-    Route::get('register', [RegisteredUserController::class, 'create'])
-        ->name('register');
-
-    // Guardar nuevo usuario registrado
-    Route::post('register', [RegisteredUserController::class, 'store']);
 
     // Mostrar formulario de login
     Route::get('login', [AuthenticatedSessionController::class, 'create'])

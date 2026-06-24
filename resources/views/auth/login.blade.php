@@ -48,23 +48,12 @@
                 Iniciar sesión
             </button>
 
-            <div class="text-center mt-4">
-                <a href="{{ route('register') }}">
-                    ¿No tienes una cuenta? Regístrate
-                </a>
-            </div>
-
-
-
             <div class="auth-security">
                 <div class="auth-line"></div>
                 <span>🛡</span>
                 <div class="auth-line"></div>
 
             </div>
-
-
-
 
             <p class="auth-access-text">
                 Acceso exclusivo para empleados autorizados

@@ -21,27 +21,27 @@
             <h3>Menú principal</h3>
 
             <a href="{{ route('super-admin.dashboard') }}" class="active">
-                🏠 Panel general
+                 Panel general
             </a>
 
             <a href="#">
-                👤 Mi perfil
+                 Mi perfil
+            </a>
+
+            <a href="{{ route('usuarios.index') }}">
+                 Usuarios del sistema
             </a>
 
             <a href="#">
-                👥 Usuarios del sistema
+                 Roles y permisos
             </a>
 
             <a href="#">
-                🛡 Roles y permisos
+                 Auditoría
             </a>
 
             <a href="#">
-                📊 Auditoría
-            </a>
-
-            <a href="#">
-                ⚙️ Configuración
+                 Configuración
             </a>
 
         </aside>
@@ -54,7 +54,7 @@
                     <p>Crear usuarios del sistema y asignar roles.</p>
                 </div>
 
-                <a href="#" class="gp-mini-action">
+                <a href="{{ route('usuarios.index') }}" class="gp-mini-action">
                     Administrar
                 </a>
             </div>
@@ -115,7 +115,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const canvas = document.getElementById('superAdminChart');
 
             if (!canvas) return;

@@ -63,6 +63,16 @@ class UsuarioController extends Controller
             'role' => ['required', 'exists:roles,name'],
         ]);
 
+        if (
+            $usuario->hasRole('Super Administrador') &&
+            $validated['role'] !== 'Super Administrador' &&
+            User::role('Super Administrador')->count() <= 1
+        ) {
+            return back()
+                ->withInput()
+                ->with('error', 'No puede quitar el rol al último Super Administrador.');
+        }
+
         $usuario->name = $validated['name'];
         $usuario->email = $validated['email'];
 
@@ -83,6 +93,13 @@ class UsuarioController extends Controller
     {
         if (auth()->id() === $usuario->id) {
             return back()->with('error', 'No puede eliminar su propio usuario.');
+        }
+
+        if (
+            $usuario->hasRole('Super Administrador') &&
+            User::role('Super Administrador')->count() <= 1
+        ) {
+            return back()->with('error', 'No puede eliminar el último Super Administrador.');
         }
 
         $usuario->delete();

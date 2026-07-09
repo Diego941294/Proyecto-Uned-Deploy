@@ -24,7 +24,8 @@ class EditarReporteController extends Controller
             ->get();
 
         // Pasar los reportes a la vista del supervisor
-        return view('supervisor.edit_supervisor', compact('reportes'));
+       return redirect()->route('supervisor.dashboard');
+
     }
 
     /**

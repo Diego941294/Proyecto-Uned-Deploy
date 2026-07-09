@@ -118,6 +118,14 @@ Route::middleware(['auth', 'supervisor'])->group(function () {
     // Guardar cambios
     Route::put('/supervisor/reportes/{reporte}', [EditarReporteController::class, 'update'])
         ->name('supervisor.reportes.update');
+
+    Route::middleware(['auth', 'supervisor'])->group(function () {
+    
+});
+
+
+
+
 });
 
 /*
@@ -188,6 +196,9 @@ Route::get('/supervisor/reportes/{reporte}/edit', [EditarReporteController::clas
 Route::put('/supervisor/reportes/{reporte}', [EditarReporteController::class, 'update'])
     ->name('supervisor.reportes.update');
 
+
+
+//prueva
 
 
 Route::middleware(['auth', 'supervisor'])->group(function () {

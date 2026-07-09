@@ -247,28 +247,37 @@ public function dashboardSupervisor()
 {
     $hoy = now()->toDateString();
 
-    // Área Caliente: cuenta solo si no está rechazado
     $reporteCaliente = Reporte::whereDate('fecha', $hoy)
-        ->whereHas('area', function ($query) {
-            $query->where('nombre', 'like', '%Caliente%');
-        })
-        ->where('estado', '!=', 'rechazado') // 🔹 ignorar rechazados
+        ->whereHas('area', fn($q) => $q->where('nombre', 'like', '%Caliente%'))
+        ->where('estado', '!=', 'rechazado')
         ->exists();
 
-    // Área Fría: cuenta solo si no está rechazado
     $reporteFrio = Reporte::whereDate('fecha', $hoy)
-        ->whereHas('area', function ($query) {
-            $query->where('nombre', 'like', '%Fría%')
-                  ->orWhere('nombre', 'like', '%Fria%');
-        })
-        ->where('estado', '!=', 'rechazado') // 🔹 ignorar rechazados
+        ->whereHas('area', fn($q) => $q->where('nombre', 'like', '%Fría%')
+                                      ->orWhere('nombre', 'like', '%Fria%'))
+        ->where('estado', '!=', 'rechazado')
         ->exists();
+
+    $reportes = Reporte::with('area')
+        ->where('user_id', Auth::id())
+        ->where('estado', '!=', 'rechazado')
+        ->orderBy('fecha', 'desc')
+        ->get();
+
+    // 🔹 Conteos para el gráfico
+    $aprobados  = Reporte::where('user_id', Auth::id())->where('estado', 'aprobado')->count();
+    $rechazados = Reporte::where('user_id', Auth::id())->where('estado', 'rechazado')->count();
+    $borradores = Reporte::where('user_id', Auth::id())->where('estado', 'borrador')->count();
 
     return view('dashboard.supervisor', compact(
-        'reporteCaliente',
-        'reporteFrio'
+       
+        'reportes',
+        'aprobados',
+        'rechazados',
+        'borradores'
     ));
 }
+
 
 public function misReportes()
 {

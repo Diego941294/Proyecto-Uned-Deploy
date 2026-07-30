@@ -140,4 +140,83 @@
 
         
     </script>
+
+    <style>
+/* Contenedor principal */
+.gp-form-container {
+    width: 100%;
+    max-width: 1200px;   /* ancho máximo en escritorio */
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+}
+
+/* Grupos de formulario */
+.gp-form-group {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+/* Labels */
+.gp-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #f97316; /* naranja */
+}
+
+/* Inputs y selects */
+.gp-input, .gp-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    background: #fff;
+    color: #333;
+}
+
+/* Botón principal */
+.gp-card-button {
+    background-color: #f97316; /* naranja */
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+    width: 100%; /* ocupa todo el ancho en móvil */
+}
+
+.gp-card-button:hover {
+    background-color: #e36414; /* tono más oscuro al hover */
+}
+
+/* Mensajes */
+.gp-empty-message {
+    color: #991b1b;
+    font-weight: 600;
+}
+
+.gp-error-message {
+    color: #fff;
+    background: #991b1b;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .gp-form-container {
+        padding: 10px;
+    }
+
+    .gp-card-button {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+</style>
+
 </x-app-layout>

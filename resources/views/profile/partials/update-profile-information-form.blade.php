@@ -16,61 +16,75 @@
         @csrf
     </form>
 
-    <form method="post"
+    <form method="POST"
           action="{{ route('profile.update') }}"
           enctype="multipart/form-data"
-          class="mt-6 space-y-6">
+          class="gp-profile-form">
 
         @csrf
-        @method('patch')
+        @method('PATCH')
 
-        <div>
-            <x-input-label for="photo" value="Fotografía de perfil" />
+        <div class="gp-form-group">
+            <label for="photo" class="gp-label">
+                Fotografía de perfil
+            </label>
 
             <input
                 type="file"
                 id="photo"
                 name="photo"
-                accept="image/*"
-                class="mt-2 block w-full border rounded-lg p-2">
+                accept=".jpg,.jpeg,.png,.webp"
+                class="gp-file-input">
 
-            <x-input-error class="mt-2"
-                           :messages="$errors->get('photo')" />
+            <x-input-error
+                class="mt-2"
+                :messages="$errors->get('photo')" />
         </div>
 
-        <div>
-            <x-input-label for="name" value="Nombre" />
+        <div class="gp-form-group">
+            <label for="name" class="gp-label">
+                Nombre
+            </label>
 
-            <x-text-input
+            <input
                 id="name"
                 name="name"
                 type="text"
-                class="mt-1 block w-full"
-                :value="old('name', $user->name)"
+                class="gp-input"
+                value="{{ old('name', $user->name) }}"
                 required
-                autofocus />
+                autofocus
+                autocomplete="name">
+
+            <x-input-error
+                class="mt-2"
+                :messages="$errors->get('name')" />
         </div>
 
-        <div>
-            <x-input-label for="email" value="Correo electrónico" />
+        <div class="gp-form-group">
+            <label for="email" class="gp-label">
+                Correo electrónico
+            </label>
 
-            <x-text-input
+            <input
                 id="email"
                 name="email"
                 type="email"
-                class="mt-1 block w-full"
-                :value="old('email', $user->email)"
-                required />
+                class="gp-input"
+                value="{{ old('email', $user->email) }}"
+                required
+                autocomplete="username">
 
-            <x-input-error class="mt-2"
-                           :messages="$errors->get('email')" />
+            <x-input-error
+                class="mt-2"
+                :messages="$errors->get('email')" />
         </div>
 
-        <div class="flex items-center gap-4">
+        <div class="gp-form-actions">
 
-            <x-primary-button>
-                Guardar Cambios
-            </x-primary-button>
+            <button type="submit" class="gp-action-btn primary">
+                Guardar cambios
+            </button>
 
             @if (session('status') === 'profile-updated')
                 <p
@@ -78,7 +92,7 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 3000)"
-                    class="text-sm text-green-600">
+                    class="gp-profile-success">
 
                     Perfil actualizado correctamente.
 

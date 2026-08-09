@@ -9,6 +9,13 @@
     <div class="gp-form-container">
         <form method="POST" action="{{ route('reportes.store') }}">
             @csrf
+            @csrf
+
+            @if($errors->any())
+            <div class="gp-error-message">
+                {{ $errors->first() }}
+            </div>
+            @endif
 
             <div class="gp-form-group">
                 <label class="gp-label">Área</label>
@@ -17,9 +24,9 @@
                     <option value="">Seleccione un área</option>
 
                     @foreach($areas as $area)
-                        <option value="{{ $area->id }}">
-                            {{ $area->nombre }}
-                        </option>
+                    <option value="{{ $area->id }}">
+                        {{ $area->nombre }}
+                    </option>
                     @endforeach
                 </select>
             </div>
@@ -33,8 +40,7 @@
                     class="gp-input"
                     value="{{ now()->format('Y-m-d') }}"
                     readonly
-                    required
-                >
+                    required>
             </div>
 
             <div id="checkItemsContainer" class="gp-check-container">
@@ -43,45 +49,43 @@
                 </p>
 
                 @foreach($areas as $area)
-                    <div class="area-checklist hidden" data-area="{{ $area->id }}">
-                        @php
-                            $itemsPorSeccion = $area->checkItems->groupBy('seccion');
-                        @endphp
+                <div class="area-checklist hidden" data-area="{{ $area->id }}">
+                    @php
+                    $itemsPorSeccion = $area->checkItems->groupBy('seccion');
+                    @endphp
 
-                        @foreach($itemsPorSeccion as $seccion => $items)
-                            <div class="gp-section-card">
-                                <h3 class="gp-section-title">{{ $seccion }}</h3>
+                    @foreach($itemsPorSeccion as $seccion => $items)
+                    <div class="gp-section-card">
+                        <h3 class="gp-section-title">{{ $seccion }}</h3>
 
-                                @foreach($items as $item)
-                                    <div class="gp-check-item">
-                                        <div>
-                                            <strong>{{ $item->nombre }}</strong>
-                                            <p>Orden: {{ $item->orden }}</p>
-                                        </div>
-
-                                        <div class="gp-check-controls">
-                                            <select
-                                                name="detalles[{{ $item->id }}][estado]"
-                                                class="gp-input"
-                                            >
-                                                <option value="A">A - Aceptable</option>
-                                                <option value="NC">NC - No Conforme</option>
-                                                <option value="NA">NA - No Aplica</option>
-                                                <option value="NFR">NFR - No Fue Revisado</option>
-                                            </select>
-
-                                            <input
-                                                type="text"
-                                                name="detalles[{{ $item->id }}][observacion]"
-                                                class="gp-input"
-                                                placeholder="Observación"
-                                            >
-                                        </div>
-                                    </div>
-                                @endforeach
+                        @foreach($items as $item)
+                        <div class="gp-check-item">
+                            <div>
+                                <strong>{{ $item->nombre }}</strong>
+                                <p>Orden: {{ $item->orden }}</p>
                             </div>
+
+                            <div class="gp-check-controls">
+                                <select
+                                    name="detalles[{{ $item->id }}][estado]"
+                                    class="gp-input">
+                                    <option value="A">A - Aceptable</option>
+                                    <option value="NC">NC - No Conforme</option>
+                                    <option value="NA">NA - No Aplica</option>
+                                    <option value="NFR">NFR - No Fue Revisado</option>
+                                </select>
+
+                                <input
+                                    type="text"
+                                    name="detalles[{{ $item->id }}][observacion]"
+                                    class="gp-input"
+                                    placeholder="Observación">
+                            </div>
+                        </div>
                         @endforeach
                     </div>
+                    @endforeach
+                </div>
                 @endforeach
             </div>
 
@@ -92,8 +96,7 @@
                     name="observaciones"
                     rows="4"
                     class="gp-textarea"
-                    placeholder="Observaciones generales del reporte"
-                ></textarea>
+                    placeholder="Observaciones generales del reporte"></textarea>
             </div>
 
             <div class="flex gap-4 mt-6">
@@ -101,44 +104,51 @@
                     Guardar Reporte
                 </button>
 
-               
+
             </div>
         </form>
     </div>
 
     <script>
-        const areaSelect = document.getElementById('areaSelect');
-        const emptyMessage = document.querySelector('.gp-empty-message');
-        const checklists = document.querySelectorAll('.area-checklist');
+        document.addEventListener('DOMContentLoaded', function() {
+            const areaSelect = document.getElementById('areaSelect');
+            const emptyMessage = document.querySelector('.gp-empty-message');
+            const checklists = document.querySelectorAll('.area-checklist');
 
-        areaSelect.addEventListener('change', function () {
-            const selectedArea = this.value;
+            function actualizarChecklist() {
+                const selectedArea = areaSelect.value;
 
-            checklists.forEach(checklist => {
-                checklist.classList.add('hidden');
-            });
+                checklists.forEach(checklist => {
+                    const esAreaSeleccionada =
+                        checklist.dataset.area === selectedArea;
 
-            if (!selectedArea) {
-                emptyMessage.classList.remove('hidden');
-                return;
+                    checklist.classList.toggle(
+                        'hidden',
+                        !esAreaSeleccionada
+                    );
+
+                    /*
+                     * Los campos ocultos deben quedar deshabilitados.
+                     * Un campo disabled no se envía al servidor.
+                     */
+                    checklist
+                        .querySelectorAll('input, select, textarea')
+                        .forEach(campo => {
+                            campo.disabled = !esAreaSeleccionada;
+                        });
+                });
+
+                emptyMessage.classList.toggle(
+                    'hidden',
+                    selectedArea !== ''
+                );
             }
 
-            emptyMessage.classList.add('hidden');
+            areaSelect.addEventListener('change', actualizarChecklist);
 
-            const selectedChecklist = document.querySelector(`[data-area="${selectedArea}"]`);
-
-            if (selectedChecklist) {
-                selectedChecklist.classList.remove('hidden');
-            }
+            // Desactivar los campos de todas las áreas al cargar la página.
+            actualizarChecklist();
         });
-
-        @if($errors->any())
-    <div class="gp-error-message">
-        {{ $errors->first() }}
-    </div>
-@endif
-
-        
     </script>
 
     <style>

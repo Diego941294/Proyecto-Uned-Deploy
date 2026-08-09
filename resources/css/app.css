@@ -2965,3 +2965,52 @@ body.dark-mode .gp-profile-meta span {
         grid-template-columns: 1fr;
     }
 }
+
+/* =====================================================
+   PERFIL DE USUARIO - FORMULARIO
+===================================================== */
+
+.gp-profile-form {
+    display: grid;
+    gap: 22px;
+    margin-top: 24px;
+}
+
+.gp-file-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #0f2f5f;
+    font-weight: 700;
+}
+
+.gp-file-input::file-selector-button {
+    margin-right: 12px;
+    padding: 9px 14px;
+    border: 0;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #2952cc, #183b8c);
+    color: #ffffff;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.gp-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.gp-profile-success {
+    color: #15803d;
+    font-weight: 800;
+}
+
+body.dark-mode .gp-file-input {
+    background: #07111f;
+    color: #f8fafc;
+    border-color: #475569;
+}

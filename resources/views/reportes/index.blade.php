@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="gp-filter-field">
-                    <label>Estado</label>
+                    <label>Estado</label> 
 
                     <select name="estado">
                         <option value="">Todos los estados</option>

@@ -12,7 +12,13 @@ class AdministradorMiddleware
     {
         $user = $request->user();
 
-        if ($user && ($user->hasRole('Administrador') || $user->hasRole('Super Administrador'))) {
+        if (
+            $user &&
+            (
+                $user->hasRole('administrador') ||
+                $user->hasRole('super-admin')
+            )
+        ) {
             return $next($request);
         }
 

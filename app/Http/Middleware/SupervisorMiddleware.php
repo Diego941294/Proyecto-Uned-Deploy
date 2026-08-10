@@ -15,8 +15,8 @@ class SupervisorMiddleware
         if (
             $user &&
             (
-                $user->hasRole('Supervisor') ||
-                $user->hasRole('Super Administrador')
+                $user->hasRole('supervisor') ||
+                $user->hasRole('super-admin')
             )
         ) {
             return $next($request);

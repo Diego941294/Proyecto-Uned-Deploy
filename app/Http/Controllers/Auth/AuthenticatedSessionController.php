@@ -22,32 +22,38 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-   public function store(LoginRequest $request): RedirectResponse
-{
-    $request->authenticate();
+    public function store(LoginRequest $request): RedirectResponse
+    {
+        $request->authenticate();
 
-    $request->session()->regenerate();
+        $request->session()->regenerate();
 
-    $user = Auth::user();
+        $user = Auth::user();
 
-    if ($user->hasRole('Super Administrador')) {
-        return redirect()->intended(route('super-admin.dashboard'));
+        if ($user->hasRole('super-admin')) {
+            return redirect()->route('super-admin.dashboard');
+        }
+
+        if ($user->hasRole('administrador')) {
+            return redirect()->route('administrador.dashboard');
+        }
+
+        if ($user->hasRole('supervisor')) {
+            return redirect()->route('supervisor.dashboard');
+        }
+
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()
+            ->route('login')
+            ->with(
+                'error',
+                'El usuario no tiene un rol válido asignado.'
+            );
     }
-
-    if ($user->hasRole('Administrador')) {
-        return redirect()->intended(route('administrador.dashboard'));
-    }
-
-    if ($user->hasRole('Supervisor')) {
-        return redirect()->intended(route('supervisor.dashboard'));
-    }
-
-    Auth::logout();
-
-    return redirect()
-        ->route('login')
-        ->with('error', 'El usuario no tiene un rol asignado.');
-}
 
     /**
      * Destroy an authenticated session.

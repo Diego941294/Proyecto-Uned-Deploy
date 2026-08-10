@@ -1,7 +1,5 @@
-<x-app-layout>
-
-    <section class="gp-page-header">
-       <div class="gp-page-title-row">
+<section class="gp-page-header">
+    <div class="gp-page-title-row">
 
         <div>
             <h2 class="gp-header-title">
@@ -9,11 +7,12 @@
             </h2>
 
             <p class="gp-header-subtitle">
-                Administración de elementos de verificación por área.
+                Administración de elementos de verificación por infraestructura.
             </p>
         </div>
 
         <div class="gp-header-actions">
+
             <a href="{{ route('administrador.dashboard') }}"
                class="gp-action-btn secondary">
                 ← Volver
@@ -23,63 +22,84 @@
                class="gp-action-btn primary">
                 + Nuevo Item
             </a>
+
         </div>
 
     </div>
-    </section>
+</section>
 
-    <div class="gp-reports-panel">
+<div class="gp-reports-panel">
 
-        <div class="gp-reports-toolbar">
-            <div>
-                <h3>Elementos registrados</h3>
-                <p>Consulta los elementos de verificación del sistema preoperacional.</p>
-            </div>
+    <div class="gp-reports-toolbar">
+        <div>
+            <h3>Elementos registrados</h3>
+
+            <p>
+                Consulta los elementos de verificación del sistema preoperacional.
+            </p>
         </div>
+    </div>
 
-        <div class="gp-table-modern-wrap">
+    <div class="gp-table-modern-wrap">
 
-            <table class="gp-table-modern">
+        <table class="gp-table-modern">
 
-                <thead>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Área</th>
+                    <th>Infraestructura</th>
+                    <th>Nombre</th>
+                    <th>Orden</th>
+                    <th>Estado</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @forelse($checkItems as $item)
+
                     <tr>
-                        <th>ID</th>
-                        <th>Área</th>
-                        <th>Sección</th>
-                        <th>Nombre</th>
-                        <th>Orden</th>
-                        <th>Estado</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    @forelse($checkItems as $item)
-
-                    <tr>
-                        <td>#{{ $item->id }}</td>
 
                         <td>
-                            <strong>{{ $item->area->nombre }}</strong>
+                            #{{ $item->id }}
                         </td>
 
-                        <td>{{ $item->seccion }}</td>
-
-                        <td>{{ $item->nombre }}</td>
-
-                        <td>{{ $item->orden }}</td>
+                        <td>
+                            <strong>
+                                {{ $item->infraestructura?->area?->nombre ?? 'Área no disponible' }}
+                            </strong>
+                        </td>
 
                         <td>
+                            {{ $item->infraestructura?->nombre ?? 'Infraestructura no disponible' }}
+                        </td>
+
+                        <td>
+                            {{ $item->nombre }}
+                        </td>
+
+                        <td>
+                            {{ $item->orden }}
+                        </td>
+
+                        <td>
+
                             @if($item->activo)
-                            <span class="gp-badge-success">
-                                Activo
-                            </span>
+
+                                <span class="gp-badge-success">
+                                    Activo
+                                </span>
+
                             @else
-                            <span class="gp-badge-danger">
-                                Inactivo
-                            </span>
+
+                                <span class="gp-badge-danger">
+                                    Inactivo
+                                </span>
+
                             @endif
+
                         </td>
 
                         <td class="text-center">
@@ -87,24 +107,24 @@
                             <div class="gp-action-group">
 
                                 <a href="{{ route('check-items.edit', $item) }}"
-                                    class="gp-view-button">
-
+                                   class="gp-view-button">
                                     ✏️ Editar
-
                                 </a>
 
-                                <form method="POST"
+                                <form
+                                    method="POST"
                                     action="{{ route('check-items.destroy', $item) }}"
-                                    onsubmit="return confirm('¿Está seguro de eliminar este Check Item? Esta acción no se puede deshacer.');">
+                                    onsubmit="return confirm('¿Está seguro de eliminar este Check Item? Esta acción no se puede deshacer.');"
+                                >
 
                                     @csrf
                                     @method('DELETE')
 
-                                    <button type="submit"
-                                        class="gp-delete-button">
-
+                                    <button
+                                        type="submit"
+                                        class="gp-delete-button"
+                                    >
                                         🗑 Eliminar
-
                                     </button>
 
                                 </form>
@@ -112,9 +132,10 @@
                             </div>
 
                         </td>
+
                     </tr>
 
-                    @empty
+                @empty
 
                     <tr>
                         <td colspan="7" class="gp-empty-table">
@@ -122,16 +143,12 @@
                         </td>
                     </tr>
 
-                    @endforelse
+                @endforelse
 
-                </tbody>
+            </tbody>
 
-            </table>
-
-        </div>
+        </table>
 
     </div>
 
-    
-
-</x-app-layout>
+</div>

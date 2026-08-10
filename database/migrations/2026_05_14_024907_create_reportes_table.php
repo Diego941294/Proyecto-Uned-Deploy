@@ -12,33 +12,42 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reportes', function (Blueprint $table) {
-    $table->id();
 
-    $table->foreignId('user_id')
-        ->constrained()
-        ->onDelete('restrict');
+            $table->id();
 
-    $table->foreignId('area_id')
-        ->constrained()
-        ->onDelete('restrict');
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->onDelete('restrict');
 
-    $table->date('fecha');
-    $table->integer('semana')->nullable();
+            $table->foreignId('area_id')
+                ->constrained('areas')
+                ->onDelete('restrict');
 
-    $table->enum('estado', ['borrador', 'enviado', 'aprobado', 'rechazado'])
-        ->default('borrador');
+            $table->date('fecha');
 
-    $table->text('observaciones')->nullable();
+            $table->integer('semana')
+                ->nullable();
 
-    $table->foreignId('aprobado_por')
-        ->nullable()
-        ->constrained('users')
-        ->nullOnDelete();
+            $table->enum(
+                'estado',
+                [
+                    'borrador',
+                    'enviado',
+                    'aprobado',
+                    'rechazado'
+                ]
+            )->default('borrador');
 
-    $table->timestamp('fecha_aprobacion')->nullable();
+            $table->text('observaciones')
+                ->nullable();
 
-    $table->timestamps();
-});
+            /*
+             * aprobado_por y fecha_aprobacion
+             * se agregan en una migración posterior.
+             */
+
+            $table->timestamps();
+        });
     }
 
     /**

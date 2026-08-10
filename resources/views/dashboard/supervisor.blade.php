@@ -103,37 +103,71 @@
 
     </div>
 
-    <div class="gp-dashboard-card" style="margin-top:30px;">
-        @if($reportes->isEmpty())
-            <p style="color:#991b1b; font-weight:600;">❌ No hay reportes en estado Borrador.</p>
-        @else
-            <div class="gp-table-wrapper">
-                <table class="gp-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Área</th>
-                            <th>Fecha</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($reportes as $reporte)
-                            <tr>
-                                <td>#{{ $reporte->id }}</td>
-                                <td>{{ $reporte->area->nombre }}</td>
-                                <td>{{ \Carbon\Carbon::parse($reporte->fecha)->format('d/m/Y') }}</td>
-                                <td>
-                                    <a href="{{ route('reportes.edit', $reporte->id) }}" class="gp-action-link">✏️ Editar</a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @endif
-    </div>
+<div class="gp-dashboard-card" style="margin-top:30px;">
 
+    @if($reportes->isEmpty())
+
+        <p style="color:#991b1b; font-weight:600;">
+            ❌ No hay reportes en estado Borrador.
+        </p>
+
+    @else
+
+        <div class="gp-table-wrapper">
+
+            <table class="gp-table">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Área</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach($reportes as $reporte)
+
+                        <tr>
+
+                            <td>
+                                #{{ $reporte->id_reportes }}
+                            </td>
+
+                            <td>
+                                {{ $reporte->area?->nombre ?? 'Área no disponible' }}
+                            </td>
+
+                            <td>
+                                {{ \Carbon\Carbon::parse($reporte->fecha)->format('d/m/Y') }}
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{{ route('reportes.edit', $reporte->id_reportes) }}"
+                                    class="gp-action-link"
+                                >
+                                    ✏️ Editar
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    @endforeach
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    @endif
+
+</div>
 
     <style>
         .gp-dashboard-grid {
@@ -152,8 +186,7 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
 
-        //uh
-
+   
 
         .gp-table-wrapper {
             width: 100%;
@@ -199,7 +232,7 @@
         }
 
 
-        //color
+     
 
         .gp-table {
             background-color: #fff;

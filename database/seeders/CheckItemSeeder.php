@@ -4,74 +4,226 @@ namespace Database\Seeders;
 
 use App\Models\Area;
 use App\Models\CheckItem;
+use App\Models\Infraestructura;
 use Illuminate\Database\Seeder;
 
 class CheckItemSeeder extends Seeder
 {
     public function run(): void
     {
+        /*
+        |--------------------------------------------------------------------------
+        | ÁREA FRÍA
+        |--------------------------------------------------------------------------
+        */
+
         $areaFria = Area::where('nombre', 'Área Fría')->first();
 
-        $itemsFrio = [
+        if ($areaFria) {
 
-            ['seccion' => 'Infraestructura', 'nombre' => 'Pisos'],
-            ['seccion' => 'Infraestructura', 'nombre' => 'Paredes'],
-            ['seccion' => 'Infraestructura', 'nombre' => 'Techos'],
-            ['seccion' => 'Infraestructura', 'nombre' => 'Puertas'],
-            ['seccion' => 'Infraestructura', 'nombre' => 'Ventanas'],
-            ['seccion' => 'Infraestructura', 'nombre' => 'Drenajes y rejillas'],
+            $infraFria = Infraestructura::where(
+                'id_areas',
+                $areaFria->id_areas
+            )
+                ->where('nombre', 'Infraestructura y Áreas')
+                ->first();
 
-            ['seccion' => 'Iluminación y ventilación', 'nombre' => 'Iluminación'],
-            ['seccion' => 'Iluminación y ventilación', 'nombre' => 'Ventilación'],
+            $equiposFrio = Infraestructura::where(
+                'id_areas',
+                $areaFria->id_areas
+            )
+                ->where('nombre', 'Equipos y Utensilios')
+                ->first();
 
-            ['seccion' => 'Control de plagas', 'nombre' => 'Presencia de insectos'],
+            $personalFrio = Infraestructura::where(
+                'id_areas',
+                $areaFria->id_areas
+            )
+                ->where('nombre', 'Personal')
+                ->first();
 
-            ['seccion' => 'Equipos', 'nombre' => 'Prechiller'],
-            ['seccion' => 'Equipos', 'nombre' => 'Chiller'],
-            ['seccion' => 'Equipos', 'nombre' => 'Fábrica de hielo'],
+            $itemsInfraFria = [
+                'Pisos',
+                'Paredes',
+                'Techos',
+                'Puertas',
+                'Ventanas',
+                'Drenajes y rejillas',
+                'Iluminación',
+                'Ventilación',
+                'Presencia de insectos',
+            ];
 
-            ['seccion' => 'Personal', 'nombre' => 'Uniformes'],
-            ['seccion' => 'Personal', 'nombre' => 'Estado de salud del personal'],
-        ];
+            foreach ($itemsInfraFria as $index => $nombre) {
 
-        foreach ($itemsFrio as $index => $item) {
+                if ($infraFria) {
+                    CheckItem::firstOrCreate(
+                        [
+                            'id_infraestructuras' =>
+                                $infraFria->id_infraestructuras,
 
-            CheckItem::create([
-                'area_id' => $areaFria->id,
-                'seccion' => $item['seccion'],
-                'nombre' => $item['nombre'],
-                'orden' => $index + 1,
-                'activo' => true,
-            ]);
+                            'nombre' => $nombre,
+                        ],
+                        [
+                            'orden' => $index + 1,
+                            'activo' => true,
+                        ]
+                    );
+                }
+            }
+
+            $itemsEquiposFrio = [
+                'Prechiller',
+                'Chiller',
+                'Fábrica de hielo',
+            ];
+
+            foreach ($itemsEquiposFrio as $index => $nombre) {
+
+                if ($equiposFrio) {
+                    CheckItem::firstOrCreate(
+                        [
+                            'id_infraestructuras' =>
+                                $equiposFrio->id_infraestructuras,
+
+                            'nombre' => $nombre,
+                        ],
+                        [
+                            'orden' => $index + 1,
+                            'activo' => true,
+                        ]
+                    );
+                }
+            }
+
+            $itemsPersonalFrio = [
+                'Uniformes',
+                'Estado de salud del personal',
+            ];
+
+            foreach ($itemsPersonalFrio as $index => $nombre) {
+
+                if ($personalFrio) {
+                    CheckItem::firstOrCreate(
+                        [
+                            'id_infraestructuras' =>
+                                $personalFrio->id_infraestructuras,
+
+                            'nombre' => $nombre,
+                        ],
+                        [
+                            'orden' => $index + 1,
+                            'activo' => true,
+                        ]
+                    );
+                }
+            }
         }
 
-        $areaCaliente = Area::where('nombre', 'Área Caliente')->first();
+        /*
+        |--------------------------------------------------------------------------
+        | ÁREA CALIENTE
+        |--------------------------------------------------------------------------
+        */
 
-        $itemsCaliente = [
+        $areaCaliente = Area::where(
+            'nombre',
+            'Área Caliente'
+        )->first();
 
-            ['seccion' => 'Infraestructura', 'nombre' => 'Pisos'],
-            ['seccion' => 'Infraestructura', 'nombre' => 'Paredes'],
-            ['seccion' => 'Infraestructura', 'nombre' => 'Techos'],
+        if ($areaCaliente) {
 
-            ['seccion' => 'Equipos', 'nombre' => 'Cocinas'],
-            ['seccion' => 'Equipos', 'nombre' => 'Mesas de trabajo'],
-            ['seccion' => 'Equipos', 'nombre' => 'Utensilios'],
+            $infraCaliente = Infraestructura::where(
+                'id_areas',
+                $areaCaliente->id_areas
+            )
+                ->where('nombre', 'Infraestructura y Áreas')
+                ->first();
 
-            ['seccion' => 'Personal', 'nombre' => 'Uniformes'],
-            ['seccion' => 'Personal', 'nombre' => 'Lavado de manos'],
-        ];
+            $equiposCaliente = Infraestructura::where(
+                'id_areas',
+                $areaCaliente->id_areas
+            )
+                ->where('nombre', 'Equipos')
+                ->first();
 
-        foreach ($itemsCaliente as $index => $item) {
+            $personalCaliente = Infraestructura::where(
+                'id_areas',
+                $areaCaliente->id_areas
+            )
+                ->where('nombre', 'Personal')
+                ->first();
 
-            CheckItem::create([
-                'area_id' => $areaCaliente->id,
-                'seccion' => $item['seccion'],
-                'nombre' => $item['nombre'],
-                'orden' => $index + 1,
-                'activo' => true,
-            ]);
+            $itemsInfraCaliente = [
+                'Pisos',
+                'Paredes',
+                'Techos',
+            ];
+
+            foreach ($itemsInfraCaliente as $index => $nombre) {
+
+                if ($infraCaliente) {
+                    CheckItem::firstOrCreate(
+                        [
+                            'id_infraestructuras' =>
+                                $infraCaliente->id_infraestructuras,
+
+                            'nombre' => $nombre,
+                        ],
+                        [
+                            'orden' => $index + 1,
+                            'activo' => true,
+                        ]
+                    );
+                }
+            }
+
+            $itemsEquiposCaliente = [
+                'Cocinas',
+                'Mesas de trabajo',
+                'Utensilios',
+            ];
+
+            foreach ($itemsEquiposCaliente as $index => $nombre) {
+
+                if ($equiposCaliente) {
+                    CheckItem::firstOrCreate(
+                        [
+                            'id_infraestructuras' =>
+                                $equiposCaliente->id_infraestructuras,
+
+                            'nombre' => $nombre,
+                        ],
+                        [
+                            'orden' => $index + 1,
+                            'activo' => true,
+                        ]
+                    );
+                }
+            }
+
+            $itemsPersonalCaliente = [
+                'Uniformes',
+                'Lavado de manos',
+            ];
+
+            foreach ($itemsPersonalCaliente as $index => $nombre) {
+
+                if ($personalCaliente) {
+                    CheckItem::firstOrCreate(
+                        [
+                            'id_infraestructuras' =>
+                                $personalCaliente->id_infraestructuras,
+
+                            'nombre' => $nombre,
+                        ],
+                        [
+                            'orden' => $index + 1,
+                            'activo' => true,
+                        ]
+                    );
+                }
+            }
         }
     }
 }
-
-

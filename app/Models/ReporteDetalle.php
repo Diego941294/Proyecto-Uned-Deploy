@@ -9,20 +9,30 @@ class ReporteDetalle extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id_reporte_detalles';
+
     protected $fillable = [
-        'reporte_id',
-        'check_item_id',
+        'id_reportes',
+        'id_check_items',
         'estado',
         'observacion',
     ];
 
     public function reporte()
     {
-        return $this->belongsTo(Reporte::class);
+        return $this->belongsTo(
+            Reporte::class,
+            'id_reportes',
+            'id_reportes'
+        );
     }
 
     public function checkItem()
     {
-        return $this->belongsTo(CheckItem::class);
+        return $this->belongsTo(
+            CheckItem::class,
+            'id_check_items',
+            'id_check_items'
+        );
     }
 }

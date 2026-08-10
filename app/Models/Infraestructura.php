@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Infraestructura extends Model
 {
+    protected $primaryKey = 'id_infraestructuras';
+
     protected $fillable = [
-        'area_id',
+        'id_areas',
         'nombre',
         'codigo',
         'activo',
@@ -15,10 +17,19 @@ class Infraestructura extends Model
 
     public function area()
     {
-        return $this->belongsTo(Area::class);
+        return $this->belongsTo(
+            Area::class,
+            'id_areas',
+            'id_areas'
+        );
     }
+
     public function checkItems()
     {
-        return $this->hasMany(CheckItem::class);
+        return $this->hasMany(
+            CheckItem::class,
+            'id_infraestructuras',
+            'id_infraestructuras'
+        );
     }
 }

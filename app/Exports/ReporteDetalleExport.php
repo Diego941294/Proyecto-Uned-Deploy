@@ -19,11 +19,10 @@ class ReporteDetalleExport implements FromArray
         $this->reporte->load([
             'area',
             'usuario',
-            'detalles.checkItem'
+            'detalles.checkItem.infraestructura'
         ]);
 
         $rows = [
-
             ['REPORTE PREOPERACIONAL'],
             [],
             ['ID', $this->reporte->id],
@@ -33,25 +32,31 @@ class ReporteDetalleExport implements FromArray
             ['Supervisor', $this->reporte->usuario?->name],
             [],
             ['CHECKLIST'],
-            ['Sección', 'Elemento', 'Estado', 'Observación']
-
+            ['Infraestructura', 'Elemento', 'Estado', 'Observación']
         ];
 
         foreach ($this->reporte->detalles as $detalle) {
 
             $rows[] = [
+                $detalle->checkItem?->infraestructura?->nombre
+                    ?? 'Sin infraestructura',
 
-                $detalle->checkItem?->seccion,
-                $detalle->checkItem?->nombre,
+                $detalle->checkItem?->nombre
+                    ?? 'Elemento no disponible',
+
                 $detalle->estado,
-                $detalle->observacion
 
+                $detalle->observacion
+                    ?? 'Sin observación'
             ];
         }
 
         $rows[] = [];
         $rows[] = ['OBSERVACIONES GENERALES'];
-        $rows[] = [$this->reporte->observaciones];
+        $rows[] = [
+            $this->reporte->observaciones
+                ?? 'Sin observaciones generales.'
+        ];
 
         return $rows;
     }

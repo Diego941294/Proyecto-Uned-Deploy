@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ReporteNoConformidad extends Model
+class ReporteAccionCorrectiva extends Model
 {
+    protected $table = 'reporte_accion_correctiva';
+
+    protected $primaryKey = 'id_reporte_accion_correctiva';
+
     protected $fillable = [
-        'reporte_id',
+        'id_reportes',
         'fecha',
         'referencia',
         'causa_raiz',
@@ -26,6 +30,10 @@ class ReporteNoConformidad extends Model
 
     public function reporte()
     {
-        return $this->belongsTo(Reporte::class);
+        return $this->belongsTo(
+            Reporte::class,
+            'id_reportes',
+            'id_reportes'
+        );
     }
 }

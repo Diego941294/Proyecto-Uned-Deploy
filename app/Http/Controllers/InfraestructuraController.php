@@ -11,12 +11,16 @@ class InfraestructuraController extends Controller
     public function index()
     {
         $infraestructuras = Infraestructura::with('area')
-            ->orderBy('area_id')
+            ->orderBy('id_areas')
             ->orderBy('nombre')
             ->get();
 
-        return view('infraestructuras.index', compact('infraestructuras'));
+        return view(
+            'infraestructuras.index',
+            compact('infraestructuras')
+        );
     }
+
 
     public function create()
     {
@@ -25,104 +29,255 @@ class InfraestructuraController extends Controller
             ->get();
 
         $ultimo = Infraestructura::whereNotNull('codigo')
-            ->orderBy('id', 'desc')
+            ->orderBy('id_infraestructuras', 'desc')
             ->first();
 
         $siguienteNumero = 1;
 
-        if ($ultimo && preg_match('/INF-(\d+)/', $ultimo->codigo, $matches)) {
-            $siguienteNumero = ((int) $matches[1]) + 1;
+        if (
+            $ultimo &&
+            preg_match(
+                '/INF-(\d+)/',
+                $ultimo->codigo,
+                $matches
+            )
+        ) {
+            $siguienteNumero =
+                ((int) $matches[1]) + 1;
         }
 
-        $codigoSugerido = 'INF-' . str_pad($siguienteNumero, 2, '0', STR_PAD_LEFT);
+        $codigoSugerido =
+            'INF-' .
+            str_pad(
+                $siguienteNumero,
+                2,
+                '0',
+                STR_PAD_LEFT
+            );
 
-        return view('infraestructuras.create', compact('areas', 'codigoSugerido'));
+        return view(
+            'infraestructuras.create',
+            compact(
+                'areas',
+                'codigoSugerido'
+            )
+        );
     }
+
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'area_id' => ['required', 'exists:areas,id'],
-            'nombre' => ['required', 'string', 'max:255'],
-            'codigo' => ['nullable', 'string', 'max:50'],
-            'activo' => ['required', 'boolean'],
+            'id_areas' => [
+                'required',
+                'exists:areas,id_areas'
+            ],
+
+            'nombre' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+
+            'activo' => [
+                'required',
+                'boolean'
+            ],
         ]);
 
-        $ultimo = Infraestructura::where('area_id', $validated['area_id'])
+
+        /*
+        |--------------------------------------------------------------------------
+        | Generar código automático
+        |--------------------------------------------------------------------------
+        */
+
+        $ultimo = Infraestructura::where(
+            'id_areas',
+            $validated['id_areas']
+        )
             ->whereNotNull('codigo')
-            ->orderBy('id', 'desc')
+            ->orderBy(
+                'id_infraestructuras',
+                'desc'
+            )
             ->first();
 
         $siguienteNumero = 1;
 
-        if ($ultimo && preg_match('/INF-(\d+)/', $ultimo->codigo, $matches)) {
-            $siguienteNumero = ((int) $matches[1]) + 1;
+        if (
+            $ultimo &&
+            preg_match(
+                '/INF-(\d+)/',
+                $ultimo->codigo,
+                $matches
+            )
+        ) {
+            $siguienteNumero =
+                ((int) $matches[1]) + 1;
         }
 
-        $validated['codigo'] = 'INF-' . str_pad($siguienteNumero, 2, '0', STR_PAD_LEFT);
+        $validated['codigo'] =
+            'INF-' .
+            str_pad(
+                $siguienteNumero,
+                2,
+                '0',
+                STR_PAD_LEFT
+            );
 
 
-        $existe = Infraestructura::where('area_id', $validated['area_id'])
-            ->where('nombre', $validated['nombre'])
+        /*
+        |--------------------------------------------------------------------------
+        | Evitar duplicados por área
+        |--------------------------------------------------------------------------
+        */
+
+        $existe = Infraestructura::where(
+            'id_areas',
+            $validated['id_areas']
+        )
+            ->where(
+                'nombre',
+                $validated['nombre']
+            )
             ->exists();
 
         if ($existe) {
             return back()
                 ->withInput()
-                ->with('error', 'Ya existe una infraestructura/sección con ese nombre para el área seleccionada.');
+                ->with(
+                    'error',
+                    'Ya existe una infraestructura/sección con ese nombre para el área seleccionada.'
+                );
         }
+
 
         Infraestructura::create($validated);
 
         return redirect()
             ->route('infraestructuras.index')
-            ->with('success', 'Infraestructura creada correctamente.');
+            ->with(
+                'success',
+                'Infraestructura creada correctamente.'
+            );
     }
 
-    public function edit(Infraestructura $infraestructura)
-    {
+
+    public function edit(
+        Infraestructura $infraestructura
+    ) {
         $areas = Area::where('activo', true)
             ->orderBy('nombre')
             ->get();
 
-        return view('infraestructuras.edit', compact('infraestructura', 'areas'));
+        return view(
+            'infraestructuras.edit',
+            compact(
+                'infraestructura',
+                'areas'
+            )
+        );
     }
 
-    public function update(Request $request, Infraestructura $infraestructura)
-    {
-        $validated = $request->validate([
-            'area_id' => ['required', 'exists:areas,id'],
-            'nombre' => ['required', 'string', 'max:255'],
 
-            'activo' => ['required', 'boolean'],
+    public function update(
+        Request $request,
+        Infraestructura $infraestructura
+    ) {
+        $validated = $request->validate([
+            'id_areas' => [
+                'required',
+                'exists:areas,id_areas'
+            ],
+
+            'nombre' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+
+            'activo' => [
+                'required',
+                'boolean'
+            ],
         ]);
 
-        $existe = Infraestructura::where('area_id', $validated['area_id'])
-            ->where('nombre', $validated['nombre'])
-            ->where('id', '!=', $infraestructura->id)
+
+        /*
+        |--------------------------------------------------------------------------
+        | Evitar duplicados
+        |--------------------------------------------------------------------------
+        */
+
+        $existe = Infraestructura::where(
+            'id_areas',
+            $validated['id_areas']
+        )
+            ->where(
+                'nombre',
+                $validated['nombre']
+            )
+            ->where(
+                'id_infraestructuras',
+                '!=',
+                $infraestructura->id_infraestructuras
+            )
             ->exists();
 
         if ($existe) {
             return back()
                 ->withInput()
-                ->with('error', 'Ya existe otra infraestructura/sección con ese nombre para el área seleccionada.');
+                ->with(
+                    'error',
+                    'Ya existe otra infraestructura/sección con ese nombre para el área seleccionada.'
+                );
         }
 
-        $infraestructura->update($validated);
+
+        $infraestructura->update(
+            $validated
+        );
 
         return redirect()
             ->route('infraestructuras.index')
-            ->with('success', 'Infraestructura actualizada correctamente.');
+            ->with(
+                'success',
+                'Infraestructura actualizada correctamente.'
+            );
     }
 
 
+    public function destroy(
+        Infraestructura $infraestructura
+    ) {
+        /*
+        |--------------------------------------------------------------------------
+        | Protección de integridad
+        |--------------------------------------------------------------------------
+        |
+        | Como check_items.id_infraestructuras usa ON DELETE RESTRICT,
+        | conviene avisar al usuario antes de intentar eliminar.
+        |
+        */
 
-    public function destroy(Infraestructura $infraestructura)
-    {
+        if ($infraestructura->checkItems()->exists()) {
+            return redirect()
+                ->route('infraestructuras.index')
+                ->with(
+                    'error',
+                    'No se puede eliminar esta infraestructura porque tiene Check Items asociados.'
+                );
+        }
+
+
         $infraestructura->delete();
 
         return redirect()
             ->route('infraestructuras.index')
-            ->with('success', 'Infraestructura eliminada correctamente.');
+            ->with(
+                'success',
+                'Infraestructura eliminada correctamente.'
+            );
     }
 }

@@ -1,154 +1,189 @@
-<section class="gp-page-header">
-    <div class="gp-page-title-row">
+<x-app-layout>
 
-        <div>
-            <h2 class="gp-header-title">
-                Check Items
-            </h2>
+    <section class="gp-page-header">
 
-            <p class="gp-header-subtitle">
-                Administración de elementos de verificación por infraestructura.
-            </p>
+        <div class="gp-page-title-row">
+
+            <div>
+                <h2 class="gp-header-title">
+                    Check Items
+                </h2>
+
+                <p class="gp-header-subtitle">
+                    Administración de elementos de verificación por infraestructura.
+                </p>
+            </div>
+
+            <div class="gp-header-actions">
+
+                <a
+                    href="{{ route('administrador.dashboard') }}"
+                    class="gp-action-btn secondary"
+                >
+                    ← Volver
+                </a>
+
+                <a
+                    href="{{ route('check-items.create') }}"
+                    class="gp-action-btn primary"
+                >
+                    + Nuevo Item
+                </a>
+
+            </div>
+
         </div>
 
-        <div class="gp-header-actions">
+    </section>
 
-            <a href="{{ route('administrador.dashboard') }}"
-               class="gp-action-btn secondary">
-                ← Volver
-            </a>
 
-            <a href="{{ route('check-items.create') }}"
-               class="gp-action-btn primary">
-                + Nuevo Item
-            </a>
+    <div class="gp-reports-panel">
+
+        @if(session('success'))
+            <div class="gp-success-message">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="gp-error-message">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <div class="gp-reports-toolbar">
+
+            <div>
+                <h3>
+                    Elementos registrados
+                </h3>
+
+                <p>
+                    Consulta los elementos de verificación del sistema preoperacional.
+                </p>
+            </div>
 
         </div>
 
-    </div>
-</section>
 
-<div class="gp-reports-panel">
+        <div class="gp-table-modern-wrap">
 
-    <div class="gp-reports-toolbar">
-        <div>
-            <h3>Elementos registrados</h3>
+            <table class="gp-table-modern">
 
-            <p>
-                Consulta los elementos de verificación del sistema preoperacional.
-            </p>
-        </div>
-    </div>
-
-    <div class="gp-table-modern-wrap">
-
-        <table class="gp-table-modern">
-
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Área</th>
-                    <th>Infraestructura</th>
-                    <th>Nombre</th>
-                    <th>Orden</th>
-                    <th>Estado</th>
-                    <th class="text-center">Acciones</th>
-                </tr>
-            </thead>
-
-            <tbody>
-
-                @forelse($checkItems as $item)
-
+                <thead>
                     <tr>
+                        <th>ID</th>
+                        <th>Área</th>
+                        <th>Infraestructura</th>
+                        <th>Nombre</th>
+                        <th>Orden</th>
+                        <th>Estado</th>
+                        <th class="text-center">
+                            Acciones
+                        </th>
+                    </tr>
+                </thead>
 
-                        <td>
-                            #{{ $item->id }}
-                        </td>
+                <tbody>
 
-                        <td>
-                            <strong>
-                                {{ $item->infraestructura?->area?->nombre ?? 'Área no disponible' }}
-                            </strong>
-                        </td>
+                    @forelse($checkItems as $item)
 
-                        <td>
-                            {{ $item->infraestructura?->nombre ?? 'Infraestructura no disponible' }}
-                        </td>
+                        <tr>
 
-                        <td>
-                            {{ $item->nombre }}
-                        </td>
+                            <td>
+                                #{{ $item->id_check_items }}
+                            </td>
 
-                        <td>
-                            {{ $item->orden }}
-                        </td>
+                            <td>
+                                <strong>
+                                    {{ $item->infraestructura?->area?->nombre ?? 'Área no disponible' }}
+                                </strong>
+                            </td>
 
-                        <td>
+                            <td>
+                                {{ $item->infraestructura?->nombre ?? 'Infraestructura no disponible' }}
+                            </td>
 
-                            @if($item->activo)
+                            <td>
+                                {{ $item->nombre }}
+                            </td>
 
-                                <span class="gp-badge-success">
-                                    Activo
-                                </span>
+                            <td>
+                                {{ $item->orden }}
+                            </td>
 
-                            @else
+                            <td>
 
-                                <span class="gp-badge-danger">
-                                    Inactivo
-                                </span>
+                                @if($item->activo)
 
-                            @endif
+                                    <span class="gp-badge-success">
+                                        Activo
+                                    </span>
 
-                        </td>
+                                @else
 
-                        <td class="text-center">
+                                    <span class="gp-badge-danger">
+                                        Inactivo
+                                    </span>
 
-                            <div class="gp-action-group">
+                                @endif
 
-                                <a href="{{ route('check-items.edit', $item) }}"
-                                   class="gp-view-button">
-                                    ✏️ Editar
-                                </a>
+                            </td>
 
-                                <form
-                                    method="POST"
-                                    action="{{ route('check-items.destroy', $item) }}"
-                                    onsubmit="return confirm('¿Está seguro de eliminar este Check Item? Esta acción no se puede deshacer.');"
-                                >
+                            <td class="text-center">
 
-                                    @csrf
-                                    @method('DELETE')
+                                <div class="gp-action-group">
 
-                                    <button
-                                        type="submit"
-                                        class="gp-delete-button"
+                                    <a
+                                        href="{{ route('check-items.edit', $item) }}"
+                                        class="gp-view-button"
                                     >
-                                        🗑 Eliminar
-                                    </button>
+                                        ✏️ Editar
+                                    </a>
 
-                                </form>
+                                    <form
+                                        method="POST"
+                                        action="{{ route('check-items.destroy', $item) }}"
+                                        onsubmit="return confirm('¿Está seguro de eliminar este Check Item? Esta acción no se puede deshacer.');"
+                                    >
 
-                            </div>
+                                        @csrf
+                                        @method('DELETE')
 
-                        </td>
+                                        <button
+                                            type="submit"
+                                            class="gp-delete-button"
+                                        >
+                                            🗑 Eliminar
+                                        </button>
 
-                    </tr>
+                                    </form>
 
-                @empty
+                                </div>
 
-                    <tr>
-                        <td colspan="7" class="gp-empty-table">
-                            No hay items registrados.
-                        </td>
-                    </tr>
+                            </td>
 
-                @endforelse
+                        </tr>
 
-            </tbody>
+                    @empty
 
-        </table>
+                        <tr>
+                            <td
+                                colspan="7"
+                                class="gp-empty-table"
+                            >
+                                No hay items registrados.
+                            </td>
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
 
     </div>
 
-</div>
+</x-app-layout>

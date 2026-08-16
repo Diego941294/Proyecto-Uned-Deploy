@@ -52,4 +52,13 @@ class User extends Authenticatable
             'id_users'
         );
     }
+
+    public function historialEstados()
+{
+    return $this->hasMany(
+        ReporteHistorialEstado::class,
+        'id_users',
+        'id_users'
+    );
+}
 }

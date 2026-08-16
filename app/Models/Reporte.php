@@ -61,13 +61,13 @@ class Reporte extends Model
         );
     }
     public function accionesCorrectivas()
-{
-    return $this->hasMany(
-        ReporteAccionCorrectiva::class,
-        'id_reportes',
-        'id_reportes'
-    );
-}
+    {
+        return $this->hasMany(
+            ReporteAccionCorrectiva::class,
+            'id_reportes',
+            'id_reportes'
+        );
+    }
 
     public function aprobador()
     {
@@ -75,6 +75,15 @@ class Reporte extends Model
             User::class,
             'id_usuario_aprobador',
             'id_users'
+        );
+    }
+
+    public function historialEstados()
+    {
+        return $this->hasMany(
+            ReporteHistorialEstado::class,
+            'id_reportes',
+            'id_reportes'
         );
     }
 }

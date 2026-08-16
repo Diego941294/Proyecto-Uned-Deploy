@@ -7,6 +7,8 @@ use App\Models\CheckItem;
 use App\Models\Reporte;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ReporteHistorialEstado;
+use Illuminate\Support\Facades\DB;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -245,19 +247,19 @@ class ReporteController extends Controller
             'id_users' => Auth::id(),
 
             'id_areas' =>
-                $validated['id_areas'],
+            $validated['id_areas'],
 
             'fecha' =>
-                $validated['fecha'],
+            $validated['fecha'],
 
             'semana' =>
-                now()->weekOfYear,
+            now()->weekOfYear,
 
             'estado' =>
-                'borrador',
+            'borrador',
 
             'observaciones' =>
-                $validated['observaciones']
+            $validated['observaciones']
                 ?? null,
         ]);
 
@@ -275,13 +277,13 @@ class ReporteController extends Controller
                 ->detalles()
                 ->create([
                     'id_check_items' =>
-                        $checkItemId,
+                    $checkItemId,
 
                     'estado' =>
-                        $detalle['estado'],
+                    $detalle['estado'],
 
                     'observacion' =>
-                        $detalle['observacion']
+                    $detalle['observacion']
                         ?? null,
                 ]);
         }
@@ -375,16 +377,24 @@ class ReporteController extends Controller
 
     public function aprobar(Reporte $reporte)
     {
-        $reporte->update([
-            'estado' =>
-                'aprobado',
+        DB::transaction(function () use ($reporte) {
 
-            'id_usuario_aprobador' =>
-                Auth::id(),
+            $estadoAnterior = $reporte->estado;
 
-            'fecha_aprobacion' =>
-                now(),
-        ]);
+            $reporte->update([
+                'estado' => 'aprobado',
+                'id_usuario_aprobador' => Auth::id(),
+                'fecha_aprobacion' => now(),
+            ]);
+
+            ReporteHistorialEstado::create([
+                'id_reportes' => $reporte->id_reportes,
+                'id_users' => Auth::id(),
+                'estado_anterior' => $estadoAnterior,
+                'estado_nuevo' => 'aprobado',
+                'comentario' => 'Reporte aprobado.',
+            ]);
+        });
 
         return redirect()
             ->back()
@@ -403,16 +413,24 @@ class ReporteController extends Controller
 
     public function rechazar(Reporte $reporte)
     {
-        $reporte->update([
-            'estado' =>
-                'rechazado',
+        DB::transaction(function () use ($reporte) {
 
-            'id_usuario_aprobador' =>
-                Auth::id(),
+            $estadoAnterior = $reporte->estado;
 
-            'fecha_aprobacion' =>
-                now(),
-        ]);
+            $reporte->update([
+                'estado' => 'rechazado',
+                'id_usuario_aprobador' => Auth::id(),
+                'fecha_aprobacion' => null,
+            ]);
+
+            ReporteHistorialEstado::create([
+                'id_reportes' => $reporte->id_reportes,
+                'id_users' => Auth::id(),
+                'estado_anterior' => $estadoAnterior,
+                'estado_nuevo' => 'rechazado',
+                'comentario' => 'Reporte rechazado.',
+            ]);
+        });
 
         return redirect()
             ->back()
@@ -421,7 +439,6 @@ class ReporteController extends Controller
                 'Reporte rechazado.'
             );
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -453,8 +470,8 @@ class ReporteController extends Controller
             ),
 
             'reporte-'
-            . $reporte->id_reportes
-            . '.xlsx'
+                . $reporte->id_reportes
+                . '.xlsx'
         );
     }
 
@@ -481,8 +498,8 @@ class ReporteController extends Controller
 
         return $pdf->download(
             'reporte-preoperacional-'
-            . $reporte->id_reportes
-            . '.pdf'
+                . $reporte->id_reportes
+                . '.pdf'
         );
     }
 
@@ -596,47 +613,47 @@ class ReporteController extends Controller
                 'fecha',
                 $hoy
             )
-                ->whereHas(
-                    'area',
-                    fn ($q) =>
-                    $q->where(
-                        'nombre',
-                        'like',
-                        '%Caliente%'
-                    )
+            ->whereHas(
+                'area',
+                fn($q) =>
+                $q->where(
+                    'nombre',
+                    'like',
+                    '%Caliente%'
                 )
-                ->where(
-                    'estado',
-                    '!=',
-                    'rechazado'
-                )
-                ->exists();
+            )
+            ->where(
+                'estado',
+                '!=',
+                'rechazado'
+            )
+            ->exists();
 
         $reporteFrio =
             Reporte::whereDate(
                 'fecha',
                 $hoy
             )
-                ->whereHas(
-                    'area',
-                    fn ($q) =>
-                    $q->where(
+            ->whereHas(
+                'area',
+                fn($q) =>
+                $q->where(
+                    'nombre',
+                    'like',
+                    '%Fría%'
+                )
+                    ->orWhere(
                         'nombre',
                         'like',
-                        '%Fría%'
+                        '%Fria%'
                     )
-                        ->orWhere(
-                            'nombre',
-                            'like',
-                            '%Fria%'
-                        )
-                )
-                ->where(
-                    'estado',
-                    '!=',
-                    'rechazado'
-                )
-                ->exists();
+            )
+            ->where(
+                'estado',
+                '!=',
+                'rechazado'
+            )
+            ->exists();
 
         $reportes = Reporte::with('area')
             ->where(

@@ -192,22 +192,24 @@ class ReporteController extends Controller
             ],
         ]);
 
+
         /*
-        |--------------------------------------------------------------------------
-        | VALIDAR CHECK ITEMS
-        |--------------------------------------------------------------------------
-        |
-        | CheckItem
-        |      ↓
-        | Infraestructura
-        |      ↓
-        | Área
-        |
-        */
+    |--------------------------------------------------------------------------
+    | VALIDAR CHECK ITEMS
+    |--------------------------------------------------------------------------
+    |
+    | CheckItem
+    |      ↓
+    | Infraestructura
+    |      ↓
+    | Área
+    |
+    */
 
         $checkItemIds = array_keys(
             $validated['detalles']
         );
+
 
         $cantidadItemsValidos = CheckItem::whereIn(
             'id_check_items',
@@ -225,6 +227,7 @@ class ReporteController extends Controller
             )
             ->count();
 
+
         if (
             $cantidadItemsValidos
             !== count($checkItemIds)
@@ -237,56 +240,92 @@ class ReporteController extends Controller
                 );
         }
 
+
         /*
+    |--------------------------------------------------------------------------
+    | CREAR REPORTE + DETALLES + HISTORIAL
+    |--------------------------------------------------------------------------
+    */
+
+        DB::transaction(function () use ($validated) {
+
+            /*
         |--------------------------------------------------------------------------
         | CREAR REPORTE
         |--------------------------------------------------------------------------
         */
 
-        $reporte = Reporte::create([
-            'id_users' => Auth::id(),
+            $reporte = Reporte::create([
+                'id_users' => Auth::id(),
 
-            'id_areas' =>
-            $validated['id_areas'],
+                'id_areas' =>
+                $validated['id_areas'],
 
-            'fecha' =>
-            $validated['fecha'],
+                'fecha' =>
+                $validated['fecha'],
 
-            'semana' =>
-            now()->weekOfYear,
+                'semana' =>
+                now()->weekOfYear,
 
-            'estado' =>
-            'borrador',
+                'estado' =>
+                'borrador',
 
-            'observaciones' =>
-            $validated['observaciones']
-                ?? null,
-        ]);
+                'observaciones' =>
+                $validated['observaciones']
+                    ?? null,
+            ]);
 
-        /*
+
+            /*
         |--------------------------------------------------------------------------
         | CREAR DETALLES
         |--------------------------------------------------------------------------
         */
 
-        foreach (
-            $validated['detalles']
-            as $checkItemId => $detalle
-        ) {
-            $reporte
-                ->detalles()
-                ->create([
-                    'id_check_items' =>
-                    $checkItemId,
+            foreach (
+                $validated['detalles']
+                as $checkItemId => $detalle
+            ) {
+                $reporte
+                    ->detalles()
+                    ->create([
+                        'id_check_items' =>
+                        $checkItemId,
 
-                    'estado' =>
-                    $detalle['estado'],
+                        'estado' =>
+                        $detalle['estado'],
 
-                    'observacion' =>
-                    $detalle['observacion']
-                        ?? null,
-                ]);
-        }
+                        'observacion' =>
+                        $detalle['observacion']
+                            ?? null,
+                    ]);
+            }
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | REGISTRAR ESTADO INICIAL
+        |--------------------------------------------------------------------------
+        */
+
+            ReporteHistorialEstado::create([
+                'id_reportes' =>
+                $reporte->id_reportes,
+
+                'id_users' =>
+                Auth::id(),
+
+                'estado_anterior' =>
+                null,
+
+                'estado_nuevo' =>
+                'borrador',
+
+                'comentario' =>
+                'Reporte creado.',
+            ]);
+        });
+
 
         return redirect()
             ->route('reportes.index')
@@ -298,10 +337,10 @@ class ReporteController extends Controller
 
 
     /*
-    |--------------------------------------------------------------------------
-    | MOSTRAR REPORTE
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| MOSTRAR REPORTE
+|--------------------------------------------------------------------------
+*/
 
     public function show(Reporte $reporte)
     {
@@ -317,7 +356,6 @@ class ReporteController extends Controller
             compact('reporte')
         );
     }
-
 
     /*
     |--------------------------------------------------------------------------

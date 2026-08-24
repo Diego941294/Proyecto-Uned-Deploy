@@ -29,32 +29,94 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        $user->fill($request->validated());
+        $validated = $request->validated();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Evitar asignar archivos directamente con fill()
+        |--------------------------------------------------------------------------
+        */
+
+        unset(
+            $validated['photo'],
+            $validated['firma']
+        );
+
+        $user->fill($validated);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | FOTO DE PERFIL
+        |--------------------------------------------------------------------------
+        */
 
         if ($request->hasFile('photo')) {
 
-            $request->validate([
-                'photo' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            ]);
-
             if ($user->photo) {
-                Storage::disk('public')->delete($user->photo);
+                Storage::disk('public')
+                    ->delete($user->photo);
             }
 
-            $photoPath = $request->file('photo')->store('perfiles', 'public');
+            $photoPath = $request
+                ->file('photo')
+                ->store(
+                    'perfiles',
+                    'public'
+                );
 
             $user->photo = $photoPath;
         }
 
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
+
+        /*
+        |--------------------------------------------------------------------------
+        | FIRMA
+        |--------------------------------------------------------------------------
+        |
+        | La imagen se almacena como archivo.
+        | En la base de datos únicamente se guarda la ruta.
+        |
+        */
+
+        if ($request->hasFile('firma')) {
+
+            if ($user->firma) {
+                Storage::disk('public')
+                    ->delete($user->firma);
+            }
+
+            $firmaPath = $request
+                ->file('firma')
+                ->store(
+                    'firmas',
+                    'public'
+                );
+
+            $user->firma = $firmaPath;
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | EMAIL
+        |--------------------------------------------------------------------------
+        */
+
+ 
 
         $user->save();
 
+
         return Redirect::route('profile.edit')
-            ->with('status', 'profile-updated')
-            ->with('success', 'Perfil actualizado correctamente.');
+            ->with(
+                'status',
+                'profile-updated'
+            )
+            ->with(
+                'success',
+                'Perfil actualizado correctamente.'
+            );
     }
 
     /**
@@ -62,6 +124,9 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        abort(403, 'No está permitido eliminar la cuenta desde el perfil.');
+        abort(
+            403,
+            'No está permitido eliminar la cuenta desde el perfil.'
+        );
     }
 }

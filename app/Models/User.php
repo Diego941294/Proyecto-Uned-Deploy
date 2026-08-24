@@ -20,6 +20,7 @@ class User extends Authenticatable
         'email',
         'password',
         'photo',
+        'firma',
     ];
 
     protected $hidden = [
@@ -54,11 +55,11 @@ class User extends Authenticatable
     }
 
     public function historialEstados()
-{
-    return $this->hasMany(
-        ReporteHistorialEstado::class,
-        'id_users',
-        'id_users'
-    );
-}
+    {
+        return $this->hasMany(
+            ReporteHistorialEstado::class,
+            'id_users',
+            'id_users'
+        );
+    }
 }

@@ -6,25 +6,28 @@
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            Actualice su información personal y fotografía.
+            Actualice su información personal.
         </p>
     </header>
 
     <form id="send-verification"
-          method="post"
-          action="{{ route('verification.send') }}">
+        method="post"
+        action="{{ route('verification.send') }}">
         @csrf
     </form>
 
     <form method="POST"
-          action="{{ route('profile.update') }}"
-          enctype="multipart/form-data"
-          class="gp-profile-form">
+        action="{{ route('profile.update') }}"
+        enctype="multipart/form-data"
+        class="gp-profile-form">
 
         @csrf
         @method('PATCH')
 
+
+        {{-- Fotografía de perfil --}}
         <div class="gp-form-group">
+
             <label for="photo" class="gp-label">
                 Fotografía de perfil
             </label>
@@ -39,9 +42,13 @@
             <x-input-error
                 class="mt-2"
                 :messages="$errors->get('photo')" />
+
         </div>
 
+
+        {{-- Nombre --}}
         <div class="gp-form-group">
+
             <label for="name" class="gp-label">
                 Nombre
             </label>
@@ -59,26 +66,65 @@
             <x-input-error
                 class="mt-2"
                 :messages="$errors->get('name')" />
+
         </div>
 
+
+        {{-- Correo electrónico --}}
         <div class="gp-form-group">
+
             <label for="email" class="gp-label">
                 Correo electrónico
             </label>
 
             <input
                 id="email"
-                name="email"
                 type="email"
                 class="gp-input"
-                value="{{ old('email', $user->email) }}"
-                required
-                autocomplete="username">
+                value="{{ $user->email }}"
+                readonly>
+
+        </div>
+
+
+        {{-- Firma --}}
+        <div class="gp-form-group">
+
+            <label for="firma" class="gp-label">
+                Firma
+            </label>
+
+            <input
+                type="file"
+                id="firma"
+                name="firma"
+                accept=".jpg,.jpeg,.png,.webp"
+                class="gp-file-input">
 
             <x-input-error
                 class="mt-2"
-                :messages="$errors->get('email')" />
+                :messages="$errors->get('firma')" />
+
+
+            @if($user->firma)
+
+            <div style="margin-top: 12px;">
+
+                <img
+                    src="{{ asset('storage/' . $user->firma) }}"
+                    alt="Firma"
+                    style="
+                            max-width: 280px;
+                            max-height: 140px;
+                            object-fit: contain;
+                        ">
+
+            </div>
+
+            @endif
+
         </div>
+
 
         <div class="gp-form-actions">
 
@@ -87,16 +133,18 @@
             </button>
 
             @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 3000)"
-                    class="gp-profile-success">
 
-                    Perfil actualizado correctamente.
+            <p
+                x-data="{ show: true }"
+                x-show="show"
+                x-transition
+                x-init="setTimeout(() => show = false, 3000)"
+                class="gp-profile-success">
 
-                </p>
+                Perfil actualizado correctamente.
+
+            </p>
+
             @endif
 
         </div>

@@ -1,7 +1,17 @@
+@php
+    if (auth()->user()->hasRole('super-admin')) {
+        $rutaHome = route('super-admin.dashboard');
+    } elseif (auth()->user()->hasRole('administrador')) {
+        $rutaHome = route('administrador.dashboard');
+    } else {
+        $rutaHome = route('supervisor.dashboard');
+    }
+@endphp`
+
 <nav x-data="{ open: false }" class="gp-navbar">
     <div class="gp-navbar-inner">
 
-        <a href="{{ route('administrador.dashboard') }}" class="gp-brand">
+        <a href="{{ $rutaHome }}" class="gp-brand">
             <img src="{{ asset('images/guana-pollo-logo.png') }}" alt="Guana Pollo" class="gp-brand-logo">
 
             <div>
@@ -12,15 +22,15 @@
 
         <div class="gp-nav-links">
             @role('Supervisor')
-                <a href="{{ route('supervisor.dashboard') }}" class="gp-nav-link">
-                    Supervisor
-                </a>
+            <a href="{{ route('supervisor.dashboard') }}" class="gp-nav-link">
+                Supervisor
+            </a>
             @endrole
 
             @role('Administrador')
-                <a href="{{ route('administrador.dashboard') }}" class="gp-nav-link">
-                    Administrador
-                </a>
+            <a href="{{ route('administrador.dashboard') }}" class="gp-nav-link">
+                Administrador
+            </a>
             @endrole
         </div>
 
@@ -34,14 +44,20 @@
                     <strong>{{ Auth::user()->name }}</strong>
                     <span>
                         @role('Supervisor')
-                            Supervisor de Calidad
+                        Supervisor de Calidad
                         @endrole
 
                         @role('Administrador')
-                            Administrador de Calidad
+                        Administrador de Calidad
                         @endrole
                     </span>
                 </div>
+
+                <a
+                    href="{{ route('profile.edit') }}"
+                    class="gp-nav-link">
+                    Mi Perfil
+                </a>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -60,11 +76,11 @@
     <div x-show="open" class="gp-mobile-menu">
 
         @role('Supervisor')
-            <a href="{{ route('supervisor.dashboard') }}">Supervisor</a>
+        <a href="{{ route('supervisor.dashboard') }}">Supervisor</a>
         @endrole
 
         @role('Administrador')
-            <a href="{{ route('administrador.dashboard') }}">Administrador</a>
+        <a href="{{ route('administrador.dashboard') }}">Administrador</a>
         @endrole
 
         <button type="button" onclick="toggleDarkMode()">

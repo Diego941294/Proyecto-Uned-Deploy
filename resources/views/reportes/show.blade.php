@@ -22,24 +22,21 @@
 
                 <a
                     href="{{ route('reportes.index') }}"
-                    class="gp-action-btn secondary"
-                >
+                    class="gp-action-btn secondary">
                     ← Volver
                 </a>
 
 
                 <a
                     href="{{ route('reportes.pdf', $reporte) }}"
-                    class="gp-action-btn pdf"
-                >
+                    class="gp-action-btn pdf">
                     📄 PDF
                 </a>
 
 
                 <a
                     href="{{ route('reportes.excel-detalle', $reporte) }}"
-                    class="gp-action-btn excel"
-                >
+                    class="gp-action-btn excel">
                     📊 Excel
                 </a>
 
@@ -48,55 +45,51 @@
                      ACCIONES ADMINISTRATIVAS
                 ====================================================== --}}
                 @if(
-                    auth()->check() &&
-                    auth()->user()->hasAnyRole([
-                        'administrador',
-                        'super-admin'
-                    ])
+                auth()->check() &&
+                auth()->user()->hasAnyRole([
+                'administrador',
+                'super-admin'
+                ])
                 )
 
-                    @if($reporte->estado !== 'aprobado')
+                @if($reporte->estado !== 'aprobado')
 
-                        <form
-                            method="POST"
-                            action="{{ route('reportes.aprobar', $reporte) }}"
-                            onsubmit="return confirm('¿Desea aprobar este reporte?');"
-                        >
+                <form
+                    method="POST"
+                    action="{{ route('reportes.aprobar', $reporte) }}"
+                    onsubmit="return confirm('¿Desea aprobar este reporte?');">
 
-                            @csrf
+                    @csrf
 
-                            <button
-                                type="submit"
-                                class="gp-action-btn success"
-                            >
-                                ✓ Aprobar
-                            </button>
+                    <button
+                        type="submit"
+                        class="gp-action-btn success">
+                        ✓ Aprobar
+                    </button>
 
-                        </form>
+                </form>
 
-                    @endif
+                @endif
 
 
-                    @if($reporte->estado !== 'rechazado')
+                @if($reporte->estado !== 'rechazado')
 
-                        <form
-                            method="POST"
-                            action="{{ route('reportes.rechazar', $reporte) }}"
-                            onsubmit="return confirm('¿Desea rechazar este reporte?');"
-                        >
+                <form
+                    method="POST"
+                    action="{{ route('reportes.rechazar', $reporte) }}"
+                    onsubmit="return confirm('¿Desea rechazar este reporte?');">
 
-                            @csrf
+                    @csrf
 
-                            <button
-                                type="submit"
-                                class="gp-action-btn danger"
-                            >
-                                ✕ Rechazar
-                            </button>
+                    <button
+                        type="submit"
+                        class="gp-action-btn danger">
+                        ✕ Rechazar
+                    </button>
 
-                        </form>
+                </form>
 
-                    @endif
+                @endif
 
                 @endif
 
@@ -117,37 +110,37 @@
 
         @if(session('success'))
 
-            <div class="gp-success-message">
-                {{ session('success') }}
-            </div>
+        <div class="gp-success-message">
+            {{ session('success') }}
+        </div>
 
         @endif
 
 
         @if(session('error'))
 
-            <div class="gp-error-message">
-                {{ session('error') }}
-            </div>
+        <div class="gp-error-message">
+            {{ session('error') }}
+        </div>
 
         @endif
 
 
         @if($errors->any())
 
-            <div class="gp-error-message">
+        <div class="gp-error-message">
 
-                <strong>
-                    No se pudo completar la operación:
-                </strong>
+            <strong>
+                No se pudo completar la operación:
+            </strong>
 
-                <ul>
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+            <ul>
+                @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
 
-            </div>
+        </div>
 
         @endif
 
@@ -160,177 +153,83 @@
         <div class="gp-detail-summary">
 
             <div class="gp-detail-card">
-
-                <span>
-                    Área
-                </span>
-
+                <span>Área</span>
                 <strong>
                     {{ $reporte->area?->nombre ?? 'Área no disponible' }}
                 </strong>
-
             </div>
 
-
             <div class="gp-detail-card">
-
-                <span>
-                    Supervisor
-                </span>
-
+                <span>Supervisor</span>
                 <strong>
                     {{ $reporte->usuario?->name ?? 'Usuario no disponible' }}
                 </strong>
-
             </div>
 
-
             <div class="gp-detail-card">
-
-                <span>
-                    Fecha
-                </span>
-
+                <span>Fecha</span>
                 <strong>
                     {{ $reporte->fecha?->format('d/m/Y') ?? 'No registrada' }}
                 </strong>
-
             </div>
-
 
             <div class="gp-detail-card">
-
-                <span>
-                    Estado
-                </span>
+                <span>Estado</span>
 
                 @if($reporte->estado === 'aprobado')
-
-                    <strong class="gp-text-success">
-                        Aprobado
-                    </strong>
+                <strong class="gp-text-success">
+                    Aprobado
+                </strong>
 
                 @elseif($reporte->estado === 'rechazado')
-
-                    <strong class="gp-text-danger">
-                        Rechazado
-                    </strong>
+                <strong class="gp-text-danger">
+                    Rechazado
+                </strong>
 
                 @elseif($reporte->estado === 'enviado')
-
-                    <strong class="gp-text-warning">
-                        Enviado
-                    </strong>
+                <strong class="gp-text-warning">
+                    Enviado
+                </strong>
 
                 @else
-
-                    <strong class="gp-text-warning">
-                        Borrador
-                    </strong>
-
+                <strong class="gp-text-warning">
+                    Borrador
+                </strong>
                 @endif
-
             </div>
 
-        </div>
-
-
-
-        {{-- =========================================================
-             INFORMACIÓN DE REVISIÓN
-        ========================================================== --}}
-
-        <div class="gp-review-info">
 
             @if($reporte->estado === 'aprobado')
 
-                <div class="gp-review-card success">
-
-                    <strong>
-                        Aprobado por:
-                    </strong>
-
+            <div class="gp-detail-card">
+                <span>Aprobado por</span>
+                <strong>
                     {{ $reporte->aprobador?->name ?? 'No registrado' }}
+                </strong>
+            </div>
 
-                </div>
-
-
-                <div class="gp-review-card success">
-
-                    <strong>
-                        Fecha de aprobación:
-                    </strong>
-
+            <div class="gp-detail-card">
+                <span>Fecha de aprobación</span>
+                <strong>
                     {{ $reporte->fecha_aprobacion?->format('d/m/Y H:i') ?? 'No registrada' }}
-
-                </div>
-
+                </strong>
+            </div>
 
             @elseif($reporte->estado === 'rechazado')
 
-                <div class="gp-review-card danger">
-
-                    <strong>
-                        Rechazado por:
-                    </strong>
-
+            <div class="gp-detail-card">
+                <span>Administrador</span>
+                <strong>
                     {{ $reporte->aprobador?->name ?? 'No registrado' }}
+                </strong>
+            </div>
 
-                </div>
-
-            @endif
-
-        </div>
-
-
-
-        {{-- =========================================================
-             REVISIÓN ADMINISTRATIVA
-        ========================================================== --}}
-
-        <div class="gp-observation-box">
-
-            <h3>
-                Revisión administrativa
-            </h3>
-
-
-            @if($reporte->estado === 'aprobado')
-
-                <p>
-                    <strong>
-                        Aprobado por:
-                    </strong>
-
-                    {{ $reporte->aprobador?->name ?? 'No registrado' }}
-                </p>
-
-
-                <p>
-                    <strong>
-                        Fecha de aprobación:
-                    </strong>
-
-                    {{ $reporte->fecha_aprobacion?->format('d/m/Y H:i') ?? 'No registrada' }}
-                </p>
-
-
-            @elseif($reporte->estado === 'rechazado')
-
-                <p>
-                    <strong>
-                        Rechazado por:
-                    </strong>
-
-                    {{ $reporte->aprobador?->name ?? 'No registrado' }}
-                </p>
-
-
-            @else
-
-                <p>
-                    Este reporte todavía está pendiente de revisión administrativa.
-                </p>
+            <div class="gp-detail-card">
+                <span>Revisión administrativa</span>
+                <strong>
+                    Rechazado por: {{ $reporte->aprobador?->name ?? 'No registrado' }}
+                </strong>
+            </div>
 
             @endif
 
@@ -375,77 +274,76 @@
 
                     @forelse($reporte->detalles as $detalle)
 
-                        <tr>
+                    <tr>
 
-                            <td>
+                        <td>
 
-                                {{ $detalle->checkItem?->infraestructura?->nombre
+                            {{ $detalle->checkItem?->infraestructura?->nombre
                                     ?? 'Infraestructura no disponible' }}
 
-                            </td>
+                        </td>
 
 
-                            <td>
+                        <td>
 
-                                {{ $detalle->checkItem?->nombre
+                            {{ $detalle->checkItem?->nombre
                                     ?? 'Elemento no disponible' }}
 
-                            </td>
+                        </td>
 
 
-                            <td>
+                        <td>
 
-                                @if($detalle->estado === 'A')
+                            @if($detalle->estado === 'A')
 
-                                    <span class="gp-badge-success">
-                                        A
-                                    </span>
+                            <span class="gp-badge-success">
+                                A
+                            </span>
 
-                                @elseif($detalle->estado === 'NC')
+                            @elseif($detalle->estado === 'NC')
 
-                                    <span class="gp-badge-danger">
-                                        NC
-                                    </span>
+                            <span class="gp-badge-danger">
+                                NC
+                            </span>
 
-                                @elseif($detalle->estado === 'NA')
+                            @elseif($detalle->estado === 'NA')
 
-                                    <span class="gp-badge-secondary">
-                                        NA
-                                    </span>
+                            <span class="gp-badge-secondary">
+                                NA
+                            </span>
 
-                                @else
+                            @else
 
-                                    <span class="gp-badge-warning">
-                                        NFR
-                                    </span>
+                            <span class="gp-badge-warning">
+                                NFR
+                            </span>
 
-                                @endif
+                            @endif
 
-                            </td>
+                        </td>
 
 
-                            <td>
+                        <td>
 
-                                {{ $detalle->observacion
+                            {{ $detalle->observacion
                                     ?? 'Sin observación' }}
 
-                            </td>
+                        </td>
 
-                        </tr>
+                    </tr>
 
 
                     @empty
 
-                        <tr>
+                    <tr>
 
-                            <td
-                                colspan="4"
-                                class="gp-empty-table"
-                            >
-                                No hay detalles registrados para este reporte.
-                            </td>
+                        <td
+                            colspan="4"
+                            class="gp-empty-table">
+                            No hay detalles registrados para este reporte.
+                        </td>
 
-                        </tr>
+                    </tr>
 
                     @endforelse
 
@@ -478,322 +376,157 @@
 
         {{-- =========================================================
              FIRMAS
-             ADMINISTRADOR / SUPER ADMIN
         ========================================================== --}}
 
-        @if(
-            auth()->check() &&
-            auth()->user()->hasAnyRole([
-                'administrador',
-                'super-admin'
-            ])
-        )
+        <div class="gp-signature-section">
 
-            <div class="gp-signature-section">
+            <div class="gp-detail-section-title">
+                <h3>
+                    Firmas de control de calidad
+                </h3>
+            </div>
 
-                <div class="gp-detail-section-title">
+            <div class="gp-signature-grid">
+
+                {{-- SUPERVISOR --}}
+                <div class="gp-signature-card">
 
                     <h3>
-                        Firmas de control de calidad
+                        Supervisor de Calidad
                     </h3>
 
-                    <p>
-                        Registre las firmas digitales de las personas responsables de la revisión.
-                    </p>
+                    <div class="gp-form-group">
 
-                </div>
+                        <label class="gp-label">
+                            Nombre
+                        </label>
 
-
-                <form
-                    method="POST"
-                    action="{{ route('reportes.firmas', $reporte) }}"
-                >
-
-                    @csrf
-
-
-                    <div class="gp-signature-grid">
-
-
-                        {{-- =================================================
-                             SUPERVISOR / INSPECTOR DE CALIDAD
-                        ================================================== --}}
-
-                        <div class="gp-signature-card">
-
-                            <h3>
-                                Supervisor de Calidad
-                            </h3>
-
-
-                            <label class="gp-label">
-                                Nombre
-                            </label>
-
-                            <input
-                                type="text"
-                                name="inspector_calidad"
-                                class="gp-input"
-                                placeholder="Nombre del supervisor de calidad"
-                                value="{{ old(
-                                    'inspector_calidad',
-                                    $reporte->inspector_calidad
-                                ) }}"
-                            >
-
-
-                            <div class="gp-signature-method-title">
-                                Dibujar firma
-                            </div>
-
-
-                            <canvas
-                                id="firmaInspectorCanvas"
-                                class="gp-signature-canvas"
-                            ></canvas>
-
-
-                            <input
-                                type="hidden"
-                                name="firma_inspector"
-                                id="firmaInspectorInput"
-                                value="{{ old(
-                                    'firma_inspector',
-                                    $reporte->firma_inspector
-                                ) }}"
-                            >
-
-
-                            <div class="gp-signature-buttons">
-
-                                <button
-                                    type="button"
-                                    class="gp-action-btn secondary"
-                                    id="limpiarInspector"
-                                >
-                                    Limpiar firma
-                                </button>
-
-                            </div>
-
-
-                            {{-- SUBIR IMAGEN --}}
-                            <div class="gp-signature-upload">
-
-                                <label
-                                    for="imagenFirmaInspector"
-                                    class="gp-label"
-                                >
-                                    O cargar firma como imagen
-                                </label>
-
-                                <input
-                                    type="file"
-                                    id="imagenFirmaInspector"
-                                    class="gp-input"
-                                    accept="image/png,image/jpeg,image/webp"
-                                >
-
-                                <p class="gp-form-help">
-                                    Formatos permitidos: PNG, JPG, JPEG o WEBP.
-                                </p>
-
-                            </div>
-
-
-                            <div
-                                id="previewInspector"
-                                class="gp-current-signature"
-                                style="display:none;"
-                            >
-
-                                <p>
-                                    Vista previa:
-                                </p>
-
-                                <img
-                                    id="previewInspectorImg"
-                                    class="gp-signature-img"
-                                    alt="Vista previa de la firma"
-                                >
-
-                            </div>
-
-
-                            @if($reporte->firma_inspector)
-
-                                <div class="gp-current-signature">
-
-                                    <p>
-                                        Firma registrada:
-                                    </p>
-
-                                    <img
-                                        src="{{ $reporte->firma_inspector }}"
-                                        class="gp-signature-img"
-                                        alt="Firma del supervisor de calidad"
-                                    >
-
-                                </div>
-
-                            @endif
-
-                        </div>
-
-
-
-                        {{-- =================================================
-                             CONTROL / VERIFICADOR DE CALIDAD
-                        ================================================== --}}
-
-                        <div class="gp-signature-card">
-
-                            <h3>
-                                Control de Calidad
-                            </h3>
-
-
-                            <label class="gp-label">
-                                Nombre
-                            </label>
-
-                            <input
-                                type="text"
-                                name="verificador_calidad"
-                                class="gp-input"
-                                placeholder="Nombre del responsable de control de calidad"
-                                value="{{ old(
-                                    'verificador_calidad',
-                                    $reporte->verificador_calidad
-                                ) }}"
-                            >
-
-
-                            <div class="gp-signature-method-title">
-                                Dibujar firma
-                            </div>
-
-
-                            <canvas
-                                id="firmaVerificadorCanvas"
-                                class="gp-signature-canvas"
-                            ></canvas>
-
-
-                            <input
-                                type="hidden"
-                                name="firma_verificador"
-                                id="firmaVerificadorInput"
-                                value="{{ old(
-                                    'firma_verificador',
-                                    $reporte->firma_verificador
-                                ) }}"
-                            >
-
-
-                            <div class="gp-signature-buttons">
-
-                                <button
-                                    type="button"
-                                    class="gp-action-btn secondary"
-                                    id="limpiarVerificador"
-                                >
-                                    Limpiar firma
-                                </button>
-
-                            </div>
-
-
-                            {{-- SUBIR IMAGEN --}}
-                            <div class="gp-signature-upload">
-
-                                <label
-                                    for="imagenFirmaVerificador"
-                                    class="gp-label"
-                                >
-                                    O cargar firma como imagen
-                                </label>
-
-                                <input
-                                    type="file"
-                                    id="imagenFirmaVerificador"
-                                    class="gp-input"
-                                    accept="image/png,image/jpeg,image/webp"
-                                >
-
-                                <p class="gp-form-help">
-                                    Formatos permitidos: PNG, JPG, JPEG o WEBP.
-                                </p>
-
-                            </div>
-
-
-                            <div
-                                id="previewVerificador"
-                                class="gp-current-signature"
-                                style="display:none;"
-                            >
-
-                                <p>
-                                    Vista previa:
-                                </p>
-
-                                <img
-                                    id="previewVerificadorImg"
-                                    class="gp-signature-img"
-                                    alt="Vista previa de la firma"
-                                >
-
-                            </div>
-
-
-                            @if($reporte->firma_verificador)
-
-                                <div class="gp-current-signature">
-
-                                    <p>
-                                        Firma registrada:
-                                    </p>
-
-                                    <img
-                                        src="{{ $reporte->firma_verificador }}"
-                                        class="gp-signature-img"
-                                        alt="Firma de control de calidad"
-                                    >
-
-                                </div>
-
-                            @endif
-
+                        <div class="gp-input">
+                            {{ $reporte->usuario?->name ?? 'No registrado' }}
                         </div>
 
                     </div>
 
+                    @if($reporte->usuario?->firma)
 
-                    <button
-                        type="submit"
-                        class="gp-action-btn success"
-                        style="margin-top:20px;"
-                    >
-                        Guardar firmas digitales
-                    </button>
+                    <div class="gp-current-signature">
 
-                </form>
+                        <p>
+                            Firma registrada:
+                        </p>
+
+                        <img
+                            src="{{ asset('storage/' . $reporte->usuario->firma) }}"
+                            class="gp-signature-img"
+                            alt="Firma del supervisor de calidad">
+
+                    </div>
+
+                    @else
+
+                    <div class="gp-current-signature">
+                        <p>
+                            Firma no registrada.
+                        </p>
+                    </div>
+
+                    @endif
+
+                </div>
+
+
+                {{-- CONTROL DE CALIDAD --}}
+                <div class="gp-signature-card">
+
+                    <h3>
+                        Control de Calidad
+                    </h3>
+
+                    <div class="gp-form-group">
+
+                        <label class="gp-label">
+                            Nombre
+                        </label>
+
+                        <div class="gp-input">
+                            {{ $reporte->aprobador?->name ?? 'No registrado' }}
+                        </div>
+
+                    </div>
+
+                    @if($reporte->aprobador?->firma)
+
+                    <div class="gp-current-signature">
+
+                        <p>
+                            Firma registrada:
+                        </p>
+
+                        <img
+                            src="{{ asset('storage/' . $reporte->aprobador->firma) }}"
+                            class="gp-signature-img"
+                            alt="Firma de control de calidad">
+
+                    </div>
+
+                    @else
+
+                    <div class="gp-current-signature">
+                        <p>
+                            Firma no registrada.
+                        </p>
+                    </div>
+
+                    @endif
+
+                </div>
 
             </div>
 
-        @endif
-
+        </div>
 
     </div>
-
-
 
     {{-- =========================================================
          ESTILOS COMPLEMENTARIOS
     ========================================================== --}}
 
     <style>
+        .gp-detail-summary {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .gp-detail-card {
+            padding: 16px 18px;
+            border: 1px solid #dbe8f3;
+            border-radius: 12px;
+            background: #ffffff;
+        }
+
+        .gp-detail-card span {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .gp-detail-card strong {
+            color: #0f2f5f;
+        }
+
+        @media (max-width: 768px) {
+            .gp-detail-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+
+
+
 
         .gp-success-message {
             margin-bottom: 20px;
@@ -851,283 +584,8 @@
             border-radius: 12px;
             touch-action: none;
         }
-
     </style>
 
 
-
-    {{-- =========================================================
-         FIRMA DIGITAL
-    ========================================================== --}}
-
-    <script>
-
-        document.addEventListener(
-            'DOMContentLoaded',
-            function () {
-
-                /*
-                |--------------------------------------------------------------------------
-                | FIRMA DIBUJADA
-                |--------------------------------------------------------------------------
-                */
-
-                function setupSignature(
-                    canvasId,
-                    inputId,
-                    clearButtonId
-                ) {
-
-                    const canvas =
-                        document.getElementById(canvasId);
-
-                    const input =
-                        document.getElementById(inputId);
-
-                    const clearButton =
-                        document.getElementById(clearButtonId);
-
-
-                    if (
-                        !canvas ||
-                        !input ||
-                        !clearButton
-                    ) {
-                        return;
-                    }
-
-
-                    if (!window.SignaturePad) {
-                        console.warn(
-                            'SignaturePad no está disponible.'
-                        );
-
-                        return;
-                    }
-
-
-                    const signaturePad =
-                        new window.SignaturePad(
-                            canvas,
-                            {
-                                backgroundColor:
-                                    'rgb(255, 255, 255)',
-
-                                penColor:
-                                    'rgb(15, 47, 95)'
-                            }
-                        );
-
-
-                    function resizeCanvas() {
-
-                        const ratio =
-                            Math.max(
-                                window.devicePixelRatio || 1,
-                                1
-                            );
-
-                        const rect =
-                            canvas.getBoundingClientRect();
-
-
-                        canvas.width =
-                            rect.width * ratio;
-
-                        canvas.height =
-                            rect.height * ratio;
-
-
-                        canvas
-                            .getContext('2d')
-                            .scale(
-                                ratio,
-                                ratio
-                            );
-
-
-                        signaturePad.clear();
-                    }
-
-
-                    resizeCanvas();
-
-
-                    window.addEventListener(
-                        'resize',
-                        resizeCanvas
-                    );
-
-
-                    signaturePad.addEventListener(
-                        'endStroke',
-                        function () {
-
-                            input.value =
-                                signaturePad.toDataURL(
-                                    'image/png'
-                                );
-                        }
-                    );
-
-
-                    clearButton.addEventListener(
-                        'click',
-                        function () {
-
-                            signaturePad.clear();
-
-                            input.value = '';
-                        }
-                    );
-                }
-
-
-
-                setupSignature(
-                    'firmaInspectorCanvas',
-                    'firmaInspectorInput',
-                    'limpiarInspector'
-                );
-
-
-                setupSignature(
-                    'firmaVerificadorCanvas',
-                    'firmaVerificadorInput',
-                    'limpiarVerificador'
-                );
-
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | FIRMA CARGADA COMO IMAGEN
-                |--------------------------------------------------------------------------
-                */
-
-                function setupImageUpload(
-                    fileInputId,
-                    hiddenInputId,
-                    previewContainerId,
-                    previewImageId
-                ) {
-
-                    const fileInput =
-                        document.getElementById(
-                            fileInputId
-                        );
-
-                    const hiddenInput =
-                        document.getElementById(
-                            hiddenInputId
-                        );
-
-                    const previewContainer =
-                        document.getElementById(
-                            previewContainerId
-                        );
-
-                    const previewImage =
-                        document.getElementById(
-                            previewImageId
-                        );
-
-
-                    if (
-                        !fileInput ||
-                        !hiddenInput ||
-                        !previewContainer ||
-                        !previewImage
-                    ) {
-                        return;
-                    }
-
-
-                    fileInput.addEventListener(
-                        'change',
-                        function () {
-
-                            const file =
-                                fileInput.files[0];
-
-
-                            if (!file) {
-                                return;
-                            }
-
-
-                            const allowedTypes = [
-                                'image/png',
-                                'image/jpeg',
-                                'image/webp'
-                            ];
-
-
-                            if (
-                                !allowedTypes.includes(
-                                    file.type
-                                )
-                            ) {
-
-                                alert(
-                                    'Seleccione una imagen PNG, JPG, JPEG o WEBP.'
-                                );
-
-                                fileInput.value = '';
-
-                                return;
-                            }
-
-
-                            const reader =
-                                new FileReader();
-
-
-                            reader.onload =
-                                function (event) {
-
-                                    const imageData =
-                                        event.target.result;
-
-
-                                    hiddenInput.value =
-                                        imageData;
-
-
-                                    previewImage.src =
-                                        imageData;
-
-
-                                    previewContainer.style.display =
-                                        'block';
-                                };
-
-
-                            reader.readAsDataURL(file);
-                        }
-                    );
-                }
-
-
-
-                setupImageUpload(
-                    'imagenFirmaInspector',
-                    'firmaInspectorInput',
-                    'previewInspector',
-                    'previewInspectorImg'
-                );
-
-
-                setupImageUpload(
-                    'imagenFirmaVerificador',
-                    'firmaVerificadorInput',
-                    'previewVerificador',
-                    'previewVerificadorImg'
-                );
-
-            }
-        );
-
-    </script>
 
 </x-app-layout>

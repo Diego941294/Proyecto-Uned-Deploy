@@ -13,8 +13,19 @@
                 </p>
             </div>
 
-            <a href="{{ route('dashboard') }}"
-               class="gp-action-btn secondary">
+            @php
+            if (auth()->user()->hasRole('super-admin')) {
+            $rutaVolver = route('super-admin.dashboard');
+            } elseif (auth()->user()->hasRole('administrador')) {
+            $rutaVolver = route('administrador.dashboard');
+            } else {
+            $rutaVolver = route('supervisor.dashboard');
+            }
+            @endphp
+
+            <a
+                href="{{ $rutaVolver }}"
+                class="gp-action-btn secondary">
                 ← Volver
             </a>
 
@@ -28,12 +39,12 @@
             <div class="gp-profile-avatar">
 
                 @if(Auth::user()->photo)
-                    <img src="{{ asset('storage/' . Auth::user()->photo) }}"
-                         alt="Foto de perfil">
+                <img src="{{ asset('storage/' . Auth::user()->photo) }}"
+                    alt="Foto de perfil">
                 @else
-                    <span>
-                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                    </span>
+                <span>
+                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                </span>
                 @endif
 
             </div>
@@ -46,10 +57,6 @@
                 {{ Auth::user()->roles->pluck('name')->join(', ') ?: 'Sin rol asignado' }}
             </div>
 
-            <div class="gp-profile-meta">
-                <strong>Usuario desde</strong>
-                <span>{{ Auth::user()->created_at?->format('d/m/Y') }}</span>
-            </div>
 
         </aside>
 

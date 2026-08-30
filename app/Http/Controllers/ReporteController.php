@@ -449,9 +449,17 @@ class ReporteController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function rechazar(Reporte $reporte)
+    public function rechazar(Request $request, Reporte $reporte)
     {
-        DB::transaction(function () use ($reporte) {
+        $validated = $request->validate([
+            'motivo_rechazo' => [
+                'required',
+                'string',
+                'max:1000',
+            ],
+        ]);
+
+        DB::transaction(function () use ($reporte, $validated) {
 
             $estadoAnterior = $reporte->estado;
 
@@ -459,6 +467,7 @@ class ReporteController extends Controller
                 'estado' => 'rechazado',
                 'id_usuario_aprobador' => Auth::id(),
                 'fecha_aprobacion' => null,
+                'motivo_rechazo' => $validated['motivo_rechazo'],
             ]);
 
             ReporteHistorialEstado::create([
@@ -477,7 +486,6 @@ class ReporteController extends Controller
                 'Reporte rechazado.'
             );
     }
-
     /*
     |--------------------------------------------------------------------------
     | EXCEL GENERAL
@@ -641,115 +649,166 @@ class ReporteController extends Controller
     | DASHBOARD SUPERVISOR
     |--------------------------------------------------------------------------
     */
+public function dashboardSupervisor()
+{
+    $hoy = now()->toDateString();
 
-    public function dashboardSupervisor()
-    {
-        $hoy = now()->toDateString();
+    $user = Auth::user();
 
-        $reporteCaliente =
-            Reporte::whereDate(
-                'fecha',
-                $hoy
-            )
-            ->whereHas(
-                'area',
-                fn($q) =>
-                $q->where(
+    /*
+    |--------------------------------------------------------------------------
+    | CONSULTA BASE
+    |--------------------------------------------------------------------------
+    |
+    | Si el usuario es Supervisor:
+    |     solamente puede ver sus propios reportes.
+    |
+    | Si entra Super Administrador:
+    |     puede ver todos los reportes.
+    |
+    */
+
+    $queryBase = Reporte::query();
+
+    if ($user->hasRole('Supervisor')) {
+        $queryBase->where(
+            'id_users',
+            $user->id_users
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | REPORTE ÁREA CALIENTE DE HOY
+    |--------------------------------------------------------------------------
+    */
+
+    $reporteCaliente = (clone $queryBase)
+        ->whereDate(
+            'fecha',
+            $hoy
+        )
+        ->whereHas(
+            'area',
+            function ($query) {
+
+                $query->where(
                     'nombre',
                     'like',
                     '%Caliente%'
-                )
-            )
-            ->where(
-                'estado',
-                '!=',
-                'rechazado'
-            )
-            ->exists();
+                );
+            }
+        )
+        ->where(
+            'estado',
+            '!=',
+            'rechazado'
+        )
+        ->exists();
 
-        $reporteFrio =
-            Reporte::whereDate(
-                'fecha',
-                $hoy
-            )
-            ->whereHas(
-                'area',
-                fn($q) =>
-                $q->where(
+
+    /*
+    |--------------------------------------------------------------------------
+    | REPORTE ÁREA FRÍA DE HOY
+    |--------------------------------------------------------------------------
+    */
+
+    $reporteFrio = (clone $queryBase)
+        ->whereDate(
+            'fecha',
+            $hoy
+        )
+        ->whereHas(
+            'area',
+            function ($query) {
+
+                $query->where(
                     'nombre',
                     'like',
                     '%Fría%'
                 )
-                    ->orWhere(
-                        'nombre',
-                        'like',
-                        '%Fria%'
-                    )
-            )
-            ->where(
-                'estado',
-                '!=',
-                'rechazado'
-            )
-            ->exists();
-
-        $reportes = Reporte::with('area')
-            ->where(
-                'id_users',
-                Auth::id()
-            )
-            ->where(
-                'estado',
-                '!=',
-                'rechazado'
-            )
-            ->orderBy(
-                'fecha',
-                'desc'
-            )
-            ->get();
-
-        $aprobados = Reporte::where(
-            'id_users',
-            Auth::id()
+                ->orWhere(
+                    'nombre',
+                    'like',
+                    '%Fria%'
+                );
+            }
         )
-            ->where(
-                'estado',
-                'aprobado'
-            )
-            ->count();
-
-        $rechazados = Reporte::where(
-            'id_users',
-            Auth::id()
+        ->where(
+            'estado',
+            '!=',
+            'rechazado'
         )
-            ->where(
-                'estado',
-                'rechazado'
-            )
-            ->count();
+        ->exists();
 
-        $borradores = Reporte::where(
-            'id_users',
-            Auth::id()
+
+    /*
+    |--------------------------------------------------------------------------
+    | REPORTES
+    |--------------------------------------------------------------------------
+    */
+
+    $reportes = (clone $queryBase)
+        ->with('area')
+        ->where(
+            'estado',
+            '!=',
+            'rechazado'
         )
-            ->where(
-                'estado',
-                'borrador'
-            )
-            ->count();
+        ->orderBy(
+            'fecha',
+            'desc'
+        )
+        ->get();
 
-        return view(
-            'dashboard.supervisor',
-            compact(
-                'reportes',
-                'aprobados',
-                'rechazados',
-                'borradores'
-            )
-        );
-    }
 
+    /*
+    |--------------------------------------------------------------------------
+    | CONTADORES
+    |--------------------------------------------------------------------------
+    */
+
+    $aprobados = (clone $queryBase)
+        ->where(
+            'estado',
+            'aprobado'
+        )
+        ->count();
+
+
+    $rechazados = (clone $queryBase)
+        ->where(
+            'estado',
+            'rechazado'
+        )
+        ->count();
+
+
+    $borradores = (clone $queryBase)
+        ->where(
+            'estado',
+            'borrador'
+        )
+        ->count();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | VISTA
+    |--------------------------------------------------------------------------
+    */
+
+    return view(
+        'dashboard.supervisor',
+        compact(
+            'reportes',
+            'aprobados',
+            'rechazados',
+            'borradores'
+        )
+    );
+}
 
     /*
     |--------------------------------------------------------------------------

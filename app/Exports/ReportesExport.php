@@ -19,7 +19,7 @@ class ReportesExport implements FromCollection, WithHeadings
 
             return [
 
-                'ID' => $reporte->id,
+                'ID' => $reporte->id_reportes,
 
                 'Área' => $reporte->area?->nombre,
 

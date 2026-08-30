@@ -40,48 +40,99 @@
                     @forelse($infraestructuras as $infraestructura)
 
                         <tr>
-                            <td>{{ $infraestructura->area->nombre }}</td>
-
-                            <td>{{ $infraestructura->nombre }}</td>
-
-                            <td>{{ $infraestructura->codigo ?? '-' }}</td>
 
                             <td>
+                                {{ $infraestructura->area?->nombre ?? 'Área no disponible' }}
+                            </td>
+
+                            <td>
+                                {{ $infraestructura->nombre }}
+                            </td>
+
+                            <td>
+                                {{ $infraestructura->codigo ?? '-' }}
+                            </td>
+
+                            <td>
+
                                 @if($infraestructura->activo)
-                                    <span class="gp-badge-success">Activo</span>
+
+                                    <span class="gp-badge-success">
+                                        Activo
+                                    </span>
+
                                 @else
-                                    <span class="gp-badge-danger">Inactivo</span>
+
+                                    <span class="gp-badge-danger">
+                                        Inactivo
+                                    </span>
+
                                 @endif
+
                             </td>
 
                             <td class="gp-action-group">
 
-                                <a href="{{ route('infraestructuras.edit', $infraestructura) }}"
-                                   class="gp-view-button">
-
+                                <a
+                                    href="{{ route('infraestructuras.edit', $infraestructura) }}"
+                                    class="gp-view-button"
+                                >
                                     Editar
                                 </a>
 
-                                <form method="POST"
-                                      action="{{ route('infraestructuras.destroy', $infraestructura) }}">
-                                    @csrf
-                                    @method('DELETE')
 
-                                    <button type="submit"
-                                            class="gp-delete-button">
-                                        Eliminar
-                                    </button>
+                                <form
+                                    method="POST"
+                                    action="{{ route('infraestructuras.toggle-activo', $infraestructura) }}"
+
+                                    @if($infraestructura->activo)
+                                        onsubmit="return confirm('¿Está seguro de desactivar esta infraestructura?');"
+                                    @else
+                                        onsubmit="return confirm('¿Está seguro de activar esta infraestructura?');"
+                                    @endif
+                                >
+
+                                    @csrf
+                                    @method('PATCH')
+
+
+                                    @if($infraestructura->activo)
+
+                                        <button
+                                            type="submit"
+                                            class="gp-delete-button"
+                                        >
+                                            Desactivar
+                                        </button>
+
+                                    @else
+
+                                        <button
+                                            type="submit"
+                                            class="gp-activate-button"
+                                        >
+                                            Activar
+                                        </button>
+
+                                    @endif
+
                                 </form>
 
                             </td>
+
                         </tr>
 
                     @empty
 
                         <tr>
-                            <td colspan="5" class="gp-empty-table">
+
+                            <td
+                                colspan="5"
+                                class="gp-empty-table"
+                            >
                                 No existen infraestructuras registradas.
                             </td>
+
                         </tr>
 
                     @endforelse
@@ -93,5 +144,28 @@
         </div>
 
     </div>
+
+
+    <style>
+
+        .gp-activate-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 90px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .gp-activate-button:hover {
+            background: #bbf7d0;
+        }
+
+    </style>
 
 </x-app-layout>

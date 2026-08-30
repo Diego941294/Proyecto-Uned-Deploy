@@ -40,20 +40,27 @@
     <div class="gp-reports-panel">
 
         @if(session('success'))
+
             <div class="gp-success-message">
                 {{ session('success') }}
             </div>
+
         @endif
 
+
         @if(session('error'))
+
             <div class="gp-error-message">
                 {{ session('error') }}
             </div>
+
         @endif
+
 
         <div class="gp-reports-toolbar">
 
             <div>
+
                 <h3>
                     Elementos registrados
                 </h3>
@@ -61,6 +68,7 @@
                 <p>
                     Consulta los elementos de verificación del sistema preoperacional.
                 </p>
+
             </div>
 
         </div>
@@ -71,18 +79,29 @@
             <table class="gp-table-modern">
 
                 <thead>
+
                     <tr>
+
                         <th>ID</th>
+
                         <th>Área</th>
+
                         <th>Infraestructura</th>
+
                         <th>Nombre</th>
+
                         <th>Orden</th>
+
                         <th>Estado</th>
+
                         <th class="text-center">
                             Acciones
                         </th>
+
                     </tr>
+
                 </thead>
+
 
                 <tbody>
 
@@ -94,23 +113,30 @@
                                 #{{ $item->id_check_items }}
                             </td>
 
+
                             <td>
+
                                 <strong>
                                     {{ $item->infraestructura?->area?->nombre ?? 'Área no disponible' }}
                                 </strong>
+
                             </td>
+
 
                             <td>
                                 {{ $item->infraestructura?->nombre ?? 'Infraestructura no disponible' }}
                             </td>
 
+
                             <td>
                                 {{ $item->nombre }}
                             </td>
 
+
                             <td>
                                 {{ $item->orden }}
                             </td>
+
 
                             <td>
 
@@ -130,6 +156,7 @@
 
                             </td>
 
+
                             <td class="text-center">
 
                                 <div class="gp-action-group">
@@ -141,21 +168,41 @@
                                         ✏️ Editar
                                     </a>
 
+
                                     <form
                                         method="POST"
-                                        action="{{ route('check-items.destroy', $item) }}"
-                                        onsubmit="return confirm('¿Está seguro de eliminar este Check Item? Esta acción no se puede deshacer.');"
+                                        action="{{ route('check-items.toggle-activo', $item) }}"
+
+                                        @if($item->activo)
+                                            onsubmit="return confirm('¿Está seguro de desactivar este Check Item?');"
+                                        @else
+                                            onsubmit="return confirm('¿Está seguro de activar este Check Item?');"
+                                        @endif
                                     >
 
                                         @csrf
-                                        @method('DELETE')
+                                        @method('PATCH')
 
-                                        <button
-                                            type="submit"
-                                            class="gp-delete-button"
-                                        >
-                                            🗑 Eliminar
-                                        </button>
+
+                                        @if($item->activo)
+
+                                            <button
+                                                type="submit"
+                                                class="gp-delete-button"
+                                            >
+                                                Desactivar
+                                            </button>
+
+                                        @else
+
+                                            <button
+                                                type="submit"
+                                                class="gp-activate-button"
+                                            >
+                                                Activar
+                                            </button>
+
+                                        @endif
 
                                     </form>
 
@@ -168,12 +215,14 @@
                     @empty
 
                         <tr>
+
                             <td
                                 colspan="7"
                                 class="gp-empty-table"
                             >
                                 No hay items registrados.
                             </td>
+
                         </tr>
 
                     @endforelse
@@ -185,5 +234,42 @@
         </div>
 
     </div>
+
+
+    <style>
+
+        .gp-action-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+
+        .gp-view-button,
+        .gp-delete-button,
+        .gp-activate-button {
+            min-width: 100px;
+        }
+
+
+        .gp-activate-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            background: #dcfce7;
+            color: #166534;
+        }
+
+
+        .gp-activate-button:hover {
+            background: #bbf7d0;
+        }
+
+    </style>
 
 </x-app-layout>

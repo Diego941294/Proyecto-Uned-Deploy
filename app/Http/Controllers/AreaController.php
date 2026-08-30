@@ -102,79 +102,46 @@ class AreaController extends Controller
     {
         /*
         |--------------------------------------------------------------------------
-        | Verificar Check Items asociados
+        | Desactivar área
         |--------------------------------------------------------------------------
         |
-        | El área ya no tiene Check Items directamente.
-        |
-        | Área
-        |   ↓
-        | Infraestructura
-        |   ↓
-        | Check Items
+        | No se elimina físicamente para conservar las relaciones con
+        | infraestructuras, Check Items y reportes históricos.
         |
         */
 
-        $tieneCheckItems = $area
-            ->infraestructuras()
-            ->whereHas('checkItems')
-            ->exists();
-
-        if ($tieneCheckItems) {
-            return redirect()
-                ->route('areas.index')
-                ->with(
-                    'error',
-                    'No se puede eliminar esta área porque tiene Check Items asociados mediante sus infraestructuras.'
-                );
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Verificar reportes asociados
-        |--------------------------------------------------------------------------
-        */
-
-        if ($area->reportes()->exists()) {
-            return redirect()
-                ->route('areas.index')
-                ->with(
-                    'error',
-                    'No se puede eliminar esta área porque tiene reportes asociados.'
-                );
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Verificar infraestructuras asociadas
-        |--------------------------------------------------------------------------
-        */
-
-        if ($area->infraestructuras()->exists()) {
-            return redirect()
-                ->route('areas.index')
-                ->with(
-                    'error',
-                    'No se puede eliminar esta área porque tiene infraestructuras asociadas.'
-                );
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Eliminar área
-        |--------------------------------------------------------------------------
-        */
-
-        $area->delete();
+        $area->update([
+            'activo' => false,
+        ]);
 
         return redirect()
             ->route('areas.index')
             ->with(
                 'success',
-                'Área eliminada correctamente.'
+                'Área desactivada correctamente.'
+            );
+    }
+
+
+    public function toggleActivo(Area $area)
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | Activar / Desactivar área
+        |--------------------------------------------------------------------------
+        */
+
+        $area->update([
+            'activo' => !$area->activo,
+        ]);
+
+        return redirect()
+            ->route('areas.index')
+            ->with(
+                'success',
+                $area->activo
+                    ? 'Área activada correctamente.'
+                    : 'Área desactivada correctamente.'
             );
     }
 }

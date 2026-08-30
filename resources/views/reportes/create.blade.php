@@ -16,8 +16,7 @@
 
             <a
                 href="{{ route('supervisor.dashboard') }}"
-                class="gp-action-btn secondary"
-            >
+                class="gp-action-btn secondary">
                 ← Volver
             </a>
 
@@ -35,9 +34,9 @@
 
             @if($errors->any())
 
-                <div class="gp-error-message">
-                    {{ $errors->first() }}
-                </div>
+            <div class="gp-error-message">
+                {{ $errors->first() }}
+            </div>
 
             @endif
 
@@ -53,8 +52,7 @@
                     id="areaSelect"
                     name="id_areas"
                     class="gp-input"
-                    required
-                >
+                    required>
 
                     <option value="">
                         Seleccione un área
@@ -62,14 +60,14 @@
 
                     @foreach($areas as $area)
 
-                        <option
-                            value="{{ $area->id_areas }}"
-                            @selected(
-                                old('id_areas') == $area->id_areas
-                            )
+                    <option
+                        value="{{ $area->id_areas }}"
+                        @selected(
+                        old('id_areas')==$area->id_areas
+                        )
                         >
-                            {{ $area->nombre }}
-                        </option>
+                        {{ $area->nombre }}
+                    </option>
 
                     @endforeach
 
@@ -91,8 +89,7 @@
                     class="gp-input"
                     value="{{ old('fecha', now()->format('Y-m-d')) }}"
                     readonly
-                    required
-                >
+                    required>
 
             </div>
 
@@ -100,8 +97,7 @@
             {{-- Checklist --}}
             <div
                 id="checkItemsContainer"
-                class="gp-check-container"
-            >
+                class="gp-check-container">
 
                 <p class="gp-empty-message">
                     Seleccione un área para mostrar los elementos de verificación.
@@ -110,126 +106,114 @@
 
                 @foreach($areas as $area)
 
-                    <div
-                        class="area-checklist hidden"
-                        data-area="{{ $area->id_areas }}"
-                    >
+                <div
+                    class="area-checklist hidden"
+                    data-area="{{ $area->id_areas }}">
 
-                        @forelse($area->infraestructuras as $infraestructura)
+                    @forelse($area->infraestructuras as $infraestructura)
 
-                            @if($infraestructura->checkItems->isNotEmpty())
+                    @if($infraestructura->checkItems->isNotEmpty())
 
-                                <div class="gp-section-card">
+                    <div class="gp-section-card">
 
-                                    <h3 class="gp-section-title">
-                                        {{ $infraestructura->nombre }}
-                                    </h3>
-
-
-                                    @foreach($infraestructura->checkItems as $item)
-
-                                        <div class="gp-check-item">
+                        <h3 class="gp-section-title">
+                            {{ $infraestructura->nombre }}
+                        </h3>
 
 
-                                            <div class="gp-check-info">
+                        @foreach($infraestructura->checkItems as $item)
 
-                                                <strong>
-                                                    {{ $item->nombre }}
-                                                </strong>
-
-                                                <p>
-                                                    Orden: {{ $item->orden }}
-                                                </p>
-
-                                            </div>
+                        <div class="gp-check-item">
 
 
-                                            <div class="gp-check-controls">
+                            <div class="gp-check-info">
 
-                                                <select
-                                                    name="detalles[{{ $item->id_check_items }}][estado]"
-                                                    class="gp-input"
-                                                >
+                                <strong>
+                                    {{ $item->nombre }}
+                                </strong>
 
-                                                    <option
-                                                        value="A"
-                                                        @selected(
-                                                            old(
-                                                                "detalles.{$item->id_check_items}.estado",
-                                                                'A'
-                                                            ) === 'A'
-                                                        )
-                                                    >
-                                                        A - Aceptable
-                                                    </option>
+                                <p>
+                                    Orden: {{ $item->orden }}
+                                </p>
+
+                            </div>
 
 
-                                                    <option
-                                                        value="NC"
-                                                        @selected(
-                                                            old(
-                                                                "detalles.{$item->id_check_items}.estado"
-                                                            ) === 'NC'
-                                                        )
-                                                    >
-                                                        NC - No Conforme
-                                                    </option>
+                            <div class="gp-check-controls">
+
+                                <select
+                                    name="detalles[{{ $item->id_check_items }}][estado]"
+                                    class="gp-input">
+
+                                    <option
+                                        value="A"
+                                        @selected(
+                                        old( "detalles.{$item->id_check_items}.estado" , 'A'
+                                        )==='A'
+                                        )>
+                                        A - Aceptable
+                                    </option>
 
 
-                                                    <option
-                                                        value="NA"
-                                                        @selected(
-                                                            old(
-                                                                "detalles.{$item->id_check_items}.estado"
-                                                            ) === 'NA'
-                                                        )
-                                                    >
-                                                        NA - No Aplica
-                                                    </option>
+                                    <option
+                                        value="NC"
+                                        @selected(
+                                        old( "detalles.{$item->id_check_items}.estado"
+                                        )==='NC'
+                                        )>
+                                        NC - No Conforme
+                                    </option>
 
 
-                                                    <option
-                                                        value="NFR"
-                                                        @selected(
-                                                            old(
-                                                                "detalles.{$item->id_check_items}.estado"
-                                                            ) === 'NFR'
-                                                        )
-                                                    >
-                                                        NFR - No Fue Revisado
-                                                    </option>
-
-                                                </select>
+                                    <option
+                                        value="NA"
+                                        @selected(
+                                        old( "detalles.{$item->id_check_items}.estado"
+                                        )==='NA'
+                                        )>
+                                        NA - No Aplica
+                                    </option>
 
 
-                                                <input
-                                                    type="text"
-                                                    name="detalles[{{ $item->id_check_items }}][observacion]"
-                                                    class="gp-input"
-                                                    value="{{ old("detalles.{$item->id_check_items}.observacion") }}"
-                                                    placeholder="Observación"
-                                                >
+                                    <option
+                                        value="NFR"
+                                        @selected(
+                                        old( "detalles.{$item->id_check_items}.estado"
+                                        )==='NFR'
+                                        )>
+                                        NFR - No Fue Revisado
+                                    </option>
 
-                                            </div>
-
-                                        </div>
-
-                                    @endforeach
-
-                                </div>
-
-                            @endif
+                                </select>
 
 
-                        @empty
+                                <input
+                                    type="text"
+                                    name="detalles[{{ $item->id_check_items }}][observacion]"
+                                    class="gp-input"
+                                    value="{{ old("detalles.{$item->id_check_items}.observacion") }}"
+                                    placeholder="Observación">
 
-                            <p class="gp-empty-message">
-                                Esta área no tiene infraestructuras configuradas.
-                            </p>
+                            </div>
 
-                        @endforelse
+                        </div>
+
+                        @endforeach
 
                     </div>
+
+                    @endif
+
+
+                    @empty
+
+                    <p class="gp-empty-message">
+                        Esta área no tiene infraestructuras configuradas.
+                    </p>
+
+                    @endforelse
+
+                </div>
 
                 @endforeach
 
@@ -247,8 +231,7 @@
                     name="observaciones"
                     rows="4"
                     class="gp-textarea"
-                    placeholder="Observaciones generales del reporte"
-                >{{ old('observaciones') }}</textarea>
+                    placeholder="Observaciones generales del reporte">{{ old('observaciones') }}</textarea>
 
             </div>
 
@@ -258,8 +241,7 @@
 
                 <button
                     type="submit"
-                    class="gp-card-button"
-                >
+                    class="gp-card-button">
                     Guardar Reporte
                 </button>
 
@@ -271,10 +253,9 @@
 
 
     <script>
-
         document.addEventListener(
             'DOMContentLoaded',
-            function () {
+            function() {
 
                 const areaSelect =
                     document.getElementById('areaSelect');
@@ -317,8 +298,7 @@
                                 .forEach(
                                     campo => {
 
-                                        campo.disabled =
-                                            !esAreaSeleccionada;
+                                        campo.disabled = !esAreaSeleccionada;
 
                                     }
                                 );
@@ -353,12 +333,10 @@
 
             }
         );
-
     </script>
 
 
     <style>
-
         /* ===============================
            FORMULARIO NUEVO REPORTE
         =============================== */
@@ -426,7 +404,7 @@
         .gp-check-item {
             display: grid;
             grid-template-columns:
-                minmax(220px, 1fr) 1.4fr;
+                minmax(220px, 0.8fr) 2fr;
             gap: 20px;
             align-items: center;
             padding: 14px 0;
@@ -453,20 +431,18 @@
 
         .gp-check-controls {
             display: grid;
-            grid-template-columns: 220px 1fr;
+            grid-template-columns: 180px minmax(320px, 1fr);
             gap: 12px;
+            width: 100%;
         }
-
 
         .gp-card-button {
             padding: 12px 22px;
             border: none;
             border-radius: 10px;
-            background: linear-gradient(
-                135deg,
-                #f59e0b,
-                #d97706
-            );
+            background: linear-gradient(135deg,
+                    #0b63d8,
+                    #0f2f5f);
             color: #ffffff;
             font-weight: 800;
             cursor: pointer;
@@ -475,11 +451,10 @@
                 box-shadow .2s ease;
         }
 
-
         .gp-card-button:hover {
             transform: translateY(-1px);
             box-shadow:
-                0 8px 20px rgba(217, 119, 6, .24);
+                0 8px 20px rgba(11, 99, 216, .24);
         }
 
 
@@ -563,7 +538,6 @@
             }
 
         }
-
     </style>
 
 </x-app-layout>

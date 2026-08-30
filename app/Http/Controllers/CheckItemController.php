@@ -55,11 +55,20 @@ class CheckItemController extends Controller
             ],
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Evitar duplicados por infraestructura
+        |--------------------------------------------------------------------------
+        */
+
         $existe = CheckItem::where(
             'id_infraestructuras',
             $validated['id_infraestructuras']
         )
-            ->where('nombre', $validated['nombre'])
+            ->where(
+                'nombre',
+                $validated['nombre']
+            )
             ->exists();
 
         if ($existe) {
@@ -71,12 +80,21 @@ class CheckItemController extends Controller
                 );
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Generar orden automático
+        |--------------------------------------------------------------------------
+        */
+
         $ultimoOrden = CheckItem::where(
             'id_infraestructuras',
             $validated['id_infraestructuras']
         )->max('orden');
 
-        $validated['orden'] = ($ultimoOrden ?? 0) + 1;
+        $validated['orden'] =
+            ($ultimoOrden ?? 0) + 1;
+
 
         CheckItem::create($validated);
 
@@ -101,7 +119,10 @@ class CheckItemController extends Controller
 
         return view(
             'check-items.edit',
-            compact('checkItem', 'infraestructuras')
+            compact(
+                'checkItem',
+                'infraestructuras'
+            )
         );
     }
 
@@ -127,11 +148,21 @@ class CheckItemController extends Controller
             ],
         ]);
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Evitar duplicados
+        |--------------------------------------------------------------------------
+        */
+
         $existe = CheckItem::where(
             'id_infraestructuras',
             $validated['id_infraestructuras']
         )
-            ->where('nombre', $validated['nombre'])
+            ->where(
+                'nombre',
+                $validated['nombre']
+            )
             ->where(
                 'id_check_items',
                 '!=',
@@ -148,6 +179,7 @@ class CheckItemController extends Controller
                 );
         }
 
+
         $checkItem->update($validated);
 
         return redirect()
@@ -160,22 +192,47 @@ class CheckItemController extends Controller
 
     public function destroy(CheckItem $checkItem)
     {
-        if ($checkItem->detalles()->exists()) {
-            return redirect()
-                ->route('check-items.index')
-                ->with(
-                    'error',
-                    'No se puede eliminar este Check Item porque ya está asociado a uno o más reportes.'
-                );
-        }
+        /*
+        |--------------------------------------------------------------------------
+        | Desactivar Check Item
+        |--------------------------------------------------------------------------
+        |
+        | No se elimina físicamente para conservar los reportes históricos
+        | que puedan tener este Check Item asociado.
+        |
+        */
 
-        $checkItem->delete();
+        $checkItem->update([
+            'activo' => false,
+        ]);
 
         return redirect()
             ->route('check-items.index')
             ->with(
                 'success',
-                'Check Item eliminado correctamente.'
+                'Check Item desactivado correctamente.'
+            );
+    }
+
+    public function toggleActivo(CheckItem $checkItem)
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | Activar / Desactivar Check Item
+        |--------------------------------------------------------------------------
+        */
+
+        $checkItem->update([
+            'activo' => !$checkItem->activo,
+        ]);
+
+        return redirect()
+            ->route('check-items.index')
+            ->with(
+                'success',
+                $checkItem->activo
+                    ? 'Check Item activado correctamente.'
+                    : 'Check Item desactivado correctamente.'
             );
     }
 }

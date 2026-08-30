@@ -20,9 +20,7 @@
             </p>
 
             <a href="{{ route('reportes.create') }}" class="gp-card-button">
-
                 Nuevo reporte
-
             </a>
 
         </div>
@@ -37,81 +35,98 @@
             </p>
 
             <a href="{{ route('supervisor.mis_reportes') }}" class="gp-card-button">
-
                 Consultar
-
             </a>
 
         </div>
 
 
-
         <div class="gp-dashboard-card">
 
-
             <h3>Gráfico de mis reportes</h3>
-            <canvas id="graficoReportes"></canvas>
 
+            <canvas id="graficoReportes"></canvas>
 
             <style>
                 #graficoReportes {
-
                     height: 120px !important;
-                    /* alto fijo */
-                    margin: 0
+                    margin: 0;
                 }
             </style>
 
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-            <script>
-                const dataReportes = @json([$aprobados, $rechazados, $borradores]);
 
-                const ctx = document.getElementById('graficoReportes').getContext('2d');
+            <script>
+                const dataReportes = @json([
+                    $aprobados,
+                    $rechazados,
+                    $borradores
+                ]);
+
+                const ctx = document
+                    .getElementById('graficoReportes')
+                    .getContext('2d');
+
                 new Chart(ctx, {
-                    type: 'bar', // 🔸 gráfico de barras
+                    type: 'bar',
+
                     data: {
-                        labels: ['Aprobados', 'Rechazados', 'Borradores'],
+                        labels: [
+                            'Aprobados',
+                            'Rechazados',
+                            'Borradores'
+                        ],
+
                         datasets: [{
                             label: 'Cantidad',
                             data: dataReportes,
-                            backgroundColor: ['#22c55e', '#ef4444', '#f59e0b'],
+                            backgroundColor: [
+                                '#22c55e',
+                                '#ef4444',
+                                '#f59e0b'
+                            ],
                             borderWidth: 1
                         }]
                     },
+
                     options: {
-                        responsive: true,          // 🔸 evita que se estire
-                        maintainAspectRatio: false, // 🔸 respeta el tamaño CSS
+                        responsive: true,
+                        maintainAspectRatio: false,
+
                         plugins: {
-                            legend: { display: false },
-                            title: {
-                                display: true,
+                            legend: {
+                                display: false
                             }
                         },
+
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                ticks: { stepSize: 1 }
+                                ticks: {
+                                    stepSize: 1
+                                }
                             }
                         }
                     }
                 });
             </script>
 
-
         </div>
-
 
     </div>
 
-<div class="gp-dashboard-card" style="margin-top:30px;">
 
-    @if($reportes->isEmpty())
+    <div
+        class="gp-dashboard-card"
+        style="margin-top:30px;">
+
+        @if($reportes->isEmpty())
 
         <p style="color:#991b1b; font-weight:600;">
             ❌ No hay reportes en estado Borrador.
         </p>
 
-    @else
+        @else
 
         <div class="gp-table-wrapper">
 
@@ -130,32 +145,31 @@
 
                     @foreach($reportes as $reporte)
 
-                        <tr>
+                    <tr>
 
-                            <td>
-                                #{{ $reporte->id_reportes }}
-                            </td>
+                        <td>
+                            #{{ $reporte->id_reportes }}
+                        </td>
 
-                            <td>
-                                {{ $reporte->area?->nombre ?? 'Área no disponible' }}
-                            </td>
+                        <td>
+                            {{ $reporte->area?->nombre ?? 'Área no disponible' }}
+                        </td>
 
-                            <td>
-                                {{ \Carbon\Carbon::parse($reporte->fecha)->format('d/m/Y') }}
-                            </td>
+                        <td>
+                            {{ \Carbon\Carbon::parse($reporte->fecha)->format('d/m/Y') }}
+                        </td>
 
-                            <td>
+                        <td>
 
-                                <a
-                                    href="{{ route('reportes.edit', $reporte->id_reportes) }}"
-                                    class="gp-action-link"
-                                >
-                                    ✏️ Editar
-                                </a>
+                            <a
+                                href="{{ route('reportes.edit', $reporte->id_reportes) }}"
+                                class="gp-action-link">
+                                ✏️ Editar
+                            </a>
 
-                            </td>
+                        </td>
 
-                        </tr>
+                    </tr>
 
                     @endforeach
 
@@ -165,88 +179,194 @@
 
         </div>
 
-    @endif
+        @endif
 
-</div>
+    </div>
+
 
     <style>
         .gp-dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            /* 🔸 se adapta automáticamente */
+            grid-template-columns:
+                repeat(auto-fit, minmax(280px, 1fr));
             gap: 15px;
         }
 
-        /* Estilo base de cada tarjeta */
+
+        /* ===============================
+           TARJETAS SUPERVISOR
+        =============================== */
+
         .gp-dashboard-card {
             padding: 20px;
-            border: 1px solid #f97316;
+
+            border: 1px solid #8ec5f4;
+
             border-radius: 8px;
-            background: #fff;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+            background: #ffffff;
+
+            box-shadow:
+                0 2px 8px rgba(15, 47, 95, 0.10);
         }
 
-   
+
+        .gp-dashboard-card h3 {
+            color: #0b63d8;
+        }
+
+
+        /* ===============================
+           BOTONES
+        =============================== */
+
+        .gp-card-button {
+            display: inline-block;
+
+            margin-top: 16px;
+
+            padding: 11px 16px;
+
+            border-radius: 4px;
+
+            background:
+                linear-gradient(135deg,
+                    #178bff,
+                    #0b63d8);
+
+            color: #ffffff;
+
+            font-weight: 800;
+
+            text-decoration: none;
+
+            text-align: center;
+
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
+        }
+
+
+        .gp-card-button:hover {
+            transform: translateY(-1px);
+
+            background:
+                linear-gradient(135deg,
+                    #0b73e0,
+                    #084fae);
+
+            box-shadow:
+                0 8px 20px rgba(11, 99, 216, .22);
+        }
+
+
+        /* ===============================
+           TABLA
+        =============================== */
 
         .gp-table-wrapper {
             width: 100%;
             overflow-x: auto;
-            /* 🔸 scroll horizontal solo dentro de la tarjeta */
         }
+
 
         .gp-table {
             width: 100%;
+
             border-collapse: collapse;
+
             min-width: 500px;
-            /* 🔸 asegura que no se rompa en escritorio */
+
+            background-color: #ffffff;
+
+            color: #333333;
         }
+
 
         .gp-table th,
         .gp-table td {
             padding: 10px;
-            border-bottom: 1px solid #ddd;
+
+            border-bottom:
+                1px solid #dbe8f3;
+
             text-align: left;
         }
 
-        /* 🔸 En pantallas pequeñas, la tabla ocupa todo el ancho de la tarjeta */
-        @media (max-width: 768px) {
-            .gp-table {
-                min-width: 100%;
-                /* se ajusta al ancho de la tarjeta */
-            }
+
+        .gp-table th {
+            background:
+                linear-gradient(135deg,
+                    #0b63d8,
+                    #0f2f5f);
+
+            color: #ffffff;
         }
 
-        @media (max-width: 400px) {
+
+        .gp-table tbody tr:hover {
+            background: #f1f7ff;
+        }
+
+
+        /* ===============================
+           DARK MODE
+        =============================== */
+
+        body.dark-mode .gp-dashboard-card {
+            background: #0f1d33;
+
+            border-color:
+                rgba(99, 170, 255, .25);
+        }
+
+
+        body.dark-mode .gp-dashboard-card h3 {
+            color: #ffffff;
+        }
+
+
+        body.dark-mode .gp-table {
+            background: #0d192d;
+            color: #eaf3ff;
+        }
+
+
+        body.dark-mode .gp-table td {
+            background: #0d192d;
+            color: #eaf3ff;
+        }
+
+
+        /* ===============================
+           RESPONSIVE
+        =============================== */
+
+        @media (max-width: 768px) {
+
             .gp-table {
                 min-width: 100%;
-                /* 🔸 ocupa todo el ancho de la tarjeta */
-                font-size: 14px;
-                /* 🔸 reduce tipografía para que quepa */
             }
+
+        }
+
+
+        @media (max-width: 400px) {
+
+            .gp-table {
+                min-width: 100%;
+                font-size: 14px;
+            }
+
 
             .gp-table th,
             .gp-table td {
                 padding: 6px;
-                /* 🔸 menos padding */
             }
+
         }
-
-
-     
-
-        .gp-table {
-            background-color: #fff;
-            /* fondo fijo blanco */
-            color: #333;
-            /* texto gris oscuro */
-        }
-
-        .gp-table th {
-            background-color: #f97316;
-            /* naranja en encabezados */
-            color: #fff;
-        }
-
     </style>
 
 

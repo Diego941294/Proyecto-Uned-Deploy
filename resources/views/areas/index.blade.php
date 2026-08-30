@@ -35,7 +35,10 @@
                 <h3>
                     Áreas registradas ({{ $areas->count() }})
                 </h3>
-                <p>Consulta y administra las áreas disponibles del sistema.</p>
+
+                <p>
+                    Consulta y administra las áreas disponibles del sistema.
+                </p>
             </div>
         </div>
 
@@ -54,13 +57,19 @@
                 </thead>
 
                 <tbody>
+
                     @forelse($areas as $area)
 
                     <tr>
-                        <td>#{{ $area->id }}</td>
 
                         <td>
-                            <strong>{{ $area->nombre }}</strong>
+                            #{{ $area->id_areas }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ $area->nombre }}
+                            </strong>
                         </td>
 
                         <td>
@@ -68,60 +77,86 @@
                         </td>
 
                         <td>
+
                             @if($area->activo)
+
                             <span class="gp-badge-success">
                                 Activa
                             </span>
+
                             @else
+
                             <span class="gp-badge-danger">
                                 Inactiva
                             </span>
+
                             @endif
+
                         </td>
 
                         <td class="text-center">
 
                             <div class="gp-action-group">
 
-                                <a href="{{ route('areas.edit', $area) }}"
+                                <a
+                                    href="{{ route('areas.edit', $area) }}"
                                     class="gp-view-button">
-
                                     ✏️ Editar
-
                                 </a>
 
-                                <form method="POST"
-                                    action="{{ route('areas.destroy', $area) }}"
-                                    onsubmit="return confirm(
-                '¿Está seguro de eliminar esta área? Esta acción no se puede deshacer.'
-              );">
 
+                                <form
+                                    method="POST"
+                                    action="{{ route('areas.toggle-activo', $area) }}"
+                                    @if($area->activo)
+                                    onsubmit="return confirm('¿Está seguro de desactivar esta área?');"
+                                    @else
+                                    onsubmit="return confirm('¿Está seguro de activar esta área?');"
+                                    @endif
+                                    >
                                     @csrf
-                                    @method('DELETE')
+                                    @method('PATCH')
 
-                                    <button type="submit"
+                                    @if($area->activo)
+
+                                    <button
+                                        type="submit"
                                         class="gp-delete-button">
-
-                                        🗑 Eliminar
-
+                                        ⏸ Desactivar
                                     </button>
+
+                                    @else
+
+                                    <button
+                                        type="submit"
+                                        class="gp-activate-button">
+                                        ✓ Activar
+                                    </button>
+
+                                    @endif
 
                                 </form>
 
                             </div>
 
                         </td>
+
                     </tr>
 
                     @empty
 
                     <tr>
-                        <td colspan="5" class="gp-empty-table">
+
+                        <td
+                            colspan="5"
+                            class="gp-empty-table">
                             No hay áreas registradas.
                         </td>
+
                     </tr>
 
                     @endforelse
+
                 </tbody>
 
             </table>
@@ -129,7 +164,6 @@
         </div>
 
     </div>
-
 
 
     <style>
@@ -150,10 +184,27 @@
         }
 
         .gp-view-button,
-        .gp-delete-button {
-            min-width: 90px;
+        .gp-delete-button,
+        .gp-activate-button {
+            min-width: 105px;
+        }
+
+        .gp-activate-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .gp-activate-button:hover {
+            background: #bbf7d0;
         }
     </style>
-
 
 </x-app-layout>

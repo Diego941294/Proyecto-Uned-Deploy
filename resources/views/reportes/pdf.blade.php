@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
 
     <style>
+
         @page {
             margin: 28px 32px 42px 32px;
         }
@@ -70,6 +71,15 @@
             border-radius: 2px;
         }
 
+        .category-title {
+            padding: 7px 8px;
+            background: #dbeafe;
+            color: #163f73;
+            font-size: 10px;
+            font-weight: bold;
+            border: 1px solid #b9c9dc;
+        }
+
         .checklist-table {
             width: 100%;
             border-collapse: collapse;
@@ -116,6 +126,11 @@
             color: #163f73;
         }
 
+        .category-block {
+            page-break-inside: avoid;
+            margin-bottom: 10px;
+        }
+
         p {
             margin: 0;
             padding: 7px 2px;
@@ -132,6 +147,7 @@
             border-top: 1px solid #d1d5db;
             padding-top: 6px;
         }
+
     </style>
 
 </head>
@@ -169,6 +185,7 @@
 
         </tr>
 
+
         <tr>
 
             <td>
@@ -182,6 +199,7 @@
             </td>
 
         </tr>
+
 
         <tr>
 
@@ -201,10 +219,36 @@
 
 
     @php
-    $observacionesDetalle = $reporte->detalles
-    ->filter(fn ($detalle) => filled($detalle->observacion))
-    ->values();
+
+        /*
+        |--------------------------------------------------------------------------
+        | OBSERVACIONES
+        |--------------------------------------------------------------------------
+        */
+
+        $observacionesDetalle = $reporte->detalles
+            ->filter(
+                fn ($detalle) =>
+                    filled($detalle->observacion)
+            )
+            ->values();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | AGRUPAR DETALLES POR INFRAESTRUCTURA / CATEGORÍA
+        |--------------------------------------------------------------------------
+        */
+
+        $detallesAgrupados = $reporte->detalles
+            ->groupBy(
+                fn ($detalle) =>
+                    $detalle->checkItem?->infraestructura?->nombre
+                    ?? 'Sin infraestructura'
+            );
+
     @endphp
+
 
 
     <div class="section-title">
@@ -212,128 +256,253 @@
     </div>
 
 
-    <table class="checklist-table">
-
-        <thead>
-
-            <tr>
-                <th style="width: 24%;">Infraestructura</th>
-                <th style="width: 46%;">Elemento</th>
-                <th style="width: 12%;" class="text-center">Estado</th>
-                <th style="width: 18%;" class="text-center">ID Obs.</th>
-            </tr>
-
-        </thead>
+    @foreach($detallesAgrupados as $infraestructura => $detalles)
 
 
-        <tbody>
+        <div class="category-block">
 
-            @foreach($reporte->detalles as $detalle)
+            <table class="checklist-table">
 
-            @php
-            $indiceObservacion = $observacionesDetalle->search(
-            fn ($observacion) =>
-            $observacion->id_reporte_detalles
-            === $detalle->id_reporte_detalles
-            );
+                <thead>
 
-            $codigoObservacion =
-            $indiceObservacion !== false
-            ? 'OBS-' . str_pad(
-            $indiceObservacion + 1,
-            2,
-            '0',
-            STR_PAD_LEFT
-            )
-            : null;
-            @endphp
+                    <tr>
+                        <th
+                            colspan="3"
+                            class="category-title"
+                        >
+                            {{ $infraestructura }}
+                        </th>
+                    </tr>
 
 
-            <tr>
+                    <tr>
 
-                <td>
-                    {{ $detalle->checkItem?->infraestructura?->nombre ?? 'Sin infraestructura' }}
-                </td>
+                        <th style="width: 65%;">
+                            Elemento
+                        </th>
 
-                <td>
-                    {{ $detalle->checkItem?->nombre ?? 'Elemento no disponible' }}
-                </td>
+                        <th
+                            style="width: 15%;"
+                            class="text-center"
+                        >
+                            Estado
+                        </th>
 
-                <td class="text-center">
-                    {{ $detalle->estado }}
-                </td>
+                        <th
+                            style="width: 20%;"
+                            class="text-center"
+                        >
+                            ID Obs.
+                        </th>
 
-                <td class="text-center observation-id">
-                    {{ $codigoObservacion ?? '—' }}
-                </td>
+                    </tr>
 
-            </tr>
+                </thead>
 
-            @endforeach
 
-        </tbody>
+                <tbody>
 
-    </table>
+
+                    @foreach($detalles as $detalle)
+
+
+                        @php
+
+                            $indiceObservacion =
+                                $observacionesDetalle->search(
+                                    fn ($observacion) =>
+                                        $observacion->id_reporte_detalles
+                                        ===
+                                        $detalle->id_reporte_detalles
+                                );
+
+
+                            $codigoObservacion =
+                                $indiceObservacion !== false
+
+                                    ? 'OBS-' . str_pad(
+                                        $indiceObservacion + 1,
+                                        2,
+                                        '0',
+                                        STR_PAD_LEFT
+                                    )
+
+                                    : null;
+
+                        @endphp
+
+
+                        <tr>
+
+                            <td>
+                                {{ $detalle->checkItem?->nombre ?? 'Elemento no disponible' }}
+                            </td>
+
+
+                            <td class="text-center">
+                                {{ $detalle->estado }}
+                            </td>
+
+
+                            <td class="text-center observation-id">
+                                {{ $codigoObservacion ?? '—' }}
+                            </td>
+
+                        </tr>
+
+
+                    @endforeach
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+    @endforeach
 
 
 
     @if($observacionesDetalle->isNotEmpty())
 
-    <div class="section-title">
-        Detalle de observaciones
-    </div>
+
+        <div class="section-title">
+            Detalle de observaciones
+        </div>
 
 
-    <table class="checklist-table">
+        @php
 
-        <thead>
+            $observacionesAgrupadas =
+                $observacionesDetalle->groupBy(
 
-            <tr>
-                <th style="width: 12%;" class="text-center">ID</th>
-                <th style="width: 23%;">Infraestructura</th>
-                <th style="width: 25%;">Elemento</th>
-                <th style="width: 40%;">Observación</th>
-            </tr>
+                    fn ($detalle) =>
+                        $detalle->checkItem?->infraestructura?->nombre
+                        ?? 'Sin infraestructura'
 
-        </thead>
+                );
+
+        @endphp
 
 
-        <tbody>
 
-            @foreach($observacionesDetalle as $indice => $detalle)
+        @foreach($observacionesAgrupadas as $infraestructura => $observaciones)
 
-            <tr>
 
-                <td class="text-center observation-id">
+            <div class="category-block">
 
-                    OBS-{{ str_pad(
-                            $indice + 1,
-                            2,
-                            '0',
-                            STR_PAD_LEFT
-                        ) }}
 
-                </td>
+                <table class="checklist-table">
 
-                <td>
-                    {{ $detalle->checkItem?->infraestructura?->nombre ?? 'Sin infraestructura' }}
-                </td>
 
-                <td>
-                    {{ $detalle->checkItem?->nombre ?? 'Elemento no disponible' }}
-                </td>
+                    <thead>
 
-                <td>
-                    {{ $detalle->observacion }}
-                </td>
 
-            </tr>
+                        <tr>
 
-            @endforeach
+                            <th
+                                colspan="3"
+                                class="category-title"
+                            >
+                                {{ $infraestructura }}
+                            </th>
 
-        </tbody>
+                        </tr>
 
-    </table>
+
+                        <tr>
+
+                            <th
+                                style="width: 13%;"
+                                class="text-center"
+                            >
+                                ID
+                            </th>
+
+                            <th style="width: 32%;">
+                                Elemento
+                            </th>
+
+                            <th style="width: 55%;">
+                                Observación
+                            </th>
+
+                        </tr>
+
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                        @foreach($observaciones as $detalle)
+
+
+                            @php
+
+                                $indiceGeneral =
+                                    $observacionesDetalle->search(
+
+                                        fn ($observacion) =>
+                                            $observacion->id_reporte_detalles
+                                            ===
+                                            $detalle->id_reporte_detalles
+
+                                    );
+
+                            @endphp
+
+
+                            <tr>
+
+
+                                <td class="text-center observation-id">
+
+                                    OBS-{{ str_pad(
+                                        $indiceGeneral + 1,
+                                        2,
+                                        '0',
+                                        STR_PAD_LEFT
+                                    ) }}
+
+                                </td>
+
+
+                                <td>
+
+                                    {{ $detalle->checkItem?->nombre
+                                        ?? 'Elemento no disponible' }}
+
+                                </td>
+
+
+                                <td>
+
+                                    {{ $detalle->observacion }}
+
+                                </td>
+
+
+                            </tr>
+
+
+                        @endforeach
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        @endforeach
+
 
     @endif
 
@@ -350,10 +519,26 @@
 
 
 
-    <div class="footer">
+    @if(
+        $reporte->estado === 'rechazado' &&
+        filled($reporte->motivo_rechazo)
+    )
 
-        Documento generado automáticamente por el sistema
-        preoperacional Guana Pollo.
+        <div class="section-title">
+            Motivo del rechazo
+        </div>
+
+        <p>
+            {{ $reporte->motivo_rechazo }}
+        </p>
+
+    @endif
+
+
+
+    <div class="footer">
+    Generado el {{ now()->format('d/m/Y H:i:s') }}
+    
 
     </div>
 

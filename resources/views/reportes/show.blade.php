@@ -26,6 +26,13 @@
                     ← Volver
                 </a>
 
+                @if(
+                auth()->check() &&
+                auth()->user()->hasAnyRole([
+                'administrador',
+                'super-admin'
+                ])
+                )
 
                 <a
                     href="{{ route('reportes.pdf', $reporte) }}"
@@ -33,6 +40,7 @@
                     📄 PDF
                 </a>
 
+                @endif
 
                 <a
                     href="{{ route('reportes.excel-detalle', $reporte) }}"
@@ -76,9 +84,7 @@
 
                 <form
                     method="POST"
-                    action="{{ route('reportes.rechazar', $reporte) }}"
-                    onsubmit="return confirm('¿Desea rechazar este reporte?');">
-
+                    action="{{ route('reportes.rechazar', $reporte) }}">
                     @csrf
 
                     <button
@@ -86,10 +92,7 @@
                         class="gp-action-btn danger">
                         ✕ Rechazar
                     </button>
-
                 </form>
-
-                @endif
 
                 @endif
 
@@ -202,7 +205,8 @@
             @if($reporte->estado === 'aprobado')
 
             <div class="gp-detail-card">
-                <span>Aprobado por</span>
+                <span>Administrador</span>
+
                 <strong>
                     {{ $reporte->aprobador?->name ?? 'No registrado' }}
                 </strong>
@@ -210,26 +214,61 @@
 
             <div class="gp-detail-card">
                 <span>Fecha de aprobación</span>
+
                 <strong>
                     {{ $reporte->fecha_aprobacion?->format('d/m/Y H:i') ?? 'No registrada' }}
                 </strong>
             </div>
 
+
             @elseif($reporte->estado === 'rechazado')
 
             <div class="gp-detail-card">
                 <span>Administrador</span>
+
                 <strong>
                     {{ $reporte->aprobador?->name ?? 'No registrado' }}
                 </strong>
             </div>
 
             <div class="gp-detail-card">
-                <span>Revisión administrativa</span>
+                <span>Motivo del rechazo</span>
+
                 <strong>
-                    Rechazado por: {{ $reporte->aprobador?->name ?? 'No registrado' }}
+                    {{ $reporte->motivo_rechazo ?? 'No registrado' }}
                 </strong>
             </div>
+
+
+            @elseif(
+            $reporte->estado === 'borrador' &&
+            auth()->check() &&
+            auth()->user()->hasAnyRole([
+            'administrador',
+            'super-admin'
+            ])
+            )
+
+            <div class="gp-detail-card">
+                <span>Administrador</span>
+
+                <strong>
+                    {{ auth()->user()->name }}
+                </strong>
+            </div>
+
+            <div class="gp-detail-card">
+                <span>Motivo del rechazo</span>
+
+                <textarea
+                    name="motivo_rechazo"
+                    form="form-rechazar"
+                    class="gp-textarea"
+                    rows="4"
+                    placeholder="Motivo del rechazo">{{ old('motivo_rechazo') }}</textarea>
+            </div>
+
+            @endif
 
             @endif
 

@@ -253,31 +253,48 @@ class InfraestructuraController extends Controller
     ) {
         /*
         |--------------------------------------------------------------------------
-        | Protección de integridad
+        | Desactivar infraestructura
         |--------------------------------------------------------------------------
         |
-        | Como check_items.id_infraestructuras usa ON DELETE RESTRICT,
-        | conviene avisar al usuario antes de intentar eliminar.
+        | No se elimina físicamente para conservar los registros históricos
+        | y las relaciones con los Check Items existentes.
         |
         */
 
-        if ($infraestructura->checkItems()->exists()) {
-            return redirect()
-                ->route('infraestructuras.index')
-                ->with(
-                    'error',
-                    'No se puede eliminar esta infraestructura porque tiene Check Items asociados.'
-                );
-        }
-
-
-        $infraestructura->delete();
+        $infraestructura->update([
+            'activo' => false,
+        ]);
 
         return redirect()
             ->route('infraestructuras.index')
             ->with(
                 'success',
-                'Infraestructura eliminada correctamente.'
+                'Infraestructura desactivada correctamente.'
+            );
+    }
+
+
+    public function toggleActivo(
+        Infraestructura $infraestructura
+    ) {
+        /*
+        |--------------------------------------------------------------------------
+        | Activar / Desactivar infraestructura
+        |--------------------------------------------------------------------------
+        */
+
+        $infraestructura->update([
+            'activo' => !$infraestructura->activo,
+        ]);
+
+
+        return redirect()
+            ->route('infraestructuras.index')
+            ->with(
+                'success',
+                $infraestructura->activo
+                    ? 'Infraestructura activada correctamente.'
+                    : 'Infraestructura desactivada correctamente.'
             );
     }
 }

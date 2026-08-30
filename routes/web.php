@@ -292,12 +292,6 @@ Route::middleware([
         [ReporteController::class, 'pdfGeneral']
     )->name('reportes.pdf-general');
 
-
-    Route::post(
-        '/reportes/{reporte}/firmas',
-        [ReporteController::class, 'guardarFirmas']
-    )->name('reportes.firmas');
-
 });
 
 

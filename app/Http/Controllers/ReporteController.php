@@ -595,10 +595,10 @@ class ReporteController extends Controller
 
 
     /*
-    |--------------------------------------------------------------------------
-    | GUARDAR FIRMAS
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| GUARDAR FIRMAS
+|--------------------------------------------------------------------------
+*/
 
     public function guardarFirmas(
         Request $request,
@@ -649,13 +649,13 @@ class ReporteController extends Controller
     | DASHBOARD SUPERVISOR
     |--------------------------------------------------------------------------
     */
-public function dashboardSupervisor()
-{
-    $hoy = now()->toDateString();
+    public function dashboardSupervisor()
+    {
+        $hoy = now()->toDateString();
 
-    $user = Auth::user();
+        $user = Auth::user();
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | CONSULTA BASE
     |--------------------------------------------------------------------------
@@ -668,147 +668,147 @@ public function dashboardSupervisor()
     |
     */
 
-    $queryBase = Reporte::query();
+        $queryBase = Reporte::query();
 
-    if ($user->hasRole('Supervisor')) {
-        $queryBase->where(
-            'id_users',
-            $user->id_users
-        );
-    }
+        if ($user->hasRole('Supervisor')) {
+            $queryBase->where(
+                'id_users',
+                $user->id_users
+            );
+        }
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | REPORTE ÁREA CALIENTE DE HOY
     |--------------------------------------------------------------------------
     */
 
-    $reporteCaliente = (clone $queryBase)
-        ->whereDate(
-            'fecha',
-            $hoy
-        )
-        ->whereHas(
-            'area',
-            function ($query) {
+        $reporteCaliente = (clone $queryBase)
+            ->whereDate(
+                'fecha',
+                $hoy
+            )
+            ->whereHas(
+                'area',
+                function ($query) {
 
-                $query->where(
-                    'nombre',
-                    'like',
-                    '%Caliente%'
-                );
-            }
-        )
-        ->where(
-            'estado',
-            '!=',
-            'rechazado'
-        )
-        ->exists();
+                    $query->where(
+                        'nombre',
+                        'like',
+                        '%Caliente%'
+                    );
+                }
+            )
+            ->where(
+                'estado',
+                '!=',
+                'rechazado'
+            )
+            ->exists();
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | REPORTE ÁREA FRÍA DE HOY
     |--------------------------------------------------------------------------
     */
 
-    $reporteFrio = (clone $queryBase)
-        ->whereDate(
-            'fecha',
-            $hoy
-        )
-        ->whereHas(
-            'area',
-            function ($query) {
+        $reporteFrio = (clone $queryBase)
+            ->whereDate(
+                'fecha',
+                $hoy
+            )
+            ->whereHas(
+                'area',
+                function ($query) {
 
-                $query->where(
-                    'nombre',
-                    'like',
-                    '%Fría%'
-                )
-                ->orWhere(
-                    'nombre',
-                    'like',
-                    '%Fria%'
-                );
-            }
-        )
-        ->where(
-            'estado',
-            '!=',
-            'rechazado'
-        )
-        ->exists();
+                    $query->where(
+                        'nombre',
+                        'like',
+                        '%Fría%'
+                    )
+                        ->orWhere(
+                            'nombre',
+                            'like',
+                            '%Fria%'
+                        );
+                }
+            )
+            ->where(
+                'estado',
+                '!=',
+                'rechazado'
+            )
+            ->exists();
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | REPORTES
     |--------------------------------------------------------------------------
     */
 
-    $reportes = (clone $queryBase)
-        ->with('area')
-        ->where(
-            'estado',
-            '!=',
-            'rechazado'
-        )
-        ->orderBy(
-            'fecha',
-            'desc'
-        )
-        ->get();
+        $reportes = (clone $queryBase)
+            ->with('area')
+            ->where(
+                'estado',
+                '!=',
+                'rechazado'
+            )
+            ->orderBy(
+                'fecha',
+                'desc'
+            )
+            ->get();
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | CONTADORES
     |--------------------------------------------------------------------------
     */
 
-    $aprobados = (clone $queryBase)
-        ->where(
-            'estado',
-            'aprobado'
-        )
-        ->count();
+        $aprobados = (clone $queryBase)
+            ->where(
+                'estado',
+                'aprobado'
+            )
+            ->count();
 
 
-    $rechazados = (clone $queryBase)
-        ->where(
-            'estado',
-            'rechazado'
-        )
-        ->count();
+        $rechazados = (clone $queryBase)
+            ->where(
+                'estado',
+                'rechazado'
+            )
+            ->count();
 
 
-    $borradores = (clone $queryBase)
-        ->where(
-            'estado',
-            'borrador'
-        )
-        ->count();
+        $borradores = (clone $queryBase)
+            ->where(
+                'estado',
+                'borrador'
+            )
+            ->count();
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | VISTA
     |--------------------------------------------------------------------------
     */
 
-    return view(
-        'dashboard.supervisor',
-        compact(
-            'reportes',
-            'aprobados',
-            'rechazados',
-            'borradores'
-        )
-    );
-}
+        return view(
+            'dashboard.supervisor',
+            compact(
+                'reportes',
+                'aprobados',
+                'rechazados',
+                'borradores'
+            )
+        );
+    }
 
     /*
     |--------------------------------------------------------------------------

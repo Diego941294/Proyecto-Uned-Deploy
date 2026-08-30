@@ -23,10 +23,7 @@ class Reporte extends Model
         'observaciones',
         'id_usuario_aprobador',
         'fecha_aprobacion',
-        'inspector_calidad',
-        'firma_inspector',
-        'verificador_calidad',
-        'firma_verificador',
+        'motivo_rechazo',
     ];
 
     protected $casts = [
@@ -60,6 +57,7 @@ class Reporte extends Model
             'id_reportes'
         );
     }
+
     public function accionesCorrectivas()
     {
         return $this->hasMany(

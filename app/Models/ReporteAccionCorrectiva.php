@@ -24,8 +24,6 @@ class ReporteAccionCorrectiva extends Model
 
     protected $casts = [
         'fecha' => 'date',
-        'hora_causa' => 'datetime:H:i',
-        'hora_accion' => 'datetime:H:i',
     ];
 
     public function reporte()

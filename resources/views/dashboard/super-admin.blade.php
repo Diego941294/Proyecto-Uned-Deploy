@@ -152,4 +152,96 @@
         });
     </script>
 
+ <style>
+    /* 🔹 Contenedor principal */
+.gp-superadmin-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr 320px; /* sidebar, main, chart */
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* 🔹 Sidebar */
+.gp-superadmin-sidebar {
+    background: #fff;
+    border: 1px solid #dbe8f3;
+    border-radius: 12px;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+/* 🔹 Main */
+.gp-superadmin-main {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 🔹 Cards */
+.gp-superadmin-card {
+    padding: 20px;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(15, 47, 95, 0.10);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 🔹 Chart */
+.gp-superadmin-chart {
+    background: #fff;
+    border: 1px solid #dbe8f3;
+    border-radius: 12px;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.gp-superadmin-chart-box {
+    width: 100%;
+    max-width: 100%;
+    height: 250px;
+    position: relative;
+    overflow: hidden; /* 🔸 evita que el canvas se salga */
+}
+
+#superAdminChart {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    display: block;
+}
+
+/* 🔹 Leyenda */
+.gp-superadmin-legend {
+    margin-top: 12px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* 🔹 Responsive: apilar en pantallas pequeñas */
+@media (max-width: 1024px) {
+    .gp-superadmin-layout {
+        grid-template-columns: 1fr; /* 🔸 todo en una sola columna */
+    }
+
+    .gp-superadmin-main {
+        grid-template-columns: 1fr; /* 🔸 cards apiladas */
+    }
+
+    .gp-superadmin-chart {
+        margin-top: 20px; /* 🔸 se coloca debajo */
+    }
+}
+
+    </style>
+
+    
+
 </x-app-layout>

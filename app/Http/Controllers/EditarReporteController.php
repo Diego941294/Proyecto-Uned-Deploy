@@ -20,7 +20,7 @@ class EditarReporteController extends Controller
             'usuario'
         ])
             ->whereDate('fecha', $hoy)
-            ->whereRaw('LOWER(estado) = ?', ['borrador'])
+            ->whereIn('estado', ['borrador', 'rechazado'])
             ->get();
 
         return redirect()

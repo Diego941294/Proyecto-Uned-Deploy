@@ -3053,3 +3053,44 @@ body.dark-mode .gp-file-input {
     color: #f8fafc;
     border-color: #475569;
 }
+
+
+@media(max-width:768px){
+  html,body{overflow-x:hidden}
+
+  .gp-table-modern,.gp-table-modern tbody,
+  .gp-table-modern tr,.gp-table-modern td{
+    display:block;width:100%!important;
+    min-width:0!important;box-sizing:border-box
+  }
+
+  .gp-table-modern thead{display:none}
+
+  .gp-table-modern tr{
+    margin-bottom:15px;padding:16px;
+    border:1px solid #ddd;border-radius:12px
+  }
+
+  .gp-table-modern td{
+    padding:10px 0;border:0!important;
+    text-align:left!important;overflow-wrap:anywhere
+  }
+
+  .gp-table-modern td:before{
+    content:attr(data-label);display:block;
+    color:#0b63d8;font-weight:bold;margin-bottom:5px
+  }
+
+  .gp-action-group{display:flex;gap:8px}
+  .gp-action-group>*{flex:1;min-width:0}
+
+  .gp-action-group button,
+  .gp-action-group a,
+  .gp-action-group form{
+    width:100%;box-sizing:border-box
+  }
+}
+
+@media(max-width:520px){
+  .gp-action-group{flex-direction:column}
+}

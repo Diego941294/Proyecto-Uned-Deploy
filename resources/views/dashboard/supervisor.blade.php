@@ -183,7 +183,6 @@
 
     </div>
 
-
     <style>
         .gp-dashboard-grid {
             display: grid;
@@ -191,7 +190,6 @@
                 repeat(auto-fit, minmax(280px, 1fr));
             gap: 15px;
         }
-
 
         /* ===============================
            TARJETAS SUPERVISOR
@@ -210,11 +208,9 @@
                 0 2px 8px rgba(15, 47, 95, 0.10);
         }
 
-
         .gp-dashboard-card h3 {
             color: #0b63d8;
         }
-
 
         /* ===============================
            BOTONES
@@ -248,7 +244,6 @@
                 background .2s ease;
         }
 
-
         .gp-card-button:hover {
             transform: translateY(-1px);
 
@@ -261,28 +256,22 @@
                 0 8px 20px rgba(11, 99, 216, .22);
         }
 
-
         /* ===============================
            TABLA
         =============================== */
 
-        .gp-table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-        }
+      .gp-table-wrapper {
+    width: 100%;
+    overflow-x: hidden;  
+}
 
-
-        .gp-table {
-            width: 100%;
-
-            border-collapse: collapse;
-
-            min-width: 500px;
-
-            background-color: #ffffff;
-
-            color: #333333;
-        }
+.gp-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 100%;    
+    background-color: #ffffff;
+    color: #333333;
+}
 
 
         .gp-table th,
@@ -295,7 +284,6 @@
             text-align: left;
         }
 
-
         .gp-table th {
             background:
                 linear-gradient(135deg,
@@ -305,11 +293,9 @@
             color: #ffffff;
         }
 
-
         .gp-table tbody tr:hover {
             background: #f1f7ff;
         }
-
 
         /* ===============================
            DARK MODE
@@ -322,35 +308,33 @@
                 rgba(99, 170, 255, .25);
         }
 
-
         body.dark-mode .gp-dashboard-card h3 {
             color: #ffffff;
         }
-
 
         body.dark-mode .gp-table {
             background: #0d192d;
             color: #eaf3ff;
         }
 
-
         body.dark-mode .gp-table td {
             background: #0d192d;
             color: #eaf3ff;
         }
 
-
         /* ===============================
            RESPONSIVE
         =============================== */
 
-        @media (max-width: 768px) {
-
-            .gp-table {
-                min-width: 100%;
-            }
-
-        }
+       @media (max-width: 768px) {
+    .gp-table th,
+    .gp-table td {
+        padding: 6px;          
+        font-size: 14px;       
+        word-wrap: break-word; 
+        white-space: normal;   
+    }
+}
 
 
         @media (max-width: 400px) {
@@ -360,7 +344,6 @@
                 font-size: 14px;
             }
 
-
             .gp-table th,
             .gp-table td {
                 padding: 6px;
@@ -368,6 +351,7 @@
 
         }
     </style>
+
 
 
 </x-app-layout>

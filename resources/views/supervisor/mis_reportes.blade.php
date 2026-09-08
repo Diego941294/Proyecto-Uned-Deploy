@@ -95,4 +95,53 @@
 
     @endif
 
+         <style>
+        /* ===============================
+           TABLA MIS REPORTES
+        =============================== */
+
+        .gp-table-wrapper {
+            width: 100%;
+            overflow-x: hidden; /* 🔸 evita scroll horizontal */
+        }
+
+        .gp-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 100%; /* 🔸 ajusta al ancho del dispositivo */
+            background-color: #ffffff;
+            color: #333333;
+        }
+
+        .gp-table th,
+        .gp-table td {
+            padding: 10px;
+            border-bottom: 1px solid #dbe8f3;
+            text-align: left;
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        .gp-table th {
+            background: linear-gradient(135deg, #0b63d8, #0f2f5f);
+            color: #ffffff;
+        }
+
+        .gp-table tbody tr:hover {
+            background: #f1f7ff;
+        }
+
+        /* ===============================
+           RESPONSIVE
+        =============================== */
+        @media (max-width: 768px) {
+            .gp-table th,
+            .gp-table td {
+                padding: 6px;
+                font-size: 14px;
+            }
+        }
+    </style>
+
+
 </x-app-layout>

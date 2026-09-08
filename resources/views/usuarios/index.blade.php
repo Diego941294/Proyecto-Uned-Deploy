@@ -34,7 +34,6 @@
             <table class="gp-table-modern">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Nombre</th>
                         <th>Correo</th>
                         <th>Rol</th>
@@ -44,32 +43,21 @@
 
                 <tbody>
                     @forelse($usuarios as $usuario)
-                        <tr>
-                            <td>#{{ $usuario->id }}</td>
-                            <td>{{ $usuario->name }}</td>
-                            <td>{{ $usuario->email }}</td>
-                            <td>
-                                {{ $usuario->roles->pluck('name')->join(', ') ?: 'Sin rol' }}
-                            </td>
-                            <td class="text-center">
-                                <div class="gp-action-group">
-                                    <a href="{{ route('usuarios.edit', $usuario) }}" class="gp-view-button">
-                                         Editar
-                                    </a>
-
-                                    <form method="POST"
-                                          action="{{ route('usuarios.destroy', $usuario) }}"
-                                          onsubmit="return confirm('¿Desea eliminar este usuario?');">
-                                        @csrf
-                                        @method('DELETE')
-
-                                        <button type="submit" class="gp-delete-button">
-                                            🗑 Eliminar
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
+                       <tr>
+    <td data-label="Nombre">{{ $usuario->name }}</td>
+    <td data-label="Correo">{{ $usuario->email }}</td>
+    <td data-label="Rol">{{ $usuario->roles->pluck('name')->join(', ') ?: 'Sin rol' }}</td>
+    <td data-label="Acciones" class="text-center">
+        <div class="gp-action-group">
+            <a href="{{ route('usuarios.edit', $usuario) }}" class="gp-view-button">✏️ Editar</a>
+            <form method="POST" action="{{ route('usuarios.destroy', $usuario) }}" onsubmit="return confirm('¿Desea eliminar este usuario?');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="gp-delete-button">🗑 Eliminar</button>
+            </form>
+        </div>
+    </td>
+</tr>
                     @empty
                         <tr>
                             <td colspan="5" class="gp-empty-table">
@@ -82,5 +70,6 @@
         </div>
 
     </div>
+
 
 </x-app-layout>

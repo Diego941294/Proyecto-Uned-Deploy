@@ -751,11 +751,7 @@ class ReporteController extends Controller
 
         $reportes = (clone $queryBase)
             ->with('area')
-            ->where(
-                'estado',
-                '!=',
-                'rechazado'
-            )
+            ->where('estado', ['borrador', 'rechazado'])
             ->orderBy(
                 'fecha',
                 'desc'

@@ -12,8 +12,7 @@
                 </p>
             </div>
 
-            <a href="{{ route('infraestructuras.create') }}"
-               class="gp-action-btn primary">
+            <a href="{{ route('infraestructuras.create') }}" class="gp-action-btn primary">
                 + Nueva Infraestructura
             </a>
         </div>
@@ -41,19 +40,19 @@
 
                         <tr>
 
-                            <td>
+                            <td data-label="Área">
                                 {{ $infraestructura->area?->nombre ?? 'Área no disponible' }}
                             </td>
 
-                            <td>
+                            <td data-label="Nombre">
                                 {{ $infraestructura->nombre }}
                             </td>
 
-                            <td>
+                            <td data-label="Código">
                                 {{ $infraestructura->codigo ?? '-' }}
                             </td>
 
-                            <td>
+                            <td data-label="Estado">
 
                                 @if($infraestructura->activo)
 
@@ -71,52 +70,42 @@
 
                             </td>
 
-                            <td class="gp-action-group">
+                            <td data-label="Acciones" class="text-center">
 
-                                <a
-                                    href="{{ route('infraestructuras.edit', $infraestructura) }}"
-                                    class="gp-view-button"
-                                >
-                                    Editar
-                                </a>
+                                <div class="gp-action-group">
 
-
-                                <form
-                                    method="POST"
-                                    action="{{ route('infraestructuras.toggle-activo', $infraestructura) }}"
-
-                                    @if($infraestructura->activo)
-                                        onsubmit="return confirm('¿Está seguro de desactivar esta infraestructura?');"
-                                    @else
-                                        onsubmit="return confirm('¿Está seguro de activar esta infraestructura?');"
-                                    @endif
-                                >
-
-                                    @csrf
-                                    @method('PATCH')
+                                    <a href="{{ route('infraestructuras.edit', $infraestructura) }}" class="gp-view-button">
+                                        Editar
+                                    </a>
 
 
-                                    @if($infraestructura->activo)
+                                    <form method="POST"
+                                        action="{{ route('infraestructuras.toggle-activo', $infraestructura) }}"
+                                        @if($infraestructura->activo)
+                                        onsubmit="return confirm('¿Está seguro de desactivar esta infraestructura?');" @else
+                                        onsubmit="return confirm('¿Está seguro de activar esta infraestructura?');" @endif>
 
-                                        <button
-                                            type="submit"
-                                            class="gp-delete-button"
-                                        >
-                                            Desactivar
-                                        </button>
+                                        @csrf
+                                        @method('PATCH')
 
-                                    @else
 
-                                        <button
-                                            type="submit"
-                                            class="gp-activate-button"
-                                        >
-                                            Activar
-                                        </button>
+                                        @if($infraestructura->activo)
 
-                                    @endif
+                                            <button type="submit" class="gp-delete-button">
+                                                Desactivar
+                                            </button>
 
-                                </form>
+                                        @else
+
+                                            <button type="submit" class="gp-activate-button">
+                                                Activar
+                                            </button>
+
+                                        @endif
+
+                                    </form>
+                                </div>
+
 
                             </td>
 
@@ -126,10 +115,7 @@
 
                         <tr>
 
-                            <td
-                                colspan="5"
-                                class="gp-empty-table"
-                            >
+                            <td colspan="5" class="gp-empty-table">
                                 No existen infraestructuras registradas.
                             </td>
 
@@ -146,26 +132,5 @@
     </div>
 
 
-    <style>
-
-        .gp-activate-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 90px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .gp-activate-button:hover {
-            background: #bbf7d0;
-        }
-
-    </style>
 
 </x-app-layout>

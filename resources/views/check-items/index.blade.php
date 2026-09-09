@@ -82,8 +82,6 @@
 
                     <tr>
 
-                        <th>ID</th>
-
                         <th>Área</th>
 
                         <th>Infraestructura</th>
@@ -109,12 +107,7 @@
 
                         <tr>
 
-                            <td>
-                                #{{ $item->id_check_items }}
-                            </td>
-
-
-                            <td>
+                            <td data-label="Área">
 
                                 <strong>
                                     {{ $item->infraestructura?->area?->nombre ?? 'Área no disponible' }}
@@ -123,22 +116,22 @@
                             </td>
 
 
-                            <td>
+                            <td data-label="Infraestructura">
                                 {{ $item->infraestructura?->nombre ?? 'Infraestructura no disponible' }}
                             </td>
 
 
-                            <td>
+                            <td data-label="Nombre">
                                 {{ $item->nombre }}
                             </td>
 
 
-                            <td>
+                            <td data-label="Orden">
                                 {{ $item->orden }}
                             </td>
 
 
-                            <td>
+                            <td data-label="Estado">
 
                                 @if($item->activo)
 
@@ -157,7 +150,7 @@
                             </td>
 
 
-                            <td class="text-center">
+                            <td data-label="Acciones" class="text-center">
 
                                 <div class="gp-action-group">
 

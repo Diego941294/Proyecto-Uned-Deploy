@@ -1,7 +1,7 @@
 <x-app-layout>
 
     {{-- =========================================================
-         ENCABEZADO
+    ENCABEZADO
     ========================================================== --}}
     <section class="gp-page-header">
 
@@ -20,264 +20,247 @@
 
             <div class="gp-header-actions">
 
-                <a
-                    href="{{ route('reportes.index') }}"
-                    class="gp-action-btn secondary">
+                <a href="{{ route('reportes.index') }}" class="gp-action-btn secondary">
                     ← Volver
                 </a>
 
                 @if(
-                auth()->check() &&
-                auth()->user()->hasAnyRole([
-                'administrador',
-                'super-admin'
-                ])
-                )
+                        auth()->check() &&
+                        auth()->user()->hasAnyRole([
+                            'administrador',
+                            'super-admin'
+                        ])
+                    )
 
-                <a
-                    href="{{ route('reportes.pdf', $reporte) }}"
-                    class="gp-action-btn pdf">
-                    📄 PDF
-                </a>
+                    <a href="{{ route('reportes.pdf', $reporte) }}" class="gp-action-btn pdf">
+                        📄 PDF
+                    </a>
 
                 @endif
 
-                <a
-                    href="{{ route('reportes.excel-detalle', $reporte) }}"
-                    class="gp-action-btn excel">
+                <a href="{{ route('reportes.excel-detalle', $reporte) }}" class="gp-action-btn excel">
                     📊 Excel
                 </a>
 
 
                 {{-- =====================================================
-                     ACCIONES ADMINISTRATIVAS
+                ACCIONES ADMINISTRATIVAS
                 ====================================================== --}}
                 @if(
-                auth()->check() &&
-                auth()->user()->hasAnyRole([
-                'administrador',
-                'super-admin'
-                ])
-                )
+                                    auth()->check() &&
+                                    auth()->user()->hasAnyRole([
+                                        'administrador',
+                                        'super-admin'
+                                    ])
+                                )
 
-                @if($reporte->estado !== 'aprobado')
+                                @if($reporte->estado !== 'aprobado')
 
-                <form
-                    method="POST"
-                    action="{{ route('reportes.aprobar', $reporte) }}"
-                    onsubmit="return confirm('¿Desea aprobar este reporte?');">
+                                    <form method="POST" action="{{ route('reportes.aprobar', $reporte) }}"
+                                        onsubmit="return confirm('¿Desea aprobar este reporte?');">
 
-                    @csrf
+                                        @csrf
 
-                    <button
-                        type="submit"
-                        class="gp-action-btn success">
-                        ✓ Aprobar
-                    </button>
+                                        <button type="submit" class="gp-action-btn success">
+                                            ✓ Aprobar
+                                        </button>
 
-                </form>
+                                    </form>
+
+                                @endif
+
+
+                                @if($reporte->estado !== 'rechazado')
+
+                                    <form id="form-rechazar" method="POST" action="{{ route('reportes.rechazar', $reporte) }}">
+                                        @csrf
+
+                                        <button type="submit" class="gp-action-btn danger">
+                                            ✕ Rechazar
+                                        </button>
+                                    </form>
+
+                                @endif
+
+                                
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+
+                    <div class="gp-detail-panel">
+
+
+                        {{-- =========================================================
+                        MENSAJES
+                        ========================================================== --}}
+
+                        @if(session('success'))
+
+                            <div class="gp-success-message">
+                                {{ session('success') }}
+                            </div>
+
+                        @endif
+
+
+                        @if(session('error'))
+
+                            <div class="gp-error-message">
+                                {{ session('error') }}
+                            </div>
+
+                        @endif
+
+
+                        @if($errors->any())
+
+                            <div class="gp-error-message">
+
+                                <strong>
+                                    No se pudo completar la operación:
+                                </strong>
+
+                                <ul>
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+
+                            </div>
+
+                        @endif
+
+
+
+                        {{-- =========================================================
+                        RESUMEN DEL REPORTE
+                        ========================================================== --}}
+
+                        <div class="gp-detail-summary">
+
+                            <div class="gp-detail-card">
+                                <span>Área</span>
+                                <strong>
+                                    {{ $reporte->area?->nombre ?? 'Área no disponible' }}
+                                </strong>
+                            </div>
+
+                            <div class="gp-detail-card">
+                                <span>Supervisor</span>
+                                <strong>
+                                    {{ $reporte->usuario?->name ?? 'Usuario no disponible' }}
+                                </strong>
+                            </div>
+
+                            <div class="gp-detail-card">
+                                <span>Fecha</span>
+                                <strong>
+                                    {{ $reporte->fecha?->format('d/m/Y') ?? 'No registrada' }}
+                                </strong>
+                            </div>
+
+                            <div class="gp-detail-card">
+                                <span>Estado</span>
+
+                                @if($reporte->estado === 'aprobado')
+                                    <strong class="gp-text-success">
+                                        Aprobado
+                                    </strong>
+
+                                @elseif($reporte->estado === 'rechazado')
+                                    <strong class="gp-text-danger">
+                                        Rechazado
+                                    </strong>
+
+                                @elseif($reporte->estado === 'enviado')
+                                    <strong class="gp-text-warning">
+                                        Enviado
+                                    </strong>
+
+                                @else
+                                    <strong class="gp-text-warning">
+                                        Borrador
+                                    </strong>
+                                @endif
+                            </div>
+
+
+                            @if($reporte->estado === 'aprobado')
+
+                                <div class="gp-detail-card">
+                                    <span>Administrador</span>
+
+                                    <strong>
+                                        {{ $reporte->aprobador?->name ?? 'No registrado' }}
+                                    </strong>
+                                </div>
+
+                                <div class="gp-detail-card">
+                                    <span>Fecha de aprobación</span>
+
+                                    <strong>
+                                        {{ $reporte->fecha_aprobacion?->format('d/m/Y H:i') ?? 'No registrada' }}
+                                    </strong>
+                                </div>
+
+
+                            @elseif($reporte->estado === 'rechazado')
+
+                                <div class="gp-detail-card">
+                                    <span>Administrador</span>
+
+                                    <strong>
+                                        {{ $reporte->aprobador?->name ?? 'No registrado' }}
+                                    </strong>
+                                </div>
+
+                                <div class="gp-detail-card">
+                                    <span>Motivo del rechazo</span>
+
+                                    <strong>
+                                        {{ $reporte->motivo_rechazo ?? 'No registrado' }}
+                                    </strong>
+                                </div>
+
+
+                            @elseif(
+                                    $reporte->estado === 'borrador' &&
+                                    auth()->check() &&
+                                    auth()->user()->hasAnyRole([
+                                        'administrador',
+                                        'super-admin'
+                                    ])
+                                )
+
+                                <div class="gp-detail-card">
+                                    <span>Administrador</span>
+
+                                    <strong>
+                                        {{ auth()->user()->name }}
+                                    </strong>
+                                </div>
+
+                                <div class="gp-detail-card">
+                                    <span>Motivo del rechazo</span>
+
+                                    <textarea name="motivo_rechazo" form="form-rechazar" class="gp-textarea" rows="4"
+                                        placeholder="Motivo del rechazo">{{ old('motivo_rechazo') }}</textarea>
+                                </div>
+
+                            @endif
 
                 @endif
-
-
-                @if($reporte->estado !== 'rechazado')
-
-                <form
-                    method="POST"
-                    action="{{ route('reportes.rechazar', $reporte) }}">
-                    @csrf
-
-                    <button
-                        type="submit"
-                        class="gp-action-btn danger">
-                        ✕ Rechazar
-                    </button>
-                </form>
-
-                @endif
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <div class="gp-detail-panel">
-
-
-        {{-- =========================================================
-             MENSAJES
-        ========================================================== --}}
-
-        @if(session('success'))
-
-        <div class="gp-success-message">
-            {{ session('success') }}
-        </div>
-
-        @endif
-
-
-        @if(session('error'))
-
-        <div class="gp-error-message">
-            {{ session('error') }}
-        </div>
-
-        @endif
-
-
-        @if($errors->any())
-
-        <div class="gp-error-message">
-
-            <strong>
-                No se pudo completar la operación:
-            </strong>
-
-            <ul>
-                @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-
-        </div>
-
-        @endif
-
-
-
-        {{-- =========================================================
-             RESUMEN DEL REPORTE
-        ========================================================== --}}
-
-        <div class="gp-detail-summary">
-
-            <div class="gp-detail-card">
-                <span>Área</span>
-                <strong>
-                    {{ $reporte->area?->nombre ?? 'Área no disponible' }}
-                </strong>
-            </div>
-
-            <div class="gp-detail-card">
-                <span>Supervisor</span>
-                <strong>
-                    {{ $reporte->usuario?->name ?? 'Usuario no disponible' }}
-                </strong>
-            </div>
-
-            <div class="gp-detail-card">
-                <span>Fecha</span>
-                <strong>
-                    {{ $reporte->fecha?->format('d/m/Y') ?? 'No registrada' }}
-                </strong>
-            </div>
-
-            <div class="gp-detail-card">
-                <span>Estado</span>
-
-                @if($reporte->estado === 'aprobado')
-                <strong class="gp-text-success">
-                    Aprobado
-                </strong>
-
-                @elseif($reporte->estado === 'rechazado')
-                <strong class="gp-text-danger">
-                    Rechazado
-                </strong>
-
-                @elseif($reporte->estado === 'enviado')
-                <strong class="gp-text-warning">
-                    Enviado
-                </strong>
-
-                @else
-                <strong class="gp-text-warning">
-                    Borrador
-                </strong>
-                @endif
-            </div>
-
-
-            @if($reporte->estado === 'aprobado')
-
-            <div class="gp-detail-card">
-                <span>Administrador</span>
-
-                <strong>
-                    {{ $reporte->aprobador?->name ?? 'No registrado' }}
-                </strong>
-            </div>
-
-            <div class="gp-detail-card">
-                <span>Fecha de aprobación</span>
-
-                <strong>
-                    {{ $reporte->fecha_aprobacion?->format('d/m/Y H:i') ?? 'No registrada' }}
-                </strong>
-            </div>
-
-
-            @elseif($reporte->estado === 'rechazado')
-
-            <div class="gp-detail-card">
-                <span>Administrador</span>
-
-                <strong>
-                    {{ $reporte->aprobador?->name ?? 'No registrado' }}
-                </strong>
-            </div>
-
-            <div class="gp-detail-card">
-                <span>Motivo del rechazo</span>
-
-                <strong>
-                    {{ $reporte->motivo_rechazo ?? 'No registrado' }}
-                </strong>
-            </div>
-
-
-            @elseif(
-            $reporte->estado === 'borrador' &&
-            auth()->check() &&
-            auth()->user()->hasAnyRole([
-            'administrador',
-            'super-admin'
-            ])
-            )
-
-            <div class="gp-detail-card">
-                <span>Administrador</span>
-
-                <strong>
-                    {{ auth()->user()->name }}
-                </strong>
-            </div>
-
-            <div class="gp-detail-card">
-                <span>Motivo del rechazo</span>
-
-                <textarea
-                    name="motivo_rechazo"
-                    form="form-rechazar"
-                    class="gp-textarea"
-                    rows="4"
-                    placeholder="Motivo del rechazo">{{ old('motivo_rechazo') }}</textarea>
-            </div>
-
-            @endif
-
-            @endif
 
         </div>
 
 
 
         {{-- =========================================================
-             CHECKLIST
+        CHECKLIST
         ========================================================== --}}
 
         <div class="gp-detail-section-title">
@@ -313,76 +296,74 @@
 
                     @forelse($reporte->detalles as $detalle)
 
-                    <tr>
+                                    <tr>
 
-                        <td>
+                                        <td data-label="Infraestructura">
 
-                            {{ $detalle->checkItem?->infraestructura?->nombre
-                                    ?? 'Infraestructura no disponible' }}
+                                            {{ $detalle->checkItem?->infraestructura?->nombre
+                        ?? 'Infraestructura no disponible' }}
 
-                        </td>
-
-
-                        <td>
-
-                            {{ $detalle->checkItem?->nombre
-                                    ?? 'Elemento no disponible' }}
-
-                        </td>
+                                        </td>
 
 
-                        <td>
+                                        <td data-label="Elemento">
 
-                            @if($detalle->estado === 'A')
+                                            {{ $detalle->checkItem?->nombre
+                        ?? 'Elemento no disponible' }}
 
-                            <span class="gp-badge-success">
-                                A
-                            </span>
-
-                            @elseif($detalle->estado === 'NC')
-
-                            <span class="gp-badge-danger">
-                                NC
-                            </span>
-
-                            @elseif($detalle->estado === 'NA')
-
-                            <span class="gp-badge-secondary">
-                                NA
-                            </span>
-
-                            @else
-
-                            <span class="gp-badge-warning">
-                                NFR
-                            </span>
-
-                            @endif
-
-                        </td>
+                                        </td>
 
 
-                        <td>
+                                        <td data-label="Estado">
 
-                            {{ $detalle->observacion
-                                    ?? 'Sin observación' }}
+                                            @if($detalle->estado === 'A')
 
-                        </td>
+                                                <span class="gp-badge-success">
+                                                    A
+                                                </span>
 
-                    </tr>
+                                            @elseif($detalle->estado === 'NC')
+
+                                                <span class="gp-badge-danger">
+                                                    NC
+                                                </span>
+
+                                            @elseif($detalle->estado === 'NA')
+
+                                                <span class="gp-badge-secondary">
+                                                    NA
+                                                </span>
+
+                                            @else
+
+                                                <span class="gp-badge-warning">
+                                                    NFR
+                                                </span>
+
+                                            @endif
+
+                                        </td>
+
+
+                                        <td data-label="Observación">
+
+                                            {{ $detalle->observacion
+                        ?? 'Sin observación' }}
+
+                                        </td>
+
+                                    </tr>
 
 
                     @empty
 
-                    <tr>
+                        <tr>
 
-                        <td
-                            colspan="4"
-                            class="gp-empty-table">
-                            No hay detalles registrados para este reporte.
-                        </td>
+                            <td colspan="4" class="gp-empty-table">
+                                No hay detalles registrados para este reporte.
+                            </td>
 
-                    </tr>
+                        </tr>
 
                     @endforelse
 
@@ -395,7 +376,7 @@
 
 
         {{-- =========================================================
-             OBSERVACIONES GENERALES
+        OBSERVACIONES GENERALES
         ========================================================== --}}
 
         <div class="gp-observation-box">
@@ -406,7 +387,7 @@
 
             <p>
                 {{ $reporte->observaciones
-                    ?? 'Sin observaciones generales.' }}
+    ?? 'Sin observaciones generales.' }}
             </p>
 
         </div>
@@ -414,7 +395,7 @@
 
 
         {{-- =========================================================
-             FIRMAS
+        FIRMAS
         ========================================================== --}}
 
         <div class="gp-signature-section">
@@ -448,26 +429,24 @@
 
                     @if($reporte->usuario?->firma)
 
-                    <div class="gp-current-signature">
+                        <div class="gp-current-signature">
 
-                        <p>
-                            Firma registrada:
-                        </p>
+                            <p>
+                                Firma registrada:
+                            </p>
 
-                        <img
-                            src="{{ asset('storage/' . $reporte->usuario->firma) }}"
-                            class="gp-signature-img"
-                            alt="Firma del supervisor de calidad">
+                            <img src="{{ asset('storage/' . $reporte->usuario->firma) }}" class="gp-signature-img"
+                                alt="Firma del supervisor de calidad">
 
-                    </div>
+                        </div>
 
                     @else
 
-                    <div class="gp-current-signature">
-                        <p>
-                            Firma no registrada.
-                        </p>
-                    </div>
+                        <div class="gp-current-signature">
+                            <p>
+                                Firma no registrada.
+                            </p>
+                        </div>
 
                     @endif
 
@@ -495,26 +474,24 @@
 
                     @if($reporte->aprobador?->firma)
 
-                    <div class="gp-current-signature">
+                        <div class="gp-current-signature">
 
-                        <p>
-                            Firma registrada:
-                        </p>
+                            <p>
+                                Firma registrada:
+                            </p>
 
-                        <img
-                            src="{{ asset('storage/' . $reporte->aprobador->firma) }}"
-                            class="gp-signature-img"
-                            alt="Firma de control de calidad">
+                            <img src="{{ asset('storage/' . $reporte->aprobador->firma) }}" class="gp-signature-img"
+                                alt="Firma de control de calidad">
 
-                    </div>
+                        </div>
 
                     @else
 
-                    <div class="gp-current-signature">
-                        <p>
-                            Firma no registrada.
-                        </p>
-                    </div>
+                        <div class="gp-current-signature">
+                            <p>
+                                Firma no registrada.
+                            </p>
+                        </div>
 
                     @endif
 
@@ -527,7 +504,7 @@
     </div>
 
     {{-- =========================================================
-         ESTILOS COMPLEMENTARIOS
+    ESTILOS COMPLEMENTARIOS
     ========================================================== --}}
 
     <style>

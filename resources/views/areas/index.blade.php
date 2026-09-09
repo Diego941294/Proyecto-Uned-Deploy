@@ -48,7 +48,7 @@
 
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Estado</th>
@@ -62,21 +62,19 @@
 
                     <tr>
 
-                        <td>
-                            #{{ $area->id_areas }}
-                        </td>
+                       
 
-                        <td>
+                        <td data-label="Nombre">
                             <strong>
                                 {{ $area->nombre }}
                             </strong>
                         </td>
 
-                        <td>
+                        <td data-label="Descripción">
                             {{ $area->descripcion ?? 'Sin descripción' }}
                         </td>
 
-                        <td>
+                        <td data-label="Estado">
 
                             @if($area->activo)
 
@@ -94,7 +92,7 @@
 
                         </td>
 
-                        <td class="text-center">
+                        <td data-label="Acciones"  class="text-center">
 
                             <div class="gp-action-group">
 
@@ -166,45 +164,6 @@
     </div>
 
 
-    <style>
-        .gp-table-modern td:nth-child(3) {
-            max-width: 350px;
-            white-space: normal;
-            line-height: 1.5;
-        }
-
-        .gp-table-modern td:nth-child(4) {
-            text-align: center;
-        }
-
-        .gp-action-group {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .gp-view-button,
-        .gp-delete-button,
-        .gp-activate-button {
-            min-width: 105px;
-        }
-
-        .gp-activate-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .gp-activate-button:hover {
-            background: #bbf7d0;
-        }
-    </style>
+s
 
 </x-app-layout>

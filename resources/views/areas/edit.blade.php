@@ -26,7 +26,7 @@
         <div class="gp-form-card">
 
             <div class="gp-detail-section-title">
-                <h3>Información del área #{{ $area->id }}</h3>
+                <h3>Información del área #{{ $area->id_areas }}</h3>
                 <p>Modifique los datos necesarios y guarde los cambios.</p>
             </div>
 
@@ -83,4 +83,11 @@
 
     </div>
 
+
+<style>
+    .gp-form-shell {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+</style>    
 </x-app-layout>

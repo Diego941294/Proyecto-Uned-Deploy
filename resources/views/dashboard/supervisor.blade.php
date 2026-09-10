@@ -43,113 +43,176 @@
         </div>
 
 
-<div class="gp-dashboard-card">
+        <div class="gp-dashboard-card">
 
-    <h3>Gráfico de mis reportes</h3>
+            <h3>Gráfico de mis reportes</h3>
 
-    <div class="gp-supervisor-chart-box">
-        <canvas id="graficoReportes"></canvas>
+            <div class="gp-supervisor-chart-box">
+                <canvas id="graficoReportes"></canvas>
+            </div>
+
+        </div>
+
     </div>
 
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <div class="gp-dashboard-card" style="margin-top:30px;">
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
+        @if($reportes->isEmpty())
 
-        const canvas = document.getElementById('graficoReportes');
+        <p style="color:#991b1b; font-weight:600;">
+            ❌ No hay reportes en estado Borrador.
+        </p>
 
-        if (!canvas) {
-            console.error('No se encontró el canvas graficoReportes');
-            return;
-        }
+        @else
 
-        if (typeof Chart === 'undefined') {
-            console.error('Chart.js no cargó');
-            return;
-        }
+        <div class="gp-table-wrapper">
 
-        const dataReportes = [s
-            {{ (int) $aprobados }},
-            {{ (int) $rechazados }},
-            {{ (int) $borradores }}
-        ];
+            <table class="gp-table">
 
-        console.log('Datos del gráfico:', dataReportes);
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Área</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
 
-        new Chart(canvas, {
-            type: 'bar',
+                <tbody>
 
-            data: {
-                labels: [
-                    'Aprobados',
-                    'Rechazados',
-                    'Borradores'
+                    @foreach($reportes as $reporte)
+
+                    <tr>
+
+                        <td>
+                            #{{ $reporte->id_reportes }}
+                        </td>
+
+                        <td>
+                            {{ $reporte->area?->nombre ?? 'Área no disponible' }}
+                        </td>
+
+                        <td>
+                            {{ \Carbon\Carbon::parse($reporte->fecha)->format('d/m/Y') }}
+                        </td>
+
+                        <td>
+                            <a
+                                href="{{ route('reportes.edit', $reporte->id_reportes) }}"
+                                class="gp-action-link">
+                                ✏️ Editar
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    @endforeach
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        @endif
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const canvas = document.getElementById('graficoReportes');
+
+            if (!canvas || typeof Chart === 'undefined') {
+                return;
+            }
+
+            data: [
+                    Number("{{ $aprobados }}"),
+                    Number("{{ $rechazados }}"),
+                    Number("{{ $borradores }}")
                 ],
 
-                datasets: [{
-                    label: 'Cantidad',
-                    data: dataReportes,
 
-                    backgroundColor: [
-                        '#22c55e',
-                        '#ef4444',
-                        '#f59e0b'
-                    ],
+                new Chart(canvas, {
+                    type: 'bar',
 
-                    borderColor: [
-                        '#16a34a',
-                        '#dc2626',
-                        '#d97706'
-                    ],
+                    data: {
+                        labels: [
+                            'Aprobados',
+                            'Rechazados',
+                            'Borradores'
+                        ],
 
-                    borderWidth: 1
-                }]
-            },
+                        datasets: [{
+                            label: 'Cantidad',
 
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
+                            data: dataReportes,
 
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
+                            backgroundColor: [
+                                '#22c55e',
+                                '#ef4444',
+                                '#f59e0b'
+                            ],
 
-                scales: {
-                    x: {
-                        ticks: {
-                            color: '#0f2f5f'
-                        },
-                        grid: {
-                            display: false
-                        }
+                            borderColor: [
+                                '#16a34a',
+                                '#dc2626',
+                                '#d97706'
+                            ],
+
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }]
                     },
 
-                    y: {
-                        beginAtZero: true,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
 
-                        ticks: {
-                            stepSize: 1,
-                            color: '#0f2f5f'
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
                         },
 
-                        grid: {
-                            color: '#dbe8f3'
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+
+                                ticks: {
+                                    color: '#0f2f5f'
+                                }
+                            },
+
+                            y: {
+                                beginAtZero: true,
+
+                                ticks: {
+                                    stepSize: 1,
+                                    precision: 0,
+                                    color: '#0f2f5f'
+                                },
+
+                                grid: {
+                                    color: '#dbe8f3'
+                                }
+                            }
                         }
                     }
-                }
-            }
-        });
+                });
 
-    });
-</script>
+        });
+    </script>
 
 
     <style>
-
         /* ===============================
            GRID DASHBOARD
         =============================== */
@@ -168,11 +231,8 @@
 
         .gp-dashboard-card {
             padding: 20px;
-
             border: 1px solid #8ec5f4;
-
             border-radius: 8px;
-
             background: #ffffff;
 
             box-shadow:
@@ -192,26 +252,18 @@
 
         .gp-card-button {
             display: inline-block;
-
             margin-top: 16px;
-
             padding: 11px 16px;
-
             border-radius: 4px;
 
             background:
-                linear-gradient(
-                    135deg,
+                linear-gradient(135deg,
                     #178bff,
-                    #0b63d8
-                );
+                    #0b63d8);
 
             color: #ffffff;
-
             font-weight: 800;
-
             text-decoration: none;
-
             text-align: center;
 
             transition:
@@ -224,11 +276,9 @@
             transform: translateY(-1px);
 
             background:
-                linear-gradient(
-                    135deg,
+                linear-gradient(135deg,
                     #0b73e0,
-                    #084fae
-                );
+                    #084fae);
 
             box-shadow:
                 0 8px 20px rgba(11, 99, 216, .22);
@@ -246,6 +296,7 @@
             position: relative;
             overflow: hidden;
             box-sizing: border-box;
+            background: #ffffff;
         }
 
         #graficoReportes {
@@ -253,7 +304,7 @@
             height: 100% !important;
             max-width: 100% !important;
             display: block;
-            background: transparent !important;
+            background: #ffffff !important;
         }
 
 
@@ -277,20 +328,15 @@
         .gp-table th,
         .gp-table td {
             padding: 10px;
-
-            border-bottom:
-                1px solid #dbe8f3;
-
+            border-bottom: 1px solid #dbe8f3;
             text-align: left;
         }
 
         .gp-table th {
             background:
-                linear-gradient(
-                    135deg,
+                linear-gradient(135deg,
                     #0b63d8,
-                    #0f2f5f
-                );
+                    #0f2f5f);
 
             color: #ffffff;
         }
@@ -323,6 +369,14 @@
         body.dark-mode .gp-table td {
             background: #0d192d;
             color: #eaf3ff;
+        }
+
+        body.dark-mode .gp-supervisor-chart-box {
+            background: #0f1d33;
+        }
+
+        body.dark-mode #graficoReportes {
+            background: #0f1d33 !important;
         }
 
 
@@ -364,7 +418,6 @@
             }
 
         }
-
     </style>
 
 </x-app-layout>

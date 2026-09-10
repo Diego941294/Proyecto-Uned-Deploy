@@ -43,170 +43,109 @@
         </div>
 
 
-        <div class="gp-dashboard-card">
+<div class="gp-dashboard-card">
 
-            <h3>Gráfico de mis reportes</h3>
+    <h3>Gráfico de mis reportes</h3>
 
-            <div class="gp-supervisor-chart-box">
-                <canvas id="graficoReportes"></canvas>
-            </div>
-
-        </div>
-
+    <div class="gp-supervisor-chart-box">
+        <canvas id="graficoReportes"></canvas>
     </div>
 
+</div>
 
-    <div
-        class="gp-dashboard-card"
-        style="margin-top:30px;"
-    >
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        @if($reportes->isEmpty())
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
 
-            <p style="color:#991b1b; font-weight:600;">
-                ❌ No hay reportes en estado Borrador.
-            </p>
+        const canvas = document.getElementById('graficoReportes');
 
-        @else
+        if (!canvas) {
+            console.error('No se encontró el canvas graficoReportes');
+            return;
+        }
 
-            <div class="gp-table-wrapper">
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js no cargó');
+            return;
+        }
 
-                <table class="gp-table">
+        const dataReportes = [s
+            {{ (int) $aprobados }},
+            {{ (int) $rechazados }},
+            {{ (int) $borradores }}
+        ];
 
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Área</th>
-                            <th>Fecha</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
+        console.log('Datos del gráfico:', dataReportes);
 
-                    <tbody>
+        new Chart(canvas, {
+            type: 'bar',
 
-                        @foreach($reportes as $reporte)
+            data: {
+                labels: [
+                    'Aprobados',
+                    'Rechazados',
+                    'Borradores'
+                ],
 
-                            <tr>
+                datasets: [{
+                    label: 'Cantidad',
+                    data: dataReportes,
 
-                                <td>
-                                    #{{ $reporte->id_reportes }}
-                                </td>
-
-                                <td>
-                                    {{ $reporte->area?->nombre ?? 'Área no disponible' }}
-                                </td>
-
-                                <td>
-                                    {{ \Carbon\Carbon::parse($reporte->fecha)->format('d/m/Y') }}
-                                </td>
-
-                                <td>
-
-                                    <a
-                                        href="{{ route('reportes.edit', $reporte->id_reportes) }}"
-                                        class="gp-action-link"
-                                    >
-                                        ✏️ Editar
-                                    </a>
-
-                                </td>
-
-                            </tr>
-
-                        @endforeach
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        @endif
-
-    </div>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-
-            const canvas = document.getElementById('graficoReportes');
-
-            if (!canvas) {
-                return;
-            }
-
-            const dataReportes = @json([
-                $aprobados,
-                $rechazados,
-                $borradores
-            ]);
-
-            new Chart(canvas, {
-
-                type: 'bar',
-
-                data: {
-
-                    labels: [
-                        'Aprobados',
-                        'Rechazados',
-                        'Borradores'
+                    backgroundColor: [
+                        '#22c55e',
+                        '#ef4444',
+                        '#f59e0b'
                     ],
 
-                    datasets: [{
+                    borderColor: [
+                        '#16a34a',
+                        '#dc2626',
+                        '#d97706'
+                    ],
 
-                        label: 'Cantidad',
+                    borderWidth: 1
+                }]
+            },
 
-                        data: dataReportes,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
 
-                        backgroundColor: [
-                            '#22c55e',
-                            '#ef4444',
-                            '#f59e0b'
-                        ],
-
-                        borderWidth: 1
-
-                    }]
-
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 },
 
-                options: {
-
-                    responsive: true,
-
-                    maintainAspectRatio: false,
-
-                    plugins: {
-
-                        legend: {
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#0f2f5f'
+                        },
+                        grid: {
                             display: false
                         }
-
                     },
 
-                    scales: {
+                    y: {
+                        beginAtZero: true,
 
-                        y: {
+                        ticks: {
+                            stepSize: 1,
+                            color: '#0f2f5f'
+                        },
 
-                            beginAtZero: true,
-
-                            ticks: {
-                                stepSize: 1
-                            }
-
+                        grid: {
+                            color: '#dbe8f3'
                         }
-
                     }
-
                 }
-
-            });
-
+            }
         });
-    </script>
+
+    });
+</script>
 
 
     <style>

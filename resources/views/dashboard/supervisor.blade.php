@@ -1,7 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <h2 class="gp-header-title">Dashboard Supervisor</h2>
+            <h2 class="gp-header-title">
+                Dashboard Supervisor
+            </h2>
 
             <p class="gp-header-subtitle">
                 Panel de control para registro de reportes preoperacionales.
@@ -45,71 +47,9 @@
 
             <h3>Gráfico de mis reportes</h3>
 
-            <canvas id="graficoReportes"></canvas>
-
-            <style>
-                #graficoReportes {
-                    height: 120px !important;
-                    margin: 0;
-                }
-            </style>
-
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-            <script>
-                const dataReportes = @json([
-                    $aprobados,
-                    $rechazados,
-                    $borradores
-                ]);
-
-                const ctx = document
-                    .getElementById('graficoReportes')
-                    .getContext('2d');
-
-                new Chart(ctx, {
-                    type: 'bar',
-
-                    data: {
-                        labels: [
-                            'Aprobados',
-                            'Rechazados',
-                            'Borradores'
-                        ],
-
-                        datasets: [{
-                            label: 'Cantidad',
-                            data: dataReportes,
-                            backgroundColor: [
-                                '#22c55e',
-                                '#ef4444',
-                                '#f59e0b'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1
-                                }
-                            }
-                        }
-                    }
-                });
-            </script>
+            <div class="gp-supervisor-chart-box">
+                <canvas id="graficoReportes"></canvas>
+            </div>
 
         </div>
 
@@ -118,78 +58,170 @@
 
     <div
         class="gp-dashboard-card"
-        style="margin-top:30px;">
+        style="margin-top:30px;"
+    >
 
         @if($reportes->isEmpty())
 
-        <p style="color:#991b1b; font-weight:600;">
-            ❌ No hay reportes en estado Borrador.
-        </p>
+            <p style="color:#991b1b; font-weight:600;">
+                ❌ No hay reportes en estado Borrador.
+            </p>
 
         @else
 
-        <div class="gp-table-wrapper">
+            <div class="gp-table-wrapper">
 
-            <table class="gp-table">
+                <table class="gp-table">
 
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Área</th>
-                        <th>Fecha</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Área</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
+                    <tbody>
 
-                    @foreach($reportes as $reporte)
+                        @foreach($reportes as $reporte)
 
-                    <tr>
+                            <tr>
 
-                        <td>
-                            #{{ $reporte->id_reportes }}
-                        </td>
+                                <td>
+                                    #{{ $reporte->id_reportes }}
+                                </td>
 
-                        <td>
-                            {{ $reporte->area?->nombre ?? 'Área no disponible' }}
-                        </td>
+                                <td>
+                                    {{ $reporte->area?->nombre ?? 'Área no disponible' }}
+                                </td>
 
-                        <td>
-                            {{ \Carbon\Carbon::parse($reporte->fecha)->format('d/m/Y') }}
-                        </td>
+                                <td>
+                                    {{ \Carbon\Carbon::parse($reporte->fecha)->format('d/m/Y') }}
+                                </td>
 
-                        <td>
+                                <td>
 
-                            <a
-                                href="{{ route('reportes.edit', $reporte->id_reportes) }}"
-                                class="gp-action-link">
-                                ✏️ Editar
-                            </a>
+                                    <a
+                                        href="{{ route('reportes.edit', $reporte->id_reportes) }}"
+                                        class="gp-action-link"
+                                    >
+                                        ✏️ Editar
+                                    </a>
 
-                        </td>
+                                </td>
 
-                    </tr>
+                            </tr>
 
-                    @endforeach
+                        @endforeach
 
-                </tbody>
+                    </tbody>
 
-            </table>
+                </table>
 
-        </div>
+            </div>
 
         @endif
 
     </div>
 
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const canvas = document.getElementById('graficoReportes');
+
+            if (!canvas) {
+                return;
+            }
+
+            const dataReportes = @json([
+                $aprobados,
+                $rechazados,
+                $borradores
+            ]);
+
+            new Chart(canvas, {
+
+                type: 'bar',
+
+                data: {
+
+                    labels: [
+                        'Aprobados',
+                        'Rechazados',
+                        'Borradores'
+                    ],
+
+                    datasets: [{
+
+                        label: 'Cantidad',
+
+                        data: dataReportes,
+
+                        backgroundColor: [
+                            '#22c55e',
+                            '#ef4444',
+                            '#f59e0b'
+                        ],
+
+                        borderWidth: 1
+
+                    }]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    plugins: {
+
+                        legend: {
+                            display: false
+                        }
+
+                    },
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+                                stepSize: 1
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+        });
+    </script>
+
+
     <style>
+
+        /* ===============================
+           GRID DASHBOARD
+        =============================== */
+
         .gp-dashboard-grid {
             display: grid;
             grid-template-columns:
                 repeat(auto-fit, minmax(280px, 1fr));
             gap: 15px;
         }
+
 
         /* ===============================
            TARJETAS SUPERVISOR
@@ -206,11 +238,14 @@
 
             box-shadow:
                 0 2px 8px rgba(15, 47, 95, 0.10);
+
+            box-sizing: border-box;
         }
 
         .gp-dashboard-card h3 {
             color: #0b63d8;
         }
+
 
         /* ===============================
            BOTONES
@@ -226,9 +261,11 @@
             border-radius: 4px;
 
             background:
-                linear-gradient(135deg,
+                linear-gradient(
+                    135deg,
                     #178bff,
-                    #0b63d8);
+                    #0b63d8
+                );
 
             color: #ffffff;
 
@@ -248,31 +285,55 @@
             transform: translateY(-1px);
 
             background:
-                linear-gradient(135deg,
+                linear-gradient(
+                    135deg,
                     #0b73e0,
-                    #084fae);
+                    #084fae
+                );
 
             box-shadow:
                 0 8px 20px rgba(11, 99, 216, .22);
         }
 
+
+        /* ===============================
+           GRÁFICO
+        =============================== */
+
+        .gp-supervisor-chart-box {
+            width: 100%;
+            max-width: 100%;
+            height: 180px;
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        #graficoReportes {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            display: block;
+            background: transparent !important;
+        }
+
+
         /* ===============================
            TABLA
         =============================== */
 
-      .gp-table-wrapper {
-    width: 100%;
-    overflow-x: hidden;  
-}
+        .gp-table-wrapper {
+            width: 100%;
+            overflow-x: hidden;
+        }
 
-.gp-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 100%;    
-    background-color: #ffffff;
-    color: #333333;
-}
-
+        .gp-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 100%;
+            background-color: #ffffff;
+            color: #333333;
+        }
 
         .gp-table th,
         .gp-table td {
@@ -286,9 +347,11 @@
 
         .gp-table th {
             background:
-                linear-gradient(135deg,
+                linear-gradient(
+                    135deg,
                     #0b63d8,
-                    #0f2f5f);
+                    #0f2f5f
+                );
 
             color: #ffffff;
         }
@@ -296,6 +359,7 @@
         .gp-table tbody tr:hover {
             background: #f1f7ff;
         }
+
 
         /* ===============================
            DARK MODE
@@ -322,19 +386,26 @@
             color: #eaf3ff;
         }
 
+
         /* ===============================
            RESPONSIVE
         =============================== */
 
-       @media (max-width: 768px) {
-    .gp-table th,
-    .gp-table td {
-        padding: 6px;          
-        font-size: 14px;       
-        word-wrap: break-word; 
-        white-space: normal;   
-    }
-}
+        @media (max-width: 768px) {
+
+            .gp-table th,
+            .gp-table td {
+                padding: 6px;
+                font-size: 14px;
+                word-wrap: break-word;
+                white-space: normal;
+            }
+
+            .gp-supervisor-chart-box {
+                height: 220px;
+            }
+
+        }
 
 
         @media (max-width: 400px) {
@@ -349,9 +420,12 @@
                 padding: 6px;
             }
 
+            .gp-supervisor-chart-box {
+                height: 200px;
+            }
+
         }
+
     </style>
-
-
 
 </x-app-layout>

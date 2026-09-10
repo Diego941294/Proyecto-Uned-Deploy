@@ -120,80 +120,64 @@
     </div>
 
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('graficoReportes');
 
-        const canvas = document.getElementById('graficoReportes');
+            if (!canvas) return;
 
-        if (!canvas || typeof Chart === 'undefined') {
-            return;
-        }
+            new Chart(canvas, {
+                type: 'bar',
 
-        const dataReportes = [
-            Number("{{ $aprobados }}"),
-            Number("{{ $rechazados }}"),
-            Number("{{ $borradores }}")
-        ];
-
-        new Chart(canvas, {
-            type: 'bar',
-
-            data: {
-                labels: [
-                    'Aprobados',
-                    'Rechazados',
-                    'Borradores'
-                ],
-
-                datasets: [{
-                    label: 'Cantidad',
-
-                    data: dataReportes,
-
-                    backgroundColor: [
-                        '#22c55e',
-                        '#ef4444',
-                        '#f59e0b'
+                data: {
+                    labels: [
+                        'Aprobados',
+                        'Rechazados',
+                        'Borradores'
                     ],
 
-                    borderColor: [
-                        '#16a34a',
-                        '#dc2626',
-                        '#d97706'
-                    ],
+                    datasets: [{
+                        data: [
+                            Number("{{ $aprobados }}"),
+                            Number("{{ $rechazados }}"),
+                            Number("{{ $borradores }}")
+                        ],
 
-                    borderWidth: 1,
-                    borderRadius: 4
-                }]
-            },
+                        backgroundColor: [
+                            '#22c55e',
+                            '#ef4444',
+                            '#f59e0b'
+                        ],
 
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-
-                plugins: {
-                    legend: {
-                        display: false
-                    }
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }]
                 },
 
-                scales: {
-                    y: {
-                        beginAtZero: true,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
 
-                        ticks: {
-                            stepSize: 1,
-                            precision: 0
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
                         }
                     }
                 }
-            }
+            });
         });
-
-    });
-</script>
+    </script>
 
 
     <style>
@@ -276,11 +260,9 @@
         .gp-supervisor-chart-box {
             width: 100%;
             max-width: 100%;
-            height: 180px;
+            height: 250px;
             position: relative;
             overflow: hidden;
-            box-sizing: border-box;
-            background: #ffffff;
         }
 
         #graficoReportes {
@@ -288,8 +270,9 @@
             height: 100% !important;
             max-width: 100% !important;
             display: block;
-            background: #ffffff !important;
         }
+
+    
 
 
         /* ===============================

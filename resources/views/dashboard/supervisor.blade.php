@@ -1,9 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <h2 class="gp-header-title">
-                Dashboard Supervisor
-            </h2>
+            <h2 class="gp-header-title">Dashboard Supervisor</h2>
 
             <p class="gp-header-subtitle">
                 Panel de control para registro de reportes preoperacionales.
@@ -47,16 +45,86 @@
 
             <h3>Gráfico de mis reportes</h3>
 
-            <div class="gp-supervisor-chart-box">
-                <canvas id="graficoReportes"></canvas>
-            </div>
+            <canvas id="graficoReportes"></canvas>
 
+            <style>
+                #graficoReportes {
+                    height: 120px !important;
+                    margin: 0;
+                }
+            </style>
+
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+
+                    const canvas = document.getElementById('graficoReportes');
+
+                    if (!canvas) return;
+
+                    const dataReportes = [
+                        Number("{{ $aprobados }}"),
+                        Number("{{ $rechazados }}"),
+                        Number("{{ $borradores }}")
+                    ];
+
+                    new Chart(canvas, {
+                        type: 'bar',
+
+                        data: {
+                            labels: [
+                                'Aprobados',
+                                'Rechazados',
+                                'Borradores'
+                            ],
+
+                            datasets: [{
+                                label: 'Cantidad',
+
+                                data: dataReportes,
+
+                                backgroundColor: [
+                                    '#22c55e',
+                                    '#ef4444',
+                                    '#f59e0b'
+                                ],
+
+                                borderWidth: 1
+                            }]
+                        },
+
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+
+                                    ticks: {
+                                        stepSize: 1
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            </script>
         </div>
 
     </div>
 
 
-    <div class="gp-dashboard-card" style="margin-top:30px;">
+    <div
+        class="gp-dashboard-card"
+        style="margin-top:30px;">
 
         @if($reportes->isEmpty())
 
@@ -98,11 +166,13 @@
                         </td>
 
                         <td>
+
                             <a
                                 href="{{ route('reportes.edit', $reporte->id_reportes) }}"
                                 class="gp-action-link">
                                 ✏️ Editar
                             </a>
+
                         </td>
 
                     </tr>
@@ -119,72 +189,7 @@
 
     </div>
 
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const canvas = document.getElementById('graficoReportes');
-
-            if (!canvas) return;
-
-            new Chart(canvas, {
-                type: 'bar',
-
-                data: {
-                    labels: [
-                        'Aprobados',
-                        'Rechazados',
-                        'Borradores'
-                    ],
-
-                    datasets: [{
-                        data: [
-                            Number("{{ $aprobados }}"),
-                            Number("{{ $rechazados }}"),
-                            Number("{{ $borradores }}")
-                        ],
-
-                        backgroundColor: [
-                            '#22c55e',
-                            '#ef4444',
-                            '#f59e0b'
-                        ],
-
-                        borderColor: '#ffffff',
-                        borderWidth: 2
-                    }]
-                },
-
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            }
-                        }
-                    }
-                }
-            });
-        });
-    </script>
-
-
     <style>
-        /* ===============================
-           GRID DASHBOARD
-        =============================== */
-
         .gp-dashboard-grid {
             display: grid;
             grid-template-columns:
@@ -192,27 +197,26 @@
             gap: 15px;
         }
 
-
         /* ===============================
            TARJETAS SUPERVISOR
         =============================== */
 
         .gp-dashboard-card {
             padding: 20px;
+
             border: 1px solid #8ec5f4;
+
             border-radius: 8px;
+
             background: #ffffff;
 
             box-shadow:
                 0 2px 8px rgba(15, 47, 95, 0.10);
-
-            box-sizing: border-box;
         }
 
         .gp-dashboard-card h3 {
             color: #0b63d8;
         }
-
 
         /* ===============================
            BOTONES
@@ -220,8 +224,11 @@
 
         .gp-card-button {
             display: inline-block;
+
             margin-top: 16px;
+
             padding: 11px 16px;
+
             border-radius: 4px;
 
             background:
@@ -230,8 +237,11 @@
                     #0b63d8);
 
             color: #ffffff;
+
             font-weight: 800;
+
             text-decoration: none;
+
             text-align: center;
 
             transition:
@@ -252,29 +262,6 @@
                 0 8px 20px rgba(11, 99, 216, .22);
         }
 
-
-        /* ===============================
-           GRÁFICO
-        =============================== */
-
-        .gp-supervisor-chart-box {
-            width: 100%;
-            max-width: 100%;
-            height: 250px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        #graficoReportes {
-            width: 100% !important;
-            height: 100% !important;
-            max-width: 100% !important;
-            display: block;
-        }
-
-    
-
-
         /* ===============================
            TABLA
         =============================== */
@@ -292,10 +279,14 @@
             color: #333333;
         }
 
+
         .gp-table th,
         .gp-table td {
             padding: 10px;
-            border-bottom: 1px solid #dbe8f3;
+
+            border-bottom:
+                1px solid #dbe8f3;
+
             text-align: left;
         }
 
@@ -311,7 +302,6 @@
         .gp-table tbody tr:hover {
             background: #f1f7ff;
         }
-
 
         /* ===============================
            DARK MODE
@@ -338,15 +328,6 @@
             color: #eaf3ff;
         }
 
-        body.dark-mode .gp-supervisor-chart-box {
-            background: #0f1d33;
-        }
-
-        body.dark-mode #graficoReportes {
-            background: #0f1d33 !important;
-        }
-
-
         /* ===============================
            RESPONSIVE
         =============================== */
@@ -360,11 +341,6 @@
                 word-wrap: break-word;
                 white-space: normal;
             }
-
-            .gp-supervisor-chart-box {
-                height: 220px;
-            }
-
         }
 
 
@@ -380,11 +356,9 @@
                 padding: 6px;
             }
 
-            .gp-supervisor-chart-box {
-                height: 200px;
-            }
-
         }
     </style>
+
+
 
 </x-app-layout>

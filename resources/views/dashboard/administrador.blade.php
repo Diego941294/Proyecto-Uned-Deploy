@@ -45,7 +45,6 @@
         <div class="gp-admin-main-grid">
 
             <div class="gp-chart-card-v2">
-
                 <h3>Estado General de Reportes</h3>
 
                 <div class="gp-chart-content-v2">
@@ -77,49 +76,29 @@
                     </div>
 
                 </div>
-
             </div>
 
             <div class="gp-action-list-v2">
 
                 <a href="{{ route('reportes.index') }}" class="gp-action-card">
-
-                    <div class="gp-action-icon blue">
-                        📋
-                    </div>
-
+                    <div class="gp-action-icon blue">📋</div>
                     <div class="gp-action-content">
                         <strong>Reportes</strong>
                         <p>Consultar, aprobar y revisar reportes.</p>
                     </div>
-
-                    <div class="gp-action-arrow">
-                        →
-                    </div>
-
+                    <div class="gp-action-arrow">→</div>
                 </a>
 
-
                 <a href="{{ route('areas.index') }}" class="gp-action-card">
-
-                    <div class="gp-action-icon orange">
-                        🏭
-                    </div>
-
+                    <div class="gp-action-icon orange">🏭</div>
                     <div class="gp-action-content">
                         <strong>Áreas</strong>
                         <p>Administrar áreas y secciones.</p>
                     </div>
-
-                    <div class="gp-action-arrow">
-                        →
-                    </div>
-
+                    <div class="gp-action-arrow">→</div>
                 </a>
-
-
                 <a href="{{ route('infraestructuras.index') }}"
-                   class="gp-action-card">
+                    class="gp-action-card">
 
                     <div class="gp-action-icon orange">
                         🏢
@@ -136,42 +115,22 @@
 
                 </a>
 
-
-                <a href="{{ route('check-items.index') }}"
-                   class="gp-action-card">
-
-                    <div class="gp-action-icon green">
-                        ✅
-                    </div>
-
+                <a href="{{ route('check-items.index') }}" class="gp-action-card">
+                    <div class="gp-action-icon green">✅</div>
                     <div class="gp-action-content">
                         <strong>Check Items</strong>
                         <p>Gestionar elementos de inspección.</p>
                     </div>
-
-                    <div class="gp-action-arrow">
-                        →
-                    </div>
-
+                    <div class="gp-action-arrow">→</div>
                 </a>
 
-
-                <a href="{{ route('reportes.excel') }}"
-                   class="gp-action-card">
-
-                    <div class="gp-action-icon purple">
-                        📊
-                    </div>
-
+                <a href="{{ route('reportes.excel') }}" class="gp-action-card">
+                    <div class="gp-action-icon purple">📊</div>
                     <div class="gp-action-content">
                         <strong>Exportar Excel</strong>
                         <p>Descargar reporte consolidado.</p>
                     </div>
-
-                    <div class="gp-action-arrow">
-                        ↓
-                    </div>
-
+                    <div class="gp-action-arrow">↓</div>
                 </a>
 
             </div>
@@ -180,25 +139,20 @@
 
     </div>
 
-
-    {{-- Chart.js --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-
+        document.addEventListener('DOMContentLoaded', function() {
             const canvas = document.getElementById('reportesChart');
 
-            if (!canvas) {
-                return;
-            }
+            if (!canvas) return;
 
-            new Chart(canvas, {
+            const ctx = canvas.getContext('2d');
 
+            new Chart(ctx, {
                 type: 'doughnut',
 
                 data: {
-
                     labels: [
                         'Aprobados',
                         'Rechazados',
@@ -206,7 +160,6 @@
                     ],
 
                     datasets: [{
-
                         data: [
                             Number("{{ $aprobados }}"),
                             Number("{{ $rechazados }}"),
@@ -220,135 +173,88 @@
                         ],
 
                         borderColor: '#ffffff',
-
                         borderWidth: 4,
-
                         hoverOffset: 8
-
                     }]
-
                 },
 
                 options: {
-
                     responsive: true,
-
                     maintainAspectRatio: false,
-
                     cutout: '58%',
 
                     plugins: {
-
                         legend: {
                             display: false
                         }
-
                     }
-
                 }
-
             });
-
         });
     </script>
-
-
     <style>
+/* 🔹 El contenedor principal define el límite */
+.gp-admin-dashboard-v2 {
+    max-width: 1200px;   /* ajusta según tu diseño */
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
 
-        /* ===============================
-           CONTENEDOR PRINCIPAL
-        =============================== */
+/* 🔹 El grid nunca más ancho que el contenedor */
+.gp-admin-main-grid {
+    display: grid;
+    grid-template-columns: 1.35fr 0.85fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
 
-        .gp-admin-dashboard-v2 {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+/* 🔹 Tarjeta del gráfico */
+.gp-chart-card-v2 {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden; /* 🔸 evita que el canvas se salga */
+}
 
+/* 🔹 Wrapper del gráfico */
+.gp-chart-wrapper-v2 {
+    width: 100%;
+    max-width: 100%;
+    height: 250px;
+    position: relative;
+    box-sizing: border-box;
+}
 
-        /* ===============================
-           GRID PRINCIPAL
-        =============================== */
+/* 🔹 Canvas limitado */
+#reportesChart {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    display: block;
+}
 
-        .gp-admin-main-grid {
-            display: grid;
-            grid-template-columns: 1.35fr 0.85fr;
-            gap: 20px;
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-        }
+/* 🔹 Leyenda también limitada */
+.gp-chart-legend-v2 {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
 
+/* 🔹 Responsive: apilar gráfico y leyenda en pantallas pequeñas */
+@media (max-width: 1024px) {
+    .gp-admin-main-grid {
+        grid-template-columns: 1fr;
+    }
+    .gp-chart-content-v2 {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+}
+</style>
 
-        /* ===============================
-           TARJETA DEL GRÁFICO
-        =============================== */
-
-        .gp-chart-card-v2 {
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-            overflow: hidden;
-        }
-
-
-        /* ===============================
-           CONTENEDOR DEL GRÁFICO
-        =============================== */
-
-        .gp-chart-wrapper-v2 {
-            width: 100%;
-            max-width: 100%;
-            height: 250px;
-            position: relative;
-            box-sizing: border-box;
-            overflow: hidden;
-        }
-
-
-        /* ===============================
-           CANVAS
-        =============================== */
-
-        #reportesChart {
-            width: 100% !important;
-            height: 100% !important;
-            max-width: 100% !important;
-            display: block;
-            background: transparent !important;
-        }
-
-
-        /* ===============================
-           LEYENDA
-        =============================== */
-
-        .gp-chart-legend-v2 {
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-        }
-
-
-        /* ===============================
-           RESPONSIVE
-        =============================== */
-
-        @media (max-width: 1024px) {
-
-            .gp-admin-main-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .gp-chart-content-v2 {
-                display: flex;
-                flex-direction: column;
-                gap: 18px;
-            }
-
-        }
-
-    </style>
 
 </x-app-layout>

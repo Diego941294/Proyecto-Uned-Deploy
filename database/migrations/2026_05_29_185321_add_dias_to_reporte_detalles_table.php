@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-    Schema::create('areas', function (Blueprint $table) {
-    $table->id();
-    $table->string('nombre')->unique();
-    $table->string('descripcion')->nullable();
-    $table->boolean('activo')->default(true);
-    $table->timestamps();
-});
+        Schema::table('reporte_detalles', function (Blueprint $table) {
+            //
+        });
     }
 
     /**
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('areas');
+        Schema::table('reporte_detalles', function (Blueprint $table) {
+            //
+        });
     }
 };

@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-    Schema::create('areas', function (Blueprint $table) {
-    $table->id();
-    $table->string('nombre')->unique();
-    $table->string('descripcion')->nullable();
-    $table->boolean('activo')->default(true);
-    $table->timestamps();
-});
+        Schema::table('users', function (Blueprint $table) {
+
+            $table->string('photo')->nullable()->after('email');
+
+        });
     }
 
     /**
@@ -25,6 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('areas');
+        Schema::table('users', function (Blueprint $table) {
+
+            $table->dropColumn('photo');
+
+        });
     }
 };

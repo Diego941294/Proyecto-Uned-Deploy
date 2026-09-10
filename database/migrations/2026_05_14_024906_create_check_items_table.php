@@ -11,11 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-    Schema::create('areas', function (Blueprint $table) {
+        Schema::create('check_items', function (Blueprint $table) {
     $table->id();
-    $table->string('nombre')->unique();
-    $table->string('descripcion')->nullable();
+
+    $table->foreignId('area_id')
+        ->constrained()
+        ->onDelete('cascade');
+
+    $table->string('seccion');
+
+    $table->string('nombre');
+
+    $table->integer('orden')->default(0);
+
     $table->boolean('activo')->default(true);
+
     $table->timestamps();
 });
     }
@@ -25,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('areas');
+        Schema::dropIfExists('check_items');
     }
 };

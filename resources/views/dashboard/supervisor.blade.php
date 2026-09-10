@@ -120,96 +120,80 @@
     </div>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
 
-            const canvas = document.getElementById('graficoReportes');
+        const canvas = document.getElementById('graficoReportes');
 
-            if (!canvas || typeof Chart === 'undefined') {
-                return;
-            }
+        if (!canvas || typeof Chart === 'undefined') {
+            return;
+        }
 
-            data: [
-                    Number("{{ $aprobados }}"),
-                    Number("{{ $rechazados }}"),
-                    Number("{{ $borradores }}")
+        const dataReportes = [
+            Number("{{ $aprobados }}"),
+            Number("{{ $rechazados }}"),
+            Number("{{ $borradores }}")
+        ];
+
+        new Chart(canvas, {
+            type: 'bar',
+
+            data: {
+                labels: [
+                    'Aprobados',
+                    'Rechazados',
+                    'Borradores'
                 ],
 
+                datasets: [{
+                    label: 'Cantidad',
 
-                new Chart(canvas, {
-                    type: 'bar',
+                    data: dataReportes,
 
-                    data: {
-                        labels: [
-                            'Aprobados',
-                            'Rechazados',
-                            'Borradores'
-                        ],
+                    backgroundColor: [
+                        '#22c55e',
+                        '#ef4444',
+                        '#f59e0b'
+                    ],
 
-                        datasets: [{
-                            label: 'Cantidad',
+                    borderColor: [
+                        '#16a34a',
+                        '#dc2626',
+                        '#d97706'
+                    ],
 
-                            data: dataReportes,
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
 
-                            backgroundColor: [
-                                '#22c55e',
-                                '#ef4444',
-                                '#f59e0b'
-                            ],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
 
-                            borderColor: [
-                                '#16a34a',
-                                '#dc2626',
-                                '#d97706'
-                            ],
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
 
-                            borderWidth: 1,
-                            borderRadius: 4
-                        }]
-                    },
+                scales: {
+                    y: {
+                        beginAtZero: true,
 
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-
-                        scales: {
-                            x: {
-                                grid: {
-                                    display: false
-                                },
-
-                                ticks: {
-                                    color: '#0f2f5f'
-                                }
-                            },
-
-                            y: {
-                                beginAtZero: true,
-
-                                ticks: {
-                                    stepSize: 1,
-                                    precision: 0,
-                                    color: '#0f2f5f'
-                                },
-
-                                grid: {
-                                    color: '#dbe8f3'
-                                }
-                            }
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0
                         }
                     }
-                });
-
+                }
+            }
         });
-    </script>
+
+    });
+</script>
 
 
     <style>

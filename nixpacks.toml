@@ -1,0 +1,1 @@
+[phases.setup] echo nixPkgs = ["php", "phpExtensions.gd", "phpExtensions.zip", "phpExtensions.pdo_mysql", "nodejs", "npm"]

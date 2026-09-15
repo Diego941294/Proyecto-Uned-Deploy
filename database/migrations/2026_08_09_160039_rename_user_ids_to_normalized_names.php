@@ -14,53 +14,109 @@ return new class extends Migration
         |--------------------------------------------------------------------------
         */
 
-        Schema::table('users', function (Blueprint $table) {
-            $table->renameColumn(
-                'id',
-                'id_users'
-            );
-        });
+        if (
+            Schema::hasColumn('users', 'id') &&
+            !Schema::hasColumn('users', 'id_users')
+        ) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->renameColumn(
+                    'id',
+                    'id_users'
+                );
+            });
+        }
 
         /*
         |--------------------------------------------------------------------------
-        | REPORTES
+        | REPORTES - USUARIO CREADOR
         |--------------------------------------------------------------------------
         */
 
-        Schema::table('reportes', function (Blueprint $table) {
+        if (
+            Schema::hasColumn('reportes', 'user_id') &&
+            !Schema::hasColumn('reportes', 'id_users')
+        ) {
+            Schema::table('reportes', function (Blueprint $table) {
+                $table->renameColumn(
+                    'user_id',
+                    'id_users'
+                );
+            });
+        }
 
-            $table->renameColumn(
-                'user_id',
-                'id_users'
-            );
+        /*
+        |--------------------------------------------------------------------------
+        | REPORTES - USUARIO APROBADOR
+        |--------------------------------------------------------------------------
+        */
 
-            $table->renameColumn(
-                'aprobado_por',
-                'id_usuario_aprobador'
-            );
-        });
+        if (
+            Schema::hasColumn('reportes', 'aprobado_por') &&
+            !Schema::hasColumn('reportes', 'id_usuario_aprobador')
+        ) {
+            Schema::table('reportes', function (Blueprint $table) {
+                $table->renameColumn(
+                    'aprobado_por',
+                    'id_usuario_aprobador'
+                );
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('reportes', function (Blueprint $table) {
+        /*
+        |--------------------------------------------------------------------------
+        | REPORTES - USUARIO APROBADOR
+        |--------------------------------------------------------------------------
+        */
 
-            $table->renameColumn(
-                'id_users',
-                'user_id'
-            );
+        if (
+            Schema::hasColumn('reportes', 'id_usuario_aprobador') &&
+            !Schema::hasColumn('reportes', 'aprobado_por')
+        ) {
+            Schema::table('reportes', function (Blueprint $table) {
+                $table->renameColumn(
+                    'id_usuario_aprobador',
+                    'aprobado_por'
+                );
+            });
+        }
 
-            $table->renameColumn(
-                'id_usuario_aprobador',
-                'aprobado_por'
-            );
-        });
+        /*
+        |--------------------------------------------------------------------------
+        | REPORTES - USUARIO CREADOR
+        |--------------------------------------------------------------------------
+        */
 
-        Schema::table('users', function (Blueprint $table) {
-            $table->renameColumn(
-                'id_users',
-                'id'
-            );
-        });
+        if (
+            Schema::hasColumn('reportes', 'id_users') &&
+            !Schema::hasColumn('reportes', 'user_id')
+        ) {
+            Schema::table('reportes', function (Blueprint $table) {
+                $table->renameColumn(
+                    'id_users',
+                    'user_id'
+                );
+            });
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | USERS
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            Schema::hasColumn('users', 'id_users') &&
+            !Schema::hasColumn('users', 'id')
+        ) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->renameColumn(
+                    'id_users',
+                    'id'
+                );
+            });
+        }
     }
 };

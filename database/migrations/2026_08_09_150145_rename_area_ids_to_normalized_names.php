@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Renombrar la PK de areas y las FK que apuntan hacia ella.
+     * Normalizar la PK de areas y las FK relacionadas.
      *
-     * areas.id                    -> areas.id_areas
-     * infraestructuras.area_id    -> infraestructuras.id_areas
-     * reportes.area_id            -> reportes.id_areas
+     * areas.id                 -> areas.id_areas
+     * infraestructuras.area_id -> infraestructuras.id_areas
+     * reportes.area_id         -> reportes.id_areas
      */
     public function up(): void
     {
@@ -20,27 +20,42 @@ return new class extends Migration
         | AREAS
         |--------------------------------------------------------------------------
         */
-        Schema::table('areas', function (Blueprint $table) {
-            $table->renameColumn('id', 'id_areas');
-        });
+        if (
+            Schema::hasColumn('areas', 'id') &&
+            !Schema::hasColumn('areas', 'id_areas')
+        ) {
+            Schema::table('areas', function (Blueprint $table) {
+                $table->renameColumn('id', 'id_areas');
+            });
+        }
 
         /*
         |--------------------------------------------------------------------------
         | INFRAESTRUCTURAS
         |--------------------------------------------------------------------------
         */
-        Schema::table('infraestructuras', function (Blueprint $table) {
-            $table->renameColumn('area_id', 'id_areas');
-        });
+        if (
+            Schema::hasColumn('infraestructuras', 'area_id') &&
+            !Schema::hasColumn('infraestructuras', 'id_areas')
+        ) {
+            Schema::table('infraestructuras', function (Blueprint $table) {
+                $table->renameColumn('area_id', 'id_areas');
+            });
+        }
 
         /*
         |--------------------------------------------------------------------------
         | REPORTES
         |--------------------------------------------------------------------------
         */
-        Schema::table('reportes', function (Blueprint $table) {
-            $table->renameColumn('area_id', 'id_areas');
-        });
+        if (
+            Schema::hasColumn('reportes', 'area_id') &&
+            !Schema::hasColumn('reportes', 'id_areas')
+        ) {
+            Schema::table('reportes', function (Blueprint $table) {
+                $table->renameColumn('area_id', 'id_areas');
+            });
+        }
     }
 
     /**
@@ -48,16 +63,31 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('reportes', function (Blueprint $table) {
-            $table->renameColumn('id_areas', 'area_id');
-        });
+        if (
+            Schema::hasColumn('reportes', 'id_areas') &&
+            !Schema::hasColumn('reportes', 'area_id')
+        ) {
+            Schema::table('reportes', function (Blueprint $table) {
+                $table->renameColumn('id_areas', 'area_id');
+            });
+        }
 
-        Schema::table('infraestructuras', function (Blueprint $table) {
-            $table->renameColumn('id_areas', 'area_id');
-        });
+        if (
+            Schema::hasColumn('infraestructuras', 'id_areas') &&
+            !Schema::hasColumn('infraestructuras', 'area_id')
+        ) {
+            Schema::table('infraestructuras', function (Blueprint $table) {
+                $table->renameColumn('id_areas', 'area_id');
+            });
+        }
 
-        Schema::table('areas', function (Blueprint $table) {
-            $table->renameColumn('id_areas', 'id');
-        });
+        if (
+            Schema::hasColumn('areas', 'id_areas') &&
+            !Schema::hasColumn('areas', 'id')
+        ) {
+            Schema::table('areas', function (Blueprint $table) {
+                $table->renameColumn('id_areas', 'id');
+            });
+        }
     }
 };

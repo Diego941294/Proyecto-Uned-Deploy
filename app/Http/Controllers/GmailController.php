@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Google\Client;
-use Google\Service\Gmail;
 
 class GmailController extends Controller
 {
@@ -15,7 +14,8 @@ class GmailController extends Controller
         $client->setClientSecret(env('GOOGLE_CLIENT_SECRET'));
         $client->setRedirectUri(env('GOOGLE_REDIRECT_URI'));
 
-        $client->addScope(Gmail::GMAIL_SEND);
+        $client->addScope('https://www.googleapis.com/auth/gmail.send');
+
         $client->setAccessType('offline');
         $client->setPrompt('consent');
 
@@ -24,6 +24,11 @@ class GmailController extends Controller
 
     public function handleGoogleCallback()
     {
+        if (!request()->has('code')) {
+            return redirect('/login')
+                ->with('error', 'Google no devolvió el código de autorización.');
+        }
+
         $client = new Client();
 
         $client->setClientId(env('GOOGLE_CLIENT_ID'));
@@ -38,6 +43,18 @@ class GmailController extends Controller
             return response()->json($token, 400);
         }
 
-        return response()->json($token);
+        $refreshToken = $token['refresh_token'] ?? null;
+
+        if (!$refreshToken) {
+            return response(
+                'Google no devolvió un refresh token. Revoca el acceso de la aplicación y vuelve a autorizar.',
+                400
+            );
+        }
+
+        return response(
+            'Autorización correcta. Ya se obtuvo el refresh token. No cierres esta configuración todavía.',
+            200
+        );
     }
 }

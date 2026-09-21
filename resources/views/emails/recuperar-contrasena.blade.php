@@ -18,8 +18,9 @@
                     <tr>
                         <td align="center">
 
-                            <img src="{{ $message->embed(public_path('images/guana-pollo-logo.png')) }}"
-                                alt="Guana Pollo" width="170">
+                            <img src="cid:guana-pollo-logo"
+    alt="Guana Pollo"
+    width="170">
 
                             <h3 style="color:#0B4EA2;letter-spacing:4px;margin-top:15px;margin-bottom:0;">
                                 SISTEMA

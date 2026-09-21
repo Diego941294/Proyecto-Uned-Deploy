@@ -10,6 +10,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Models\Reporte;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GmailController;
 
 
 /*
@@ -341,5 +342,12 @@ Route::middleware([
 | Rutas de autenticación
 |--------------------------------------------------------------------------
 */
+
+Route::get('/google/auth', [GmailController::class, 'redirectToGoogle'])
+    ->name('google.auth');
+
+Route::get('/google/callback', [GmailController::class, 'handleGoogleCallback'])
+    ->name('google.callback');
+
 
 require __DIR__ . '/auth.php';

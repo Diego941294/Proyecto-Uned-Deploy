@@ -16,37 +16,9 @@
 
     <div class="gp-superadmin-layout">
 
-        <aside class="gp-superadmin-sidebar">
-
-            <h3>Menú principal</h3>
-
-            <a href="{{ route('super-admin.dashboard') }}" class="active">
-                 Panel general
-            </a>
-
-            <a href="#">
-                 Mi perfil
-            </a>
-
-            <a href="{{ route('usuarios.index') }}">
-                 Usuarios del sistema
-            </a>
-
-            <a href="#">
-                 Roles y permisos
-            </a>
-
-            <a href="#">
-                 Auditoría
-            </a>
-
-            <a href="#">
-                 Configuración
-            </a>
-
-        </aside>
-
+     
         <main class="gp-superadmin-main">
+
 
             <div class="gp-superadmin-card green">
                 <div>
@@ -156,7 +128,7 @@
     /* 🔹 Contenedor principal */
 .gp-superadmin-layout {
     display: grid;
-    grid-template-columns: 240px 1fr 320px; /* sidebar, main, chart */
+    grid-template-columns: minmax(0, 1fr) 320px;
     gap: 20px;
     max-width: 1200px;
     margin: 0 auto;

@@ -54,14 +54,7 @@
             </div>
 
             <div class="gp-superadmin-card red">
-                <div>
-                    <h3>Control de roles</h3>
-                    <p>Asignación de permisos según perfil de usuario.</p>
-                </div>
-
-                <a href="#" class="gp-mini-action">
-                    Revisar
-                </a>
+              
             </div>
 
         </main>

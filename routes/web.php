@@ -102,32 +102,44 @@ Route::middleware([
 ])->group(function () {
 
 
+
     Route::get('/super-admin/dashboard', function () {
 
+        // Recuperar los usuarios con sus roles,
+        // utilizando la misma relación que UsuarioController.
+        $usuarios = \App\Models\User::with('roles')->get();
+
         $distribucion = [
-            'superAdministradores' => \App\Models\User::whereHas(
-                'roles',
-                fn($query) => $query
-                    ->where('name', 'Super Administrador')
-                    ->where('guard_name', 'web')
-            )->count(),
-
-            'administradores' => \App\Models\User::whereHas(
-                'roles',
-                fn($query) => $query
-                    ->where('name', 'Administrador')
-                    ->where('guard_name', 'web')
-            )->count(),
-
-            'supervisores' => \App\Models\User::whereHas(
-                'roles',
-                fn($query) => $query
-                    ->where('name', 'Supervisor')
-                    ->where('guard_name', 'web')
-            )->count(),
+            'superAdministradores' => 0,
+            'administradores' => 0,
+            'supervisores' => 0,
         ];
 
-        return view('dashboard.super-admin', compact('distribucion'));
+        foreach ($usuarios as $usuario) {
+            foreach ($usuario->roles as $rol) {
+
+                // Los nombres se normalizan únicamente
+                // para agruparlos en el gráfico.
+                $nombre = strtolower(trim($rol->name));
+
+                if (in_array($nombre, [
+                    'super-admin',
+                    'super administrador',
+                    'superadministrador',
+                ], true)) {
+                    $distribucion['superAdministradores']++;
+                } elseif ($nombre === 'administrador') {
+                    $distribucion['administradores']++;
+                } elseif ($nombre === 'supervisor') {
+                    $distribucion['supervisores']++;
+                }
+            }
+        }
+
+        return view(
+            'dashboard.super-admin',
+            compact('distribucion')
+        );
     })->name('super-admin.dashboard');
 
     /*

@@ -1,4 +1,3 @@
-
 <x-app-layout>
 
     <section class="gp-page-header">
@@ -15,10 +14,10 @@
     </section>
 
     @php
-        $totalUsuarios =
-            $distribucion['superAdministradores']
-            + $distribucion['administradores']
-            + $distribucion['supervisores'];
+    $totalUsuarios =
+    $distribucion['superAdministradores']
+    + $distribucion['administradores']
+    + $distribucion['supervisores'];
     @endphp
 
     <div class="gp-superadmin-layout">
@@ -32,7 +31,7 @@
                 </div>
 
                 <a href="{{ route('usuarios.index') }}"
-                   class="gp-mini-action">
+                    class="gp-mini-action">
                     Administrar
                 </a>
             </div>
@@ -44,7 +43,7 @@
                 </div>
 
                 <a href="{{ route('administrador.dashboard') }}"
-                   class="gp-mini-action">
+                    class="gp-mini-action">
                     Entrar
                 </a>
             </div>
@@ -56,9 +55,15 @@
                 </div>
 
                 <a href="{{ route('supervisor.dashboard') }}"
-                   class="gp-mini-action">
+                    class="gp-mini-action">
                     Entrar
                 </a>
+            </div>
+            <div class="gp-superadmin-card red">
+                <div>
+                    <h3></h3>
+                    <p></p>
+                </div>
             </div>
 
         </main>
@@ -75,18 +80,17 @@
             <div class="gp-superadmin-chart-box">
 
                 @if ($totalUsuarios > 0)
-                    <canvas
-                        id="superAdminChart"
-                        data-superadmin="{{ $distribucion['superAdministradores'] }}"
-                        data-admin="{{ $distribucion['administradores'] }}"
-                        data-supervisor="{{ $distribucion['supervisores'] }}"
-                        role="img"
-                        aria-label="Distribución de usuarios por rol"
-                    ></canvas>
+                <canvas
+                    id="superAdminChart"
+                    data-superadmin="{{ $distribucion['superAdministradores'] }}"
+                    data-admin="{{ $distribucion['administradores'] }}"
+                    data-supervisor="{{ $distribucion['supervisores'] }}"
+                    role="img"
+                    aria-label="Distribución de usuarios por rol"></canvas>
                 @else
-                    <p class="gp-chart-empty">
-                        No hay usuarios con roles asignados.
-                    </p>
+                <p class="gp-chart-empty">
+                    No hay usuarios con roles asignados.
+                </p>
                 @endif
 
             </div>
@@ -119,87 +123,92 @@
 
     @if ($totalUsuarios > 0)
 
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
-                const canvas = document.getElementById('superAdminChart');
+            const canvas = document.getElementById('superAdminChart');
 
-                if (!canvas || typeof Chart === 'undefined') {
-                    return;
-                }
+            if (!canvas || typeof Chart === 'undefined') {
+                return;
+            }
 
-                const cantidades = [
-                    Number(canvas.dataset.superadmin),
-                    Number(canvas.dataset.admin),
-                    Number(canvas.dataset.supervisor)
-                ];
+            const cantidades = [
+                Number(canvas.dataset.superadmin),
+                Number(canvas.dataset.admin),
+                Number(canvas.dataset.supervisor)
+            ];
 
-                new Chart(canvas, {
-                    type: 'pie',
+            new Chart(canvas, {
+                type: 'pie',
 
-                    data: {
-                        labels: [
-                            'Super Administrador',
-                            'Administrador',
-                            'Supervisor'
+                data: {
+                    labels: [
+                        'Super Administrador',
+                        'Administrador',
+                        'Supervisor'
+                    ],
+
+                    datasets: [{
+                        data: cantidades,
+
+                        backgroundColor: [
+                            '#03700c',
+                            '#0b31b1',
+                            '#d8b90a'
                         ],
 
-                        datasets: [{
-                            data: cantidades,
+                        borderColor: '#ffffff',
+                        borderWidth: 3,
+                        hoverOffset: 8
+                    }]
+                },
 
-                            backgroundColor: [
-                                '#03700c',
-                                '#0b31b1',
-                                '#d8b90a'
-                            ],
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
 
-                            borderColor: '#ffffff',
-                            borderWidth: 3,
-                            hoverOffset: 8
-                        }]
-                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
 
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
 
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
+                                    const cantidad = Number(context.raw);
 
-                            tooltip: {
-                                callbacks: {
-                                    label: function (context) {
+                                    const total = context.dataset.data.reduce(
+                                        (suma, valor) => suma + Number(valor),
+                                        0
+                                    );
 
-                                        const cantidad = Number(context.raw);
+                                    const porcentaje = total > 0 ?
+                                        ((cantidad / total) * 100).toFixed(1) :
+                                        '0.0';
 
-                                        const total = context.dataset.data.reduce(
-                                            (suma, valor) => suma + Number(valor),
-                                            0
-                                        );
-
-                                        const porcentaje = total > 0
-                                            ? ((cantidad / total) * 100).toFixed(1)
-                                            : '0.0';
-
-                                        return context.label + ': ' +
-                                            cantidad + ' (' + porcentaje + '%)';
-                                    }
+                                    return context.label + ': ' +
+                                        cantidad + ' (' + porcentaje + '%)';
                                 }
                             }
                         }
                     }
-                });
-
+                }
             });
-        </script>
+
+        });
+    </script>
 
     @endif
 
     <style>
+        .gp-superadmin-card.red {
+            background: linear-gradient(135deg, #e34b55, #a91d39);
+            color: #ffffff;
+        }
+
         .gp-superadmin-layout {
             display: grid;
             grid-template-columns: minmax(0, 1fr) 320px;
@@ -309,7 +318,7 @@
             color: #64748b;
         }
 
-       /* 🔹 Responsive: apilar en pantallas pequeñas */
+        /* 🔹 Responsive: apilar en pantallas pequeñas */
         @media (max-width: 1024px) {
             .gp-superadmin-layout {
                 grid-template-columns: 1fr;
@@ -326,7 +335,6 @@
                 /* 🔸 se coloca debajo */
             }
         }
-
     </style>
 
 </x-app-layout>

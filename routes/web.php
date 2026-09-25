@@ -101,12 +101,30 @@ Route::middleware([
     'superadministrador',
 ])->group(function () {
 
+
     Route::get('/super-admin/dashboard', function () {
 
         $distribucion = [
-            'superAdministradores' => \App\Models\User::role('Super Administrador')->count(),
-            'administradores' => \App\Models\User::role('Administrador')->count(),
-            'supervisores' => \App\Models\User::role('Supervisor')->count(),
+            'superAdministradores' => \App\Models\User::whereHas(
+                'roles',
+                fn($query) => $query
+                    ->where('name', 'Super Administrador')
+                    ->where('guard_name', 'web')
+            )->count(),
+
+            'administradores' => \App\Models\User::whereHas(
+                'roles',
+                fn($query) => $query
+                    ->where('name', 'Administrador')
+                    ->where('guard_name', 'web')
+            )->count(),
+
+            'supervisores' => \App\Models\User::whereHas(
+                'roles',
+                fn($query) => $query
+                    ->where('name', 'Supervisor')
+                    ->where('guard_name', 'web')
+            )->count(),
         ];
 
         return view('dashboard.super-admin', compact('distribucion'));

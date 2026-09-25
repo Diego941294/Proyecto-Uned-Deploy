@@ -1,3 +1,4 @@
+
 <x-app-layout>
 
     <section class="gp-page-header">
@@ -6,7 +7,6 @@
                 <h2 class="gp-header-title">
                     Dashboard Super Administrador
                 </h2>
-
                 <p class="gp-header-subtitle">
                     Administración general de usuarios, roles y accesos del sistema.
                 </p>
@@ -15,27 +15,10 @@
     </section>
 
     @php
-    $roles = [
-    [
-    'nombre' => 'Super Administrador',
-    'cantidad' => $distribucion['superAdministradores'],
-    'color' => '#03700c',
-    ],
-    [
-    'nombre' => 'Administrador',
-    'cantidad' => $distribucion['administradores'],
-    'color' => '#0b31b1',
-    ],
-    [
-    'nombre' => 'Supervisor',
-    'cantidad' => $distribucion['supervisores'],
-    'color' => '#d8b90a',
-    ],
-    ];
-
-    $totalUsuarios = array_sum(
-    array_column($roles, 'cantidad')
-    );
+        $totalUsuarios =
+            $distribucion['superAdministradores']
+            + $distribucion['administradores']
+            + $distribucion['supervisores'];
     @endphp
 
     <div class="gp-superadmin-layout">
@@ -48,9 +31,8 @@
                     <p>Crear usuarios del sistema y asignar roles.</p>
                 </div>
 
-                <a
-                    href="{{ route('usuarios.index') }}"
-                    class="gp-mini-action">
+                <a href="{{ route('usuarios.index') }}"
+                   class="gp-mini-action">
                     Administrar
                 </a>
             </div>
@@ -58,15 +40,11 @@
             <div class="gp-superadmin-card blue">
                 <div>
                     <h3>Panel Administrador</h3>
-                    <p>
-                        Acceso al control de reportes,
-                        áreas y check items.
-                    </p>
+                    <p>Acceso al control de reportes, áreas y check items.</p>
                 </div>
 
-                <a
-                    href="{{ route('administrador.dashboard') }}"
-                    class="gp-mini-action">
+                <a href="{{ route('administrador.dashboard') }}"
+                   class="gp-mini-action">
                     Entrar
                 </a>
             </div>
@@ -74,15 +52,11 @@
             <div class="gp-superadmin-card cyan">
                 <div>
                     <h3>Panel Supervisor</h3>
-                    <p>
-                        Acceso al flujo operativo de
-                        creación de reportes.
-                    </p>
+                    <p>Acceso al flujo operativo de creación de reportes.</p>
                 </div>
 
-                <a
-                    href="{{ route('supervisor.dashboard') }}"
-                    class="gp-mini-action">
+                <a href="{{ route('supervisor.dashboard') }}"
+                   class="gp-mini-action">
                     Entrar
                 </a>
             </div>
@@ -101,21 +75,18 @@
             <div class="gp-superadmin-chart-box">
 
                 @if ($totalUsuarios > 0)
-
-                <canvas
-                    id="superAdminChart"
-                    data-superadmin="{{ $distribucion['superAdministradores'] }}"
-                    data-admin="{{ $distribucion['administradores'] }}"
-                    data-supervisor="{{ $distribucion['supervisores'] }}"
-                    aria-label="Distribución de usuarios por rol"
-                    role="img"></canvas>
-
+                    <canvas
+                        id="superAdminChart"
+                        data-superadmin="{{ $distribucion['superAdministradores'] }}"
+                        data-admin="{{ $distribucion['administradores'] }}"
+                        data-supervisor="{{ $distribucion['supervisores'] }}"
+                        role="img"
+                        aria-label="Distribución de usuarios por rol"
+                    ></canvas>
                 @else
-
-                <p class="gp-chart-empty">
-                    No hay usuarios con roles asignados.
-                </p>
-
+                    <p class="gp-chart-empty">
+                        No hay usuarios con roles asignados.
+                    </p>
                 @endif
 
             </div>
@@ -125,25 +96,19 @@
                 <div class="gp-legend-item">
                     <span class="gp-legend-color gp-color-superadmin"></span>
                     <span class="gp-legend-name">Super Administrador</span>
-                    <strong class="gp-legend-count">
-                        {{ $distribucion['superAdministradores'] }}
-                    </strong>
+                    <strong>{{ $distribucion['superAdministradores'] }}</strong>
                 </div>
 
                 <div class="gp-legend-item">
                     <span class="gp-legend-color gp-color-admin"></span>
                     <span class="gp-legend-name">Administrador</span>
-                    <strong class="gp-legend-count">
-                        {{ $distribucion['administradores'] }}
-                    </strong>
+                    <strong>{{ $distribucion['administradores'] }}</strong>
                 </div>
 
                 <div class="gp-legend-item">
                     <span class="gp-legend-color gp-color-supervisor"></span>
                     <span class="gp-legend-name">Supervisor</span>
-                    <strong class="gp-legend-count">
-                        {{ $distribucion['supervisores'] }}
-                    </strong>
+                    <strong>{{ $distribucion['supervisores'] }}</strong>
                 </div>
 
             </div>
@@ -154,98 +119,87 @@
 
     @if ($totalUsuarios > 0)
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
 
-    document.addEventListener('DOMContentLoaded', function () {
+                const canvas = document.getElementById('superAdminChart');
 
-    const canvas = document.getElementById('superAdminChart');
+                if (!canvas || typeof Chart === 'undefined') {
+                    return;
+                }
 
-    if (!canvas || typeof Chart === 'undefined') {
-    return;
-    }
+                const cantidades = [
+                    Number(canvas.dataset.superadmin),
+                    Number(canvas.dataset.admin),
+                    Number(canvas.dataset.supervisor)
+                ];
 
-    const cantidades = [
-    Number(canvas.dataset.superadmin),
-    Number(canvas.dataset.admin),
-    Number(canvas.dataset.supervisor)
-    ];
+                new Chart(canvas, {
+                    type: 'pie',
 
-    new Chart(canvas, {
-    type: 'pie',
+                    data: {
+                        labels: [
+                            'Super Administrador',
+                            'Administrador',
+                            'Supervisor'
+                        ],
 
-    data: {
-    labels: [
-    'Super Administrador',
-    'Administrador',
-    'Supervisor'
-    ],
+                        datasets: [{
+                            data: cantidades,
 
-    datasets: [{
-    data: cantidades,
+                            backgroundColor: [
+                                '#03700c',
+                                '#0b31b1',
+                                '#d8b90a'
+                            ],
 
-    backgroundColor: [
-    '#03700c',
-    '#0b31b1',
-    '#d8b90a'
-    ],
+                            borderColor: '#ffffff',
+                            borderWidth: 3,
+                            hoverOffset: 8
+                        }]
+                    },
 
-    borderColor: '#ffffff',
-    borderWidth: 3,
-    hoverOffset: 8
-    }]
-    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
 
-    options: {
-    responsive: true,
-    maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
 
-    plugins: {
-    legend: {
-    display: false
-    },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
 
-    tooltip: {
-    callbacks: {
-    label: function (context) {
+                                        const cantidad = Number(context.raw);
 
-    const total = context.dataset.data.reduce(
-    (sum, value) => sum + Number(value),
-    0
-    );
+                                        const total = context.dataset.data.reduce(
+                                            (suma, valor) => suma + Number(valor),
+                                            0
+                                        );
 
-    const cantidad = Number(context.raw);
+                                        const porcentaje = total > 0
+                                            ? ((cantidad / total) * 100).toFixed(1)
+                                            : '0.0';
 
-    const porcentaje = total > 0
-    ? ((cantidad / total) * 100).toFixed(1)
-    : '0.0';
+                                        return context.label + ': ' +
+                                            cantidad + ' (' + porcentaje + '%)';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
 
-    return context.label + ': ' +
-    cantidad + ' (' + porcentaje + '%)';
-    }
-    }
-    }
-    }
-    }
-    });
-
-    });
+            });
+        </script>
 
     @endif
 
     <style>
-        .gp-color-superadmin {
-            background-color: #03700c;
-        }
-
-        .gp-color-admin {
-            background-color: #0b31b1;
-        }
-
-        .gp-color-supervisor {
-            background-color: #d8b90a;
-        }
-
         .gp-superadmin-layout {
             display: grid;
             grid-template-columns: minmax(0, 1fr) 320px;
@@ -258,11 +212,9 @@
 
         .gp-superadmin-main {
             display: grid;
-            grid-template-columns:
-                repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 20px;
             width: 100%;
-            box-sizing: border-box;
             align-content: start;
         }
 
@@ -270,20 +222,11 @@
             padding: 20px;
             border-radius: 10px;
             background: #ffffff;
-            box-shadow:
-                0 2px 8px rgba(15, 47, 95, 0.10);
+            box-shadow: 0 2px 8px rgba(15, 47, 95, 0.10);
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 15px;
-        }
-
-        .gp-superadmin-card h3 {
-            margin-bottom: 8px;
-        }
-
-        .gp-superadmin-card p {
-            margin-bottom: 0;
         }
 
         .gp-superadmin-chart {
@@ -295,18 +238,10 @@
             min-width: 0;
         }
 
-        .gp-superadmin-chart h3 {
-            margin: 0;
-        }
-
         .gp-chart-total {
             margin: 8px 0 16px;
             color: #526782;
             font-size: 14px;
-        }
-
-        .gp-chart-total strong {
-            color: #17365d;
         }
 
         .gp-superadmin-chart-box {
@@ -327,8 +262,6 @@
             flex-direction: column;
             gap: 12px;
             margin-top: 20px;
-            width: 100%;
-            box-sizing: border-box;
         }
 
         .gp-legend-item {
@@ -339,6 +272,14 @@
             font-size: 14px;
         }
 
+        .gp-legend-item strong {
+            margin-left: auto;
+        }
+
+        .gp-legend-name {
+            flex: 1;
+        }
+
         .gp-legend-color {
             display: inline-block;
             width: 13px;
@@ -347,13 +288,16 @@
             flex-shrink: 0;
         }
 
-        .gp-legend-name {
-            flex: 1;
+        .gp-color-superadmin {
+            background-color: #03700c;
         }
 
-        .gp-legend-count {
-            margin-left: auto;
-            font-variant-numeric: tabular-nums;
+        .gp-color-admin {
+            background-color: #0b31b1;
+        }
+
+        .gp-color-supervisor {
+            background-color: #d8b90a;
         }
 
         .gp-chart-empty {
@@ -365,7 +309,7 @@
             color: #64748b;
         }
 
-        /* 🔹 Responsive: apilar en pantallas pequeñas */
+       /* 🔹 Responsive: apilar en pantallas pequeñas */
         @media (max-width: 1024px) {
             .gp-superadmin-layout {
                 grid-template-columns: 1fr;
@@ -382,6 +326,7 @@
                 /* 🔸 se coloca debajo */
             }
         }
+
     </style>
 
 </x-app-layout>

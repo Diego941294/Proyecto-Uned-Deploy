@@ -92,16 +92,9 @@ class InfraestructuraController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $ultimo = Infraestructura::where(
-            'id_areas',
-            $validated['id_areas']
-        )
-            ->whereNotNull('codigo')
-            ->orderBy(
-                'id_infraestructuras',
-                'desc'
-            )
-            ->first();
+       $ultimo = Infraestructura::whereNotNull('codigo')
+    ->orderBy('id_infraestructuras', 'desc')
+    ->first();
 
         $siguienteNumero = 1;
 

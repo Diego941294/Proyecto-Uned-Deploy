@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Rutas del Superadministrador
@@ -99,7 +100,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware([
     'auth',
-    'superadministrador'
+    'superadministrador',
 ])->group(function () {
 
     Route::get(
@@ -109,11 +110,25 @@ Route::middleware([
         }
     )->name('super-admin.dashboard');
 
+    /*
+    |--------------------------------------------------------------------------
+    | Administración de usuarios
+    |--------------------------------------------------------------------------
+    */
 
     Route::resource(
         'usuarios',
         UsuarioController::class
     );
+
+    /*
+    | Habilitar usuarios deshabilitados.
+    | Conserva su rol y sus reportes históricos.
+    */
+    Route::patch(
+        '/usuarios/{usuario}/habilitar',
+        [UsuarioController::class, 'habilitar']
+    )->name('usuarios.habilitar');
 
 });
 
@@ -196,7 +211,6 @@ Route::middleware([
         '/administrador/dashboard',
         [ReporteController::class, 'dashboardAdmin']
     )->name('administrador.dashboard');
-
 
     /*
     |--------------------------------------------------------------------------

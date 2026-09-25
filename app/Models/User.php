@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Services\GmailService;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
-use App\Services\GmailService;
 
 class User extends Authenticatable
 {
@@ -22,6 +22,7 @@ class User extends Authenticatable
         'password',
         'photo',
         'firma',
+        'activo',
     ];
 
     protected $hidden = [
@@ -34,8 +35,15 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'activo' => 'boolean',
         ];
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relaciones
+    |--------------------------------------------------------------------------
+    */
 
     public function reportes()
     {
@@ -64,21 +72,39 @@ class User extends Authenticatable
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Estado del usuario
+    |--------------------------------------------------------------------------
+    */
+
+    public function estaActivo(): bool
+    {
+        return $this->activo === true;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Recuperación de contraseña mediante Gmail
+    |--------------------------------------------------------------------------
+    */
+
     public function sendPasswordResetNotification($token): void
-{
-    $url = url(route('password.reset', [
-        'token' => $token,
-        'email' => $this->getEmailForPasswordReset(),
-    ], false));
+    {
+        $url = url(route('password.reset', [
+            'token' => $token,
+            'email' => $this->getEmailForPasswordReset(),
+        ], false));
 
-    $html = view('emails.recuperar-contrasena', [
-        'url' => $url,
-    ])->render();
+        $html = view(
+            'emails.recuperar-contrasena',
+            ['url' => $url]
+        )->render();
 
-    app(GmailService::class)->send(
-        $this->getEmailForPasswordReset(),
-        'Recuperación de contraseña - Guana Pollo',
-        $html
-    );
-}
+        app(GmailService::class)->send(
+            $this->getEmailForPasswordReset(),
+            'Recuperación de contraseña - Guana Pollo',
+            $html
+        );
+    }
 }

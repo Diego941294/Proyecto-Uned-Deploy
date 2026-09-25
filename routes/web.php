@@ -59,7 +59,6 @@ Route::get('/dashboard', function () {
             'error',
             'El usuario no tiene un rol asignado.'
         );
-
 })->middleware(['auth'])->name('dashboard');
 
 
@@ -87,7 +86,6 @@ Route::middleware('auth')->group(function () {
         '/profile',
         [ProfileController::class, 'destroy']
     )->name('profile.destroy');
-
 });
 
 
@@ -103,12 +101,16 @@ Route::middleware([
     'superadministrador',
 ])->group(function () {
 
-    Route::get(
-        '/super-admin/dashboard',
-        function () {
-            return view('dashboard.super-admin');
-        }
-    )->name('super-admin.dashboard');
+    Route::get('/super-admin/dashboard', function () {
+
+        $distribucion = [
+            'superAdministradores' => \App\Models\User::role('Super Administrador')->count(),
+            'administradores' => \App\Models\User::role('Administrador')->count(),
+            'supervisores' => \App\Models\User::role('Supervisor')->count(),
+        ];
+
+        return view('dashboard.super-admin', compact('distribucion'));
+    })->name('super-admin.dashboard');
 
     /*
     |--------------------------------------------------------------------------
@@ -129,7 +131,6 @@ Route::middleware([
         '/usuarios/{usuario}/habilitar',
         [UsuarioController::class, 'habilitar']
     )->name('usuarios.habilitar');
-
 });
 
 
@@ -191,7 +192,6 @@ Route::middleware([
         '/supervisor/reportes/{reporte}',
         [EditarReporteController::class, 'update']
     )->name('supervisor.reportes.update');
-
 });
 
 
@@ -306,7 +306,6 @@ Route::middleware([
         '/reportes-pdf',
         [ReporteController::class, 'pdfGeneral']
     )->name('reportes.pdf-general');
-
 });
 
 
@@ -328,7 +327,6 @@ Route::middleware('auth')->group(function () {
         '/reportes/{reporte}',
         [ReporteController::class, 'show']
     )->name('reportes.show');
-
 });
 
 
@@ -347,7 +345,6 @@ Route::middleware([
         '/supervisor/mis-reportes',
         [ReporteController::class, 'misReportes']
     )->name('supervisor.mis_reportes');
-
 });
 
 

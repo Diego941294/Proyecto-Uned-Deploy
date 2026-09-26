@@ -44,24 +44,24 @@
 
 
                 {{-- =====================================================
-                ACCIONES ADMINISTRATIVAS
-                ====================================================== --}}
+ACCIONES ADMINISTRATIVAS
+====================================================== --}}
 
-                {{-- ACCIONES ADMINISTRATIVAS --}}
                 @if(
                 auth()->check() &&
                 auth()->user()->hasAnyRole(['administrador', 'super-admin']) &&
                 $reporte->estado === 'enviado'
                 )
 
-                <form
-
-
-                    <a
+                {{-- EDITAR --}}
+                <a
                     href="{{ route('administrador.reportes.edit', $reporte) }}"
                     class="gp-action-btn secondary">
                     ✎ Editar
-                    </a>
+                </a>
+
+                {{-- APROBAR --}}
+                <form
                     method="POST"
                     action="{{ route('reportes.aprobar', $reporte) }}"
                     onsubmit="return confirm('¿Desea aprobar este reporte?');">
@@ -72,70 +72,48 @@
                     </button>
                 </form>
 
+                {{-- RECHAZAR --}}
                 <button
                     type="button"
                     class="gp-action-btn danger"
-                    onclick="document.getElementById('gp-rechazo-panel').hidden = false;
-                 document.getElementById('motivo_rechazo').focus();">
+                    onclick="
+            document.getElementById('gp-rechazo-panel').hidden = false;
+            document.getElementById('motivo_rechazo').focus();
+        ">
                     ✕ Rechazar
                 </button>
 
                 @endif
 
+            </div> {{-- Cierra gp-header-actions --}}
 
-                @if($reporte->estado !== 'rechazado')
+        </div> {{-- Cierra gp-page-title-row --}}
 
-                <form
-                    action="{{ route('reportes.rechazar', $reporte) }}"
-                    method="POST">
-                    @csrf
-
-                    <label for="motivo_rechazo">
-                        Motivo del rechazo *
-                    </label>
-
-                    <textarea
-                        id="motivo_rechazo"
-                        name="motivo_rechazo"
-                        rows="4"
-                        maxlength="1000"
-                        required
-                        placeholder="Digite el motivo del rechazo...">{{ old('motivo_rechazo') }}</textarea>
-
-                    @error('motivo_rechazo')
-                    <p class="text-red-600" role="alert">
-                        {{ $message }}
-                    </p>
-                    @enderror
-
-                    <button type="submit">
-                        Confirmar rechazo
-                    </button>
-                </form>
-
-                @endif
+    </section> {{-- Cierra gp-page-header --}}
 
 
-            </div>
-
-        </div>
-
-    </section>
+    {{-- =====================================================
+FORMULARIO DE RECHAZO
+====================================================== --}}
 
     @if(
     auth()->check() &&
     auth()->user()->hasAnyRole(['administrador', 'super-admin']) &&
     $reporte->estado === 'enviado'
     )
+
     <section
         id="gp-rechazo-panel"
         class="gp-rechazo-panel"
         @if(!$errors->has('motivo_rechazo')) hidden @endif
         >
-        <h3>Rechazar reporte #{{ $reporte->id_reportes }}</h3>
+
+        <h3>
+            Rechazar reporte #{{ $reporte->id_reportes }}
+        </h3>
 
         <p>
-            Para rechazar este reporte, debe indicar el motivo.
+            Para rechazar este reporte, debe digitar el motivo del rechazo.
         </p>
 
         <form
@@ -153,8 +131,8 @@
                 class="gp-textarea"
                 rows="4"
                 maxlength="1000"
-                placeholder="Digite el motivo del rechazo..."
-                required>{{ old('motivo_rechazo') }}</textarea>
+                required
+                placeholder="Digite el motivo del rechazo...">{{ old('motivo_rechazo') }}</textarea>
 
             @error('motivo_rechazo')
             <p class="gp-rechazo-error" role="alert">
@@ -163,21 +141,34 @@
             @enderror
 
             <div class="gp-rechazo-actions">
+
                 <button
                     type="button"
                     class="gp-action-btn secondary"
-                    onclick="document.getElementById('gp-rechazo-panel').hidden = true;">
+                    onclick="
+                        document.getElementById('gp-rechazo-panel').hidden = true;
+                    ">
                     Cancelar
                 </button>
 
-                <button type="submit" class="gp-action-btn danger">
+                <button
+                    type="submit"
+                    class="gp-action-btn danger">
                     Confirmar rechazo
                 </button>
+
             </div>
+
         </form>
+
     </section>
+
     @endif
 
+
+    {{-- =====================================================
+CONTENIDO DEL REPORTE
+====================================================== --}}
 
     <div class="gp-detail-panel">
 
@@ -660,8 +651,61 @@
             border-radius: 12px;
             touch-action: none;
         }
-    </style>
 
+
+        .gp-rechazo-panel {
+            margin: 20px 0;
+            padding: 24px;
+            background: #fff7f7;
+            border: 1px solid #fecaca;
+            border-left: 5px solid #dc2626;
+            border-radius: 12px;
+        }
+
+        .gp-rechazo-panel[hidden] {
+            display: none;
+        }
+
+        .gp-rechazo-panel h3 {
+            margin-bottom: 8px;
+            color: #991b1b;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .gp-rechazo-panel p {
+            margin-bottom: 16px;
+            color: #7f1d1d;
+        }
+
+        .gp-rechazo-panel label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .gp-rechazo-panel textarea {
+            display: block;
+            width: 100%;
+            min-height: 110px;
+            padding: 12px;
+            border: 1px solid #fca5a5;
+            border-radius: 8px;
+        }
+
+        .gp-rechazo-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .gp-rechazo-error {
+            margin-top: 8px;
+            color: #b91c1c;
+            font-weight: 600;
+        }
+    </style>
 
 
 </x-app-layout>

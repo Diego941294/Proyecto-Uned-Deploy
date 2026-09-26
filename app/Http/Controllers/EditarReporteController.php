@@ -31,19 +31,24 @@ class EditarReporteController extends Controller
     public function edit(Reporte $reporte)
     {
         // Solo el propietario puede editar el reporte.
+
         if ((string) $reporte->id_users !== (string) Auth::id()) {
-            abort(
-                403,
-                'No tiene permiso para editar este reporte.'
-            );
+            return redirect()
+                ->route('supervisor.dashboard')
+                ->with(
+                    'warning',
+                    'No puedes editar este reporte porque pertenece a otro usuario.'
+                );
         }
 
         // Únicamente se pueden editar borradores.
         if ($reporte->estado !== 'borrador') {
-            abort(
-                403,
-                'Solo se pueden editar reportes en estado borrador.'
-            );
+            return redirect()
+                ->route('supervisor.dashboard')
+                ->with(
+                    'warning',
+                    'Este reporte no se puede editar porque ya fue enviado, aprobado o rechazado. Solo se pueden modificar reportes en estado borrador.'
+                );
         }
 
         $reporte->load([
@@ -155,7 +160,7 @@ class EditarReporteController extends Controller
             if ($cantidadItemsValidos !== count($checkItemIds)) {
                 throw ValidationException::withMessages([
                     'detalles' =>
-                        'Uno o más elementos seleccionados no pertenecen al área indicada.',
+                    'Uno o más elementos seleccionados no pertenecen al área indicada.',
                 ]);
             }
         }
@@ -209,7 +214,7 @@ class EditarReporteController extends Controller
                 'fecha' => $validated['fecha'],
 
                 'observaciones' =>
-                    $validated['observaciones'] ?? null,
+                $validated['observaciones'] ?? null,
             ]);
 
             /*
@@ -227,7 +232,7 @@ class EditarReporteController extends Controller
                         'estado' => $detalle['estado'],
 
                         'observacion' =>
-                            $detalle['observacion'] ?? null,
+                        $detalle['observacion'] ?? null,
                     ]
                 );
             }

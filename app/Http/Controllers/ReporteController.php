@@ -344,6 +344,7 @@ class ReporteController extends Controller
 
     public function show(Reporte $reporte)
     {
+
         $reporte->load([
             'area',
             'usuario',
@@ -407,17 +408,93 @@ class ReporteController extends Controller
     }
 
 
+
+    /**
+     * Enviar un borrador para revisión.
+     */
+    public function enviar(Reporte $reporte)
+    {
+        DB::transaction(function () use ($reporte) {
+
+            $reporte = Reporte::query()
+                ->whereKey($reporte->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            // Solo el propietario puede enviar el reporte.
+            if (
+                (string) $reporte->id_users !==
+                (string) Auth::id()
+            ) {
+                abort(
+                    403,
+                    'No tiene permiso para enviar este reporte.'
+                );
+            }
+
+            // Un reporte solo puede enviarse desde borrador.
+            if ($reporte->estado !== 'borrador') {
+                abort(
+                    409,
+                    'Solo se pueden enviar reportes en estado borrador.'
+                );
+            }
+
+            // No permitir reportes sin detalles.
+            if (!$reporte->detalles()->exists()) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'reporte' => 'El reporte debe contener elementos inspeccionados antes de enviarse.',
+                ]);
+            }
+
+            $reporte->update([
+                'estado' => 'enviado',
+            ]);
+
+            ReporteHistorialEstado::create([
+                'id_reportes' => $reporte->id_reportes,
+                'id_users' => Auth::id(),
+                'estado_anterior' => 'borrador',
+                'estado_nuevo' => 'enviado',
+                'comentario' => 'Reporte enviado para revisión.',
+            ]);
+        });
+
+        return redirect()
+            ->route('reportes.show', $reporte)
+            ->with(
+                'success',
+                'Reporte enviado correctamente para revisión.'
+            );
+    }
+
+
+
+
+
+
     /*
     |--------------------------------------------------------------------------
     | APROBAR REPORTE
     |--------------------------------------------------------------------------
     */
 
+
     public function aprobar(Reporte $reporte)
     {
         DB::transaction(function () use ($reporte) {
 
-            $estadoAnterior = $reporte->estado;
+            $reporte = Reporte::query()
+                ->whereKey($reporte->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($reporte->estado !== 'enviado') {
+                abort(
+                    409,
+                    'Solo se pueden aprobar reportes enviados y pendientes de revisión.'
+                );
+            }
 
             $reporte->update([
                 'estado' => 'aprobado',
@@ -428,7 +505,7 @@ class ReporteController extends Controller
             ReporteHistorialEstado::create([
                 'id_reportes' => $reporte->id_reportes,
                 'id_users' => Auth::id(),
-                'estado_anterior' => $estadoAnterior,
+                'estado_anterior' => 'enviado',
                 'estado_nuevo' => 'aprobado',
                 'comentario' => 'Reporte aprobado.',
             ]);
@@ -438,7 +515,7 @@ class ReporteController extends Controller
             ->back()
             ->with(
                 'success',
-                'Reporte aprobado.'
+                'Reporte aprobado correctamente.'
             );
     }
 
@@ -449,8 +526,11 @@ class ReporteController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function rechazar(Request $request, Reporte $reporte)
-    {
+
+    public function rechazar(
+        Request $request,
+        Reporte $reporte
+    ) {
         $validated = $request->validate([
             'motivo_rechazo' => [
                 'required',
@@ -459,21 +539,34 @@ class ReporteController extends Controller
             ],
         ]);
 
-        DB::transaction(function () use ($reporte, $validated) {
+        DB::transaction(function () use (
+            $reporte,
+            $validated
+        ) {
+            $reporte = Reporte::query()
+                ->whereKey($reporte->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
 
-            $estadoAnterior = $reporte->estado;
+            if ($reporte->estado !== 'enviado') {
+                abort(
+                    409,
+                    'Solo se pueden rechazar reportes enviados y pendientes de revisión.'
+                );
+            }
 
             $reporte->update([
                 'estado' => 'rechazado',
                 'id_usuario_aprobador' => Auth::id(),
                 'fecha_aprobacion' => null,
-                'motivo_rechazo' => $validated['motivo_rechazo'],
+                'motivo_rechazo' =>
+                $validated['motivo_rechazo'],
             ]);
 
             ReporteHistorialEstado::create([
                 'id_reportes' => $reporte->id_reportes,
                 'id_users' => Auth::id(),
-                'estado_anterior' => $estadoAnterior,
+                'estado_anterior' => 'enviado',
                 'estado_nuevo' => 'rechazado',
                 'comentario' => 'Reporte rechazado.',
             ]);
@@ -483,7 +576,7 @@ class ReporteController extends Controller
             ->back()
             ->with(
                 'success',
-                'Reporte rechazado.'
+                'Reporte rechazado correctamente.'
             );
     }
     /*
@@ -749,15 +842,12 @@ class ReporteController extends Controller
     |--------------------------------------------------------------------------
     */
 
+
         $reportes = (clone $queryBase)
             ->with('area')
-            ->where('estado', ['borrador', 'rechazado'])
-            ->orderBy(
-                'fecha',
-                'desc'
-            )
+            ->where('estado', 'borrador')
+            ->orderBy('fecha', 'desc')
             ->get();
-
 
         /*
     |--------------------------------------------------------------------------

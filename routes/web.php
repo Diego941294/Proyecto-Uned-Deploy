@@ -188,6 +188,14 @@ Route::middleware([
     )->name('reportes.create');
 
 
+    /* Enviar reporte para revisión*/
+
+    Route::post(
+        '/reportes/{reporte}/enviar',
+        [ReporteController::class, 'enviar']
+    )->name('reportes.enviar');
+
+
     Route::post(
         '/reportes',
         [ReporteController::class, 'store']

@@ -129,7 +129,7 @@
         @if($reportes->isEmpty())
 
         <p style="color:#991b1b; font-weight:600;">
-            ❌ No hay reportes en estado Borrador.
+            No hay reportes en estado Borrador.
         </p>
 
         @else
@@ -165,14 +165,30 @@
                             {{ \Carbon\Carbon::parse($reporte->fecha)->format('d/m/Y') }}
                         </td>
 
+
                         <td>
+                            <div class="gp-report-actions">
 
-                            <a
-                                href="{{ route('reportes.edit', $reporte->id_reportes) }}"
-                                class="gp-action-link">
-                                ✏️ Editar
-                            </a>
+                                <a
+                                    href="{{ route('reportes.edit', $reporte->id_reportes) }}"
+                                    class="gp-action-link">
+                                    Editar
+                                </a>
 
+                                <form
+                                    method="POST"
+                                    action="{{ route('reportes.enviar', $reporte->id_reportes) }}"
+                                    onsubmit="return confirm('¿Desea enviar este reporte? Una vez enviado, ya no podrá editarlo.');">
+
+                                    @csrf
+
+                                    <button type="submit" class="gp-send-button">
+                                        Enviar reporte
+                                    </button>
+
+                                </form>
+
+                            </div>
                         </td>
 
                     </tr>
@@ -190,6 +206,31 @@
     </div>
 
     <style>
+        .gp-report-actions {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .gp-report-actions form {
+            margin: 0;
+        }
+
+        .gp-send-button {
+            padding: 9px 14px;
+            border: none;
+            border-radius: 5px;
+            background: #167347;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .gp-send-button:hover {
+            background: #105735;
+        }
+
         .gp-dashboard-grid {
             display: grid;
             grid-template-columns:

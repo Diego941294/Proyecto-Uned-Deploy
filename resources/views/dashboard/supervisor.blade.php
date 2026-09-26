@@ -7,7 +7,20 @@
                 Panel de control para registro de reportes preoperacionales.
             </p>
         </div>
+
     </x-slot>
+
+    @if (session('warning'))
+    <div class="gp-warning-alert" role="alert">
+        <span class="gp-warning-icon">!</span>
+
+        <div>
+            <strong>Acceso restringido</strong>
+            <p>{{ session('warning') }}</p>
+        </div>
+    </div>
+    @endif
+
 
     <div class="gp-dashboard-grid">
 

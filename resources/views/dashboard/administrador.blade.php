@@ -1,6 +1,5 @@
 <x-app-layout>
 
-
     @if (session('warning'))
     <div class="gp-warning-alert" role="alert">
         <strong>Atención:</strong>
@@ -35,13 +34,12 @@
             color: #166534;
         }
     </style>
-
     <div class="gp-admin-dashboard-v2">
 
         <div class="gp-kpi-grid-v2">
 
             <div class="gp-kpi-v2 blue">
-                <div class="gp-kpi-icon"></div>
+                <div class="gp-kpi-icon">📄</div>
                 <div>
                     <span>Total Reportes</span>
                     <strong>{{ $totalReportes }}</strong>
@@ -68,7 +66,7 @@
             </div>
 
             <div class="gp-kpi-v2 gray">
-                <div class="gp-kpi-icon"></div>
+                <div class="gp-kpi-icon">📝</div>
                 <div>
                     <span>Borradores</span>
                     <strong>{{ $borradores }}</strong>
@@ -117,7 +115,7 @@
             <div class="gp-action-list-v2">
 
                 <a href="{{ route('reportes.index') }}" class="gp-action-card">
-                    <div class="gp-action-icon blue"></div>
+                    <div class="gp-action-icon blue">📋</div>
                     <div class="gp-action-content">
                         <strong>Reportes</strong>
                         <p>Consultar, aprobar y revisar reportes.</p>
@@ -126,7 +124,7 @@
                 </a>
 
                 <a href="{{ route('areas.index') }}" class="gp-action-card">
-                    <div class="gp-action-icon orange"></div>
+                    <div class="gp-action-icon orange">🏭</div>
                     <div class="gp-action-content">
                         <strong>Áreas</strong>
                         <p>Administrar áreas y secciones.</p>
@@ -137,7 +135,7 @@
                     class="gp-action-card">
 
                     <div class="gp-action-icon orange">
-
+                        🏢
                     </div>
 
                     <div class="gp-action-content">
@@ -152,7 +150,7 @@
                 </a>
 
                 <a href="{{ route('check-items.index') }}" class="gp-action-card">
-                    <div class="gp-action-icon green"></div>
+                    <div class="gp-action-icon green">✅</div>
                     <div class="gp-action-content">
                         <strong>Check Items</strong>
                         <p>Gestionar elementos de inspección.</p>
@@ -161,7 +159,7 @@
                 </a>
 
                 <a href="{{ route('reportes.excel') }}" class="gp-action-card">
-                    <div class="gp-action-icon purple"></div>
+                    <div class="gp-action-icon purple">📊</div>
                     <div class="gp-action-content">
                         <strong>Exportar Excel</strong>
                         <p>Descargar reporte consolidado.</p>

@@ -250,6 +250,28 @@ Route::middleware([
         [ReporteController::class, 'dashboardAdmin']
     )->name('administrador.dashboard');
 
+
+
+
+
+
+    /*
+|--------------------------------------------------------------------------
+| Edición administrativa de reportes enviados
+|--------------------------------------------------------------------------
+*/
+
+    Route::get(
+        '/administrador/reportes/{reporte}/edit',
+        [EditarReporteController::class, 'editAdmin']
+    )->name('administrador.reportes.edit');
+
+    Route::put(
+        '/administrador/reportes/{reporte}',
+        [EditarReporteController::class, 'updateAdmin']
+    )->name('administrador.reportes.update');
+
+
     /*
     |--------------------------------------------------------------------------
     | Áreas

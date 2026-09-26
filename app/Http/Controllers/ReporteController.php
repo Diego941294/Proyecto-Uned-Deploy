@@ -548,13 +548,20 @@ class ReporteController extends Controller
 
     public function rechazar(Request $request, Reporte $reporte)
     {
-        $validated = $request->validate([
-            'motivo_rechazo' => [
-                'required',
-                'string',
-                'max:1000',
-            ],
-        ]);
+       $validated = $request->validate(
+    [
+        'motivo_rechazo' => [
+            'required',
+            'string',
+            'max:1000',
+        ],
+    ],
+    [
+        'motivo_rechazo.required' => 'Debe digitar el motivo del rechazo.',
+        'motivo_rechazo.string' => 'El motivo del rechazo debe ser un texto.',
+        'motivo_rechazo.max' => 'El motivo del rechazo no puede superar los 1000 caracteres.',
+    ]
+);
 
         $resultado = DB::transaction(function () use (
             $reporte,

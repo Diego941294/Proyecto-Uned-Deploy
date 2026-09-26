@@ -42,6 +42,7 @@ class EditarReporteController extends Controller
         }
 
         // Únicamente se pueden editar borradores.
+
         if ($reporte->estado !== 'borrador') {
             return redirect()
                 ->route('supervisor.dashboard')
@@ -249,6 +250,118 @@ class EditarReporteController extends Controller
             ->with(
                 'success',
                 'Reporte actualizado correctamente.'
+            );
+    }
+
+
+
+    /**
+     * Mostrar el formulario de edición administrativa.
+     */
+    public function editAdmin(Reporte $reporte)
+    {
+        if ($reporte->estado !== 'enviado') {
+            return redirect()
+                ->route('administrador.dashboard')
+                ->with(
+                    'warning',
+                    'Solo se pueden corregir reportes enviados y pendientes de revisión.'
+                );
+        }
+
+        $reporte->load([
+            'area',
+            'detalles.checkItem.infraestructura',
+        ]);
+
+        $areas = Area::where('activo', true)
+            ->orderBy('nombre')
+            ->get();
+
+        return view(
+            'administrador.reporte_edit',
+            compact('reporte', 'areas')
+        );
+    }
+
+    /**
+     * Guardar correcciones administrativas.
+     */
+    public function updateAdmin(Request $request, Reporte $reporte)
+    {
+        if ($reporte->estado !== 'enviado') {
+            return redirect()
+                ->route('administrador.dashboard')
+                ->with(
+                    'warning',
+                    'Este reporte ya no está pendiente de revisión y no puede modificarse.'
+                );
+        }
+
+        $validated = $request->validate([
+            'observaciones' => ['nullable', 'string'],
+            'detalles' => ['required', 'array', 'min:1'],
+            'detalles.*.estado' => ['required', 'in:A,NC,NA,NFR'],
+            'detalles.*.observacion' => ['nullable', 'string'],
+        ]);
+
+        $resultado = DB::transaction(function () use ($reporte, $validated) {
+            $reporte = Reporte::query()
+                ->whereKey($reporte->getKey())
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($reporte->estado !== 'enviado') {
+                return false;
+            }
+
+            $detalles = $validated['detalles'];
+
+            $ids = array_keys($detalles);
+
+            $cantidadValidos = CheckItem::whereIn('id_check_items', $ids)
+                ->whereHas('infraestructura', function ($query) use ($reporte) {
+                    $query->where('id_areas', $reporte->id_areas);
+                })
+                ->count();
+
+            if ($cantidadValidos !== count($ids)) {
+                throw ValidationException::withMessages([
+                    'detalles' => 'Los elementos deben pertenecer al área del reporte.',
+                ]);
+            }
+
+            $reporte->update([
+                'observaciones' => $validated['observaciones'] ?? null,
+            ]);
+
+            foreach ($detalles as $itemId => $detalle) {
+                $reporte->detalles()->updateOrCreate(
+                    ['id_check_items' => $itemId],
+                    [
+                        'estado' => $detalle['estado'],
+                        'observacion' => $detalle['observacion'] ?? null,
+                    ]
+                );
+            }
+
+            return true;
+        });
+
+        if (!$resultado) {
+            return redirect()
+                ->route('administrador.dashboard')
+                ->with(
+                    'warning',
+                    'El reporte cambió de estado y ya no puede modificarse.'
+                );
+        }
+
+        return redirect()
+            ->route('reportes.show', $reporte)
+            ->with(
+                'success',
+                'Correcciones guardadas correctamente. El reporte sigue pendiente de revisión.'
             );
     }
 }

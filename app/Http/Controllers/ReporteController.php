@@ -407,44 +407,29 @@ class ReporteController extends Controller
         //
     }
 
-
-
     /**
      * Enviar un borrador para revisión.
      */
+
     public function enviar(Reporte $reporte)
     {
-        DB::transaction(function () use ($reporte) {
+        $resultado = DB::transaction(function () use ($reporte) {
 
             $reporte = Reporte::query()
                 ->whereKey($reporte->getKey())
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            // Solo el propietario puede enviar el reporte.
-            if (
-                (string) $reporte->id_users !==
-                (string) Auth::id()
-            ) {
-                abort(
-                    403,
-                    'No tiene permiso para enviar este reporte.'
-                );
+            if ((string) $reporte->id_users !== (string) Auth::id()) {
+                return 'otro_usuario';
             }
 
-            // Un reporte solo puede enviarse desde borrador.
             if ($reporte->estado !== 'borrador') {
-                abort(
-                    409,
-                    'Solo se pueden enviar reportes en estado borrador.'
-                );
+                return 'estado_invalido';
             }
 
-            // No permitir reportes sin detalles.
             if (!$reporte->detalles()->exists()) {
-                throw \Illuminate\Validation\ValidationException::withMessages([
-                    'reporte' => 'El reporte debe contener elementos inspeccionados antes de enviarse.',
-                ]);
+                return 'sin_detalles';
             }
 
             $reporte->update([
@@ -458,7 +443,36 @@ class ReporteController extends Controller
                 'estado_nuevo' => 'enviado',
                 'comentario' => 'Reporte enviado para revisión.',
             ]);
+
+            return 'enviado';
         });
+
+        if ($resultado === 'otro_usuario') {
+            return redirect()
+                ->route('supervisor.dashboard')
+                ->with(
+                    'warning',
+                    'No puedes enviar este reporte porque pertenece a otro usuario.'
+                );
+        }
+
+        if ($resultado === 'estado_invalido') {
+            return redirect()
+                ->route('supervisor.dashboard')
+                ->with(
+                    'warning',
+                    'Solo puedes enviar reportes que estén en estado borrador.'
+                );
+        }
+
+        if ($resultado === 'sin_detalles') {
+            return redirect()
+                ->route('supervisor.dashboard')
+                ->with(
+                    'warning',
+                    'Debes completar los elementos de inspección antes de enviar el reporte.'
+                );
+        }
 
         return redirect()
             ->route('reportes.show', $reporte)
@@ -468,11 +482,6 @@ class ReporteController extends Controller
             );
     }
 
-
-
-
-
-
     /*
     |--------------------------------------------------------------------------
     | APROBAR REPORTE
@@ -480,9 +489,10 @@ class ReporteController extends Controller
     */
 
 
+
     public function aprobar(Reporte $reporte)
     {
-        DB::transaction(function () use ($reporte) {
+        $resultado = DB::transaction(function () use ($reporte) {
 
             $reporte = Reporte::query()
                 ->whereKey($reporte->getKey())
@@ -490,10 +500,7 @@ class ReporteController extends Controller
                 ->firstOrFail();
 
             if ($reporte->estado !== 'enviado') {
-                abort(
-                    409,
-                    'Solo se pueden aprobar reportes enviados y pendientes de revisión.'
-                );
+                return false;
             }
 
             $reporte->update([
@@ -509,10 +516,21 @@ class ReporteController extends Controller
                 'estado_nuevo' => 'aprobado',
                 'comentario' => 'Reporte aprobado.',
             ]);
+
+            return true;
         });
 
+        if (!$resultado) {
+            return redirect()
+                ->route('administrador.dashboard')
+                ->with(
+                    'warning',
+                    'Este reporte no puede aprobarse porque no está pendiente de revisión.'
+                );
+        }
+
         return redirect()
-            ->back()
+            ->route('administrador.dashboard')
             ->with(
                 'success',
                 'Reporte aprobado correctamente.'
@@ -527,10 +545,9 @@ class ReporteController extends Controller
     */
 
 
-    public function rechazar(
-        Request $request,
-        Reporte $reporte
-    ) {
+
+    public function rechazar(Request $request, Reporte $reporte)
+    {
         $validated = $request->validate([
             'motivo_rechazo' => [
                 'required',
@@ -539,7 +556,7 @@ class ReporteController extends Controller
             ],
         ]);
 
-        DB::transaction(function () use (
+        $resultado = DB::transaction(function () use (
             $reporte,
             $validated
         ) {
@@ -549,18 +566,14 @@ class ReporteController extends Controller
                 ->firstOrFail();
 
             if ($reporte->estado !== 'enviado') {
-                abort(
-                    409,
-                    'Solo se pueden rechazar reportes enviados y pendientes de revisión.'
-                );
+                return false;
             }
 
             $reporte->update([
                 'estado' => 'rechazado',
                 'id_usuario_aprobador' => Auth::id(),
                 'fecha_aprobacion' => null,
-                'motivo_rechazo' =>
-                $validated['motivo_rechazo'],
+                'motivo_rechazo' => $validated['motivo_rechazo'],
             ]);
 
             ReporteHistorialEstado::create([
@@ -570,10 +583,21 @@ class ReporteController extends Controller
                 'estado_nuevo' => 'rechazado',
                 'comentario' => 'Reporte rechazado.',
             ]);
+
+            return true;
         });
 
+        if (!$resultado) {
+            return redirect()
+                ->route('administrador.dashboard')
+                ->with(
+                    'warning',
+                    'Este reporte no puede rechazarse porque no está pendiente de revisión.'
+                );
+        }
+
         return redirect()
-            ->back()
+            ->route('administrador.dashboard')
             ->with(
                 'success',
                 'Reporte rechazado correctamente.'

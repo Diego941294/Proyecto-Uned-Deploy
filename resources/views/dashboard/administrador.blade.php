@@ -1,11 +1,47 @@
 <x-app-layout>
 
+
+    @if (session('warning'))
+    <div class="gp-warning-alert" role="alert">
+        <strong>Atención:</strong>
+        {{ session('warning') }}
+    </div>
+    @endif
+
+    @if (session('success'))
+    <div class="gp-success-alert" role="status">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    <style>
+        .gp-warning-alert {
+            margin: 20px 0;
+            padding: 15px 20px;
+            border: 1px solid #f0c36d;
+            border-left: 5px solid #d97706;
+            border-radius: 8px;
+            background: #fffbeb;
+            color: #78350f;
+        }
+
+        .gp-success-alert {
+            margin: 20px 0;
+            padding: 15px 20px;
+            border: 1px solid #86efac;
+            border-left: 5px solid #16a34a;
+            border-radius: 8px;
+            background: #f0fdf4;
+            color: #166534;
+        }
+    </style>
+
     <div class="gp-admin-dashboard-v2">
 
         <div class="gp-kpi-grid-v2">
 
             <div class="gp-kpi-v2 blue">
-                <div class="gp-kpi-icon">📄</div>
+                <div class="gp-kpi-icon"></div>
                 <div>
                     <span>Total Reportes</span>
                     <strong>{{ $totalReportes }}</strong>
@@ -32,7 +68,7 @@
             </div>
 
             <div class="gp-kpi-v2 gray">
-                <div class="gp-kpi-icon">📝</div>
+                <div class="gp-kpi-icon"></div>
                 <div>
                     <span>Borradores</span>
                     <strong>{{ $borradores }}</strong>
@@ -81,7 +117,7 @@
             <div class="gp-action-list-v2">
 
                 <a href="{{ route('reportes.index') }}" class="gp-action-card">
-                    <div class="gp-action-icon blue">📋</div>
+                    <div class="gp-action-icon blue"></div>
                     <div class="gp-action-content">
                         <strong>Reportes</strong>
                         <p>Consultar, aprobar y revisar reportes.</p>
@@ -90,7 +126,7 @@
                 </a>
 
                 <a href="{{ route('areas.index') }}" class="gp-action-card">
-                    <div class="gp-action-icon orange">🏭</div>
+                    <div class="gp-action-icon orange"></div>
                     <div class="gp-action-content">
                         <strong>Áreas</strong>
                         <p>Administrar áreas y secciones.</p>
@@ -101,7 +137,7 @@
                     class="gp-action-card">
 
                     <div class="gp-action-icon orange">
-                        🏢
+
                     </div>
 
                     <div class="gp-action-content">
@@ -116,7 +152,7 @@
                 </a>
 
                 <a href="{{ route('check-items.index') }}" class="gp-action-card">
-                    <div class="gp-action-icon green">✅</div>
+                    <div class="gp-action-icon green"></div>
                     <div class="gp-action-content">
                         <strong>Check Items</strong>
                         <p>Gestionar elementos de inspección.</p>
@@ -125,7 +161,7 @@
                 </a>
 
                 <a href="{{ route('reportes.excel') }}" class="gp-action-card">
-                    <div class="gp-action-icon purple">📊</div>
+                    <div class="gp-action-icon purple"></div>
                     <div class="gp-action-content">
                         <strong>Exportar Excel</strong>
                         <p>Descargar reporte consolidado.</p>
@@ -193,68 +229,71 @@
         });
     </script>
     <style>
-/* 🔹 El contenedor principal define el límite */
-.gp-admin-dashboard-v2 {
-    max-width: 1200px;   /* ajusta según tu diseño */
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box;
-}
+        /* 🔹 El contenedor principal define el límite */
+        .gp-admin-dashboard-v2 {
+            max-width: 1200px;
+            /* ajusta según tu diseño */
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
 
-/* 🔹 El grid nunca más ancho que el contenedor */
-.gp-admin-main-grid {
-    display: grid;
-    grid-template-columns: 1.35fr 0.85fr;
-    gap: 20px;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-}
+        /* 🔹 El grid nunca más ancho que el contenedor */
+        .gp-admin-main-grid {
+            display: grid;
+            grid-template-columns: 1.35fr 0.85fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
 
-/* 🔹 Tarjeta del gráfico */
-.gp-chart-card-v2 {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    overflow: hidden; /* 🔸 evita que el canvas se salga */
-}
+        /* 🔹 Tarjeta del gráfico */
+        .gp-chart-card-v2 {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+            /* 🔸 evita que el canvas se salga */
+        }
 
-/* 🔹 Wrapper del gráfico */
-.gp-chart-wrapper-v2 {
-    width: 100%;
-    max-width: 100%;
-    height: 250px;
-    position: relative;
-    box-sizing: border-box;
-}
+        /* 🔹 Wrapper del gráfico */
+        .gp-chart-wrapper-v2 {
+            width: 100%;
+            max-width: 100%;
+            height: 250px;
+            position: relative;
+            box-sizing: border-box;
+        }
 
-/* 🔹 Canvas limitado */
-#reportesChart {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 100% !important;
-    display: block;
-}
+        /* 🔹 Canvas limitado */
+        #reportesChart {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            display: block;
+        }
 
-/* 🔹 Leyenda también limitada */
-.gp-chart-legend-v2 {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-}
+        /* 🔹 Leyenda también limitada */
+        .gp-chart-legend-v2 {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
 
-/* 🔹 Responsive: apilar gráfico y leyenda en pantallas pequeñas */
-@media (max-width: 1024px) {
-    .gp-admin-main-grid {
-        grid-template-columns: 1fr;
-    }
-    .gp-chart-content-v2 {
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
-    }
-}
-</style>
+        /* 🔹 Responsive: apilar gráfico y leyenda en pantallas pequeñas */
+        @media (max-width: 1024px) {
+            .gp-admin-main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gp-chart-content-v2 {
+                display: flex;
+                flex-direction: column;
+                gap: 18px;
+            }
+        }
+    </style>
 
 
 </x-app-layout>

@@ -24,6 +24,8 @@ class Reporte extends Model
         'id_usuario_aprobador',
         'fecha_aprobacion',
         'motivo_rechazo',
+        'firma_supervisor_snapshot',
+        'nombre_supervisor_snapshot',
     ];
 
     protected $casts = [
@@ -80,6 +82,15 @@ class Reporte extends Model
     {
         return $this->hasMany(
             ReporteHistorialEstado::class,
+            'id_reportes',
+            'id_reportes'
+        );
+    }
+
+    public function snapshot()
+    {
+        return $this->hasOne(
+            ReporteSnapshot::class,
             'id_reportes',
             'id_reportes'
         );

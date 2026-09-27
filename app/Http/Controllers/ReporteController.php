@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ReporteHistorialEstado;
 use Illuminate\Support\Facades\DB;
+use App\Services\ReporteSnapshotService;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -81,74 +82,32 @@ class ReporteController extends Controller
 
     public function create()
     {
-        $hoy = \Carbon\Carbon::today()
-            ->format('Y-m-d');
+        $user = Auth::user();
 
-        $areas = Area::where(
-            'activo',
-            true
-        )
+        if (blank($user->firma)) {
+            return redirect()
+                ->route('supervisor.dashboard')
+                ->with(
+                    'warning',
+                    'Para crear un reporte, primero debes registrar tu firma en tu perfil.'
+                );
+        }
+
+        $areas = Area::where('activo', true)
             ->with([
                 'infraestructuras' => function ($query) {
-                    $query->where(
-                        'activo',
-                        true
-                    )
+                    $query->where('activo', true)
                         ->orderBy('nombre');
                 },
-
                 'infraestructuras.checkItems' => function ($query) {
-                    $query->where(
-                        'activo',
-                        true
-                    )
+                    $query->where('activo', true)
                         ->orderBy('orden');
-                }
+                },
             ])
             ->orderBy('nombre')
             ->get();
 
-        /*
-        |--------------------------------------------------------------------------
-        | ÁREAS DISPONIBLES
-        |--------------------------------------------------------------------------
-        |
-        | Se permite crear un reporte si:
-        |
-        | 1. No existe un reporte del área para hoy.
-        | 2. Todos los reportes existentes del día están rechazados.
-        |
-        */
-
-        $areas = $areas->filter(
-            function ($area) use ($hoy) {
-
-                $reportesHoy = Reporte::where(
-                    'id_areas',
-                    $area->id_areas
-                )
-                    ->whereDate(
-                        'fecha',
-                        $hoy
-                    )
-                    ->get();
-
-                if ($reportesHoy->isEmpty()) {
-                    return true;
-                }
-
-                return $reportesHoy->every(
-                    function ($reporte) {
-                        return $reporte->estado === 'rechazado';
-                    }
-                );
-            }
-        );
-
-        return view(
-            'reportes.create',
-            compact('areas')
-        );
+        return view('reportes.create', compact('areas'));
     }
 
 
@@ -160,6 +119,16 @@ class ReporteController extends Controller
 
     public function store(Request $request)
     {
+        $user = Auth::user();
+
+        if (blank($user->firma)) {
+            return redirect()
+                ->route('supervisor.dashboard')
+                ->with(
+                    'warning',
+                    'No se puede guardar el reporte porque no tienes una firma registrada. Agrégala en tu perfil e inténtalo nuevamente.'
+                );
+        }
         $validated = $request->validate([
             'id_areas' => [
                 'required',
@@ -413,6 +382,15 @@ class ReporteController extends Controller
 
     public function enviar(Reporte $reporte)
     {
+
+        if (blank(Auth::user()?->firma)) {
+            return redirect()
+                ->route('reportes.show', $reporte)
+                ->with(
+                    'warning',
+                    'Para enviar este reporte, primero debes registrar tu firma en tu perfil.'
+                );
+        }
         $resultado = DB::transaction(function () use ($reporte) {
 
             $reporte = Reporte::query()
@@ -434,6 +412,8 @@ class ReporteController extends Controller
 
             $reporte->update([
                 'estado' => 'enviado',
+                'firma_supervisor_snapshot' => Auth::user()->firma,
+                'nombre_supervisor_snapshot' => Auth::user()->name,
             ]);
 
             ReporteHistorialEstado::create([
@@ -488,10 +468,17 @@ class ReporteController extends Controller
     |--------------------------------------------------------------------------
     */
 
-
-
     public function aprobar(Reporte $reporte)
     {
+
+        if (blank(Auth::user()?->firma)) {
+            return redirect()
+                ->route('reportes.show', $reporte)
+                ->with(
+                    'warning',
+                    'Para aprobar este reporte, primero debes registrar tu firma en tu perfil.'
+                );
+        }
         $resultado = DB::transaction(function () use ($reporte) {
 
             $reporte = Reporte::query()
@@ -499,25 +486,31 @@ class ReporteController extends Controller
                 ->lockForUpdate()
                 ->firstOrFail();
 
+            // Se pueden aprobar borradores y reportes enviados.
+            // Nunca reportes ya aprobados o rechazados.
             if ($reporte->estado !== 'enviado') {
                 return false;
             }
+
+            $estadoAnterior = $reporte->estado;
 
             $reporte->update([
                 'estado' => 'aprobado',
                 'id_usuario_aprobador' => Auth::id(),
                 'fecha_aprobacion' => now(),
+                'motivo_rechazo' => null,
             ]);
 
             ReporteHistorialEstado::create([
                 'id_reportes' => $reporte->id_reportes,
                 'id_users' => Auth::id(),
-                'estado_anterior' => 'enviado',
+                'estado_anterior' => $estadoAnterior,
                 'estado_nuevo' => 'aprobado',
                 'comentario' => 'Reporte aprobado.',
             ]);
 
             return true;
+            app(ReporteSnapshotService::class)->crear($reporte);
         });
 
         if (!$resultado) {
@@ -525,18 +518,14 @@ class ReporteController extends Controller
                 ->route('administrador.dashboard')
                 ->with(
                     'warning',
-                    'Este reporte no puede aprobarse porque no está pendiente de revisión.'
+                    'Este reporte ya fue aprobado o rechazado y no puede volver a modificarse.'
                 );
         }
 
         return redirect()
             ->route('administrador.dashboard')
-            ->with(
-                'success',
-                'Reporte aprobado correctamente.'
-            );
+            ->with('success', 'Reporte aprobado correctamente.');
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -546,35 +535,42 @@ class ReporteController extends Controller
 
 
 
+
     public function rechazar(Request $request, Reporte $reporte)
     {
-       $validated = $request->validate(
-    [
-        'motivo_rechazo' => [
-            'required',
-            'string',
-            'max:1000',
-        ],
-    ],
-    [
-        'motivo_rechazo.required' => 'Debe digitar el motivo del rechazo.',
-        'motivo_rechazo.string' => 'El motivo del rechazo debe ser un texto.',
-        'motivo_rechazo.max' => 'El motivo del rechazo no puede superar los 1000 caracteres.',
-    ]
-);
 
-        $resultado = DB::transaction(function () use (
-            $reporte,
-            $validated
-        ) {
+        if (blank(Auth::user()?->firma)) {
+            return redirect()
+                ->route('reportes.show', $reporte)
+                ->with(
+                    'warning',
+                    'Para rechazar este reporte, primero debes registrar tu firma en tu perfil.'
+                );
+        }
+        $validated = $request->validate(
+            [
+                'motivo_rechazo' => ['required', 'string', 'max:1000'],
+            ],
+            [
+                'motivo_rechazo.required' => 'Debe digitar el motivo del rechazo.',
+                'motivo_rechazo.string' => 'El motivo del rechazo debe ser un texto.',
+                'motivo_rechazo.max' => 'El motivo del rechazo no puede superar los 1000 caracteres.',
+            ]
+        );
+
+        $resultado = DB::transaction(function () use ($reporte, $validated) {
+
             $reporte = Reporte::query()
                 ->whereKey($reporte->getKey())
                 ->lockForUpdate()
                 ->firstOrFail();
 
+            // Solo se pueden rechazar borradores o reportes enviados.
             if ($reporte->estado !== 'enviado') {
                 return false;
             }
+
+            $estadoAnterior = $reporte->estado;
 
             $reporte->update([
                 'estado' => 'rechazado',
@@ -586,12 +582,13 @@ class ReporteController extends Controller
             ReporteHistorialEstado::create([
                 'id_reportes' => $reporte->id_reportes,
                 'id_users' => Auth::id(),
-                'estado_anterior' => 'enviado',
+                'estado_anterior' => $estadoAnterior,
                 'estado_nuevo' => 'rechazado',
                 'comentario' => 'Reporte rechazado.',
             ]);
 
             return true;
+            app(ReporteSnapshotService::class)->crear($reporte);
         });
 
         if (!$resultado) {
@@ -599,16 +596,13 @@ class ReporteController extends Controller
                 ->route('administrador.dashboard')
                 ->with(
                     'warning',
-                    'Este reporte no puede rechazarse porque no está pendiente de revisión.'
+                    'Este reporte ya fue aprobado o rechazado y no puede volver a modificarse.'
                 );
         }
 
         return redirect()
             ->route('administrador.dashboard')
-            ->with(
-                'success',
-                'Reporte rechazado correctamente.'
-            );
+            ->with('success', 'Reporte rechazado correctamente.');
     }
     /*
     |--------------------------------------------------------------------------
@@ -703,7 +697,7 @@ class ReporteController extends Controller
                 'borrador'
             )->count();
 
-        $pendientes = $borradores;
+        $pendientes = Reporte::where('estado', 'enviado')->count();
 
         return view(
             'dashboard.administrador',

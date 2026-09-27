@@ -185,6 +185,11 @@ CONTENIDO DEL REPORTE
 
         @endif
 
+        @if(session('warning'))
+        <div class="gp-warning-message" role="alert">
+            {{ session('warning') }}
+        </div>
+        @endif
 
         @if(session('error'))
 
@@ -591,6 +596,15 @@ CONTENIDO DEL REPORTE
         }
 
 
+        .gp-warning-message {
+            margin-bottom: 20px;
+            padding: 14px 16px;
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fcd34d;
+            border-radius: 10px;
+            font-weight: 600;
+        }
 
 
 

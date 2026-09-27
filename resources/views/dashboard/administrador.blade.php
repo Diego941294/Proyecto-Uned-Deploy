@@ -47,6 +47,15 @@
                 </div>
             </div>
 
+            <div class="gp-kpi-v2 blue">
+                <div class="gp-kpi-icon">📨</div>
+                <div>
+                    <span>Pendientes de revisión</span>
+                    <strong>{{ $pendientes }}</strong>
+                    <small>Reportes enviados por supervisores</small>
+                </div>
+            </div>
+
             <div class="gp-kpi-v2 green">
                 <div class="gp-kpi-icon">✓</div>
                 <div>
@@ -62,15 +71,6 @@
                     <span>Rechazados</span>
                     <strong>{{ $rechazados }}</strong>
                     <small>Rechazos</small>
-                </div>
-            </div>
-
-            <div class="gp-kpi-v2 gray">
-                <div class="gp-kpi-icon">📝</div>
-                <div>
-                    <span>Borradores</span>
-                    <strong>{{ $borradores }}</strong>
-                    <small>En borrador</small>
                 </div>
             </div>
 
@@ -103,8 +103,8 @@
 
                         <div>
                             <span class="green"></span>
-                            <p>Borradores</p>
-                            <strong>{{ $borradores }}</strong>
+                            <p>Enviados</p>
+                            <strong>{{ $pendientes }}</strong>
                         </div>
 
                     </div>
@@ -186,18 +186,19 @@
             new Chart(ctx, {
                 type: 'doughnut',
 
+
                 data: {
                     labels: [
                         'Aprobados',
                         'Rechazados',
-                        'Borradores'
+                        'Enviados'
                     ],
 
                     datasets: [{
                         data: [
                             Number("{{ $aprobados }}"),
                             Number("{{ $rechazados }}"),
-                            Number("{{ $borradores }}")
+                            Number("{{ $pendientes }}")
                         ],
 
                         backgroundColor: [
@@ -211,7 +212,6 @@
                         hoverOffset: 8
                     }]
                 },
-
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,

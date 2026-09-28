@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Reporte;
 use App\Models\ReporteSnapshot;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class ReporteSnapshotService
@@ -33,7 +33,20 @@ class ReporteSnapshotService
             'historialEstados.usuario',
         ]);
 
+        $firmaSupervisorHistorica = $this->copiarFirmaHistorica(
+            $reporte->firma_supervisor_snapshot,
+            $reporte->id_reportes,
+            'supervisor'
+        );
+
+        $firmaResolutorHistorica = $this->copiarFirmaHistorica(
+            $reporte->aprobador?->firma,
+            $reporte->id_reportes,
+            'resolutor'
+        );
         $datos = [
+
+
             'version' => 1,
 
             'reporte' => [
@@ -56,7 +69,7 @@ class ReporteSnapshotService
                 'nombre' => $reporte->nombre_supervisor_snapshot,
                 'email' => $reporte->usuario?->email,
                 'roles' => $reporte->usuario?->roles->pluck('name')->all() ?? [],
-                'firma' => $reporte->firma_supervisor_snapshot,
+                'firma' => $firmaSupervisorHistorica,
             ],
 
             'administrador' => [
@@ -64,7 +77,7 @@ class ReporteSnapshotService
                 'nombre' => $reporte->aprobador?->name,
                 'email' => $reporte->aprobador?->email,
                 'roles' => $reporte->aprobador?->roles->pluck('name')->all() ?? [],
-                'firma' => $reporte->aprobador?->firma,
+                'firma' => $firmaResolutorHistorica,
                 'fecha_aprobacion' => $reporte->fecha_aprobacion?->toIso8601String(),
                 'motivo_rechazo' => $reporte->motivo_rechazo,
             ],
@@ -121,5 +134,59 @@ class ReporteSnapshotService
             'datos' => $datos,
             'fecha_snapshot' => now(),
         ]);
+    }
+
+    /**
+     * Crea una copia permanente de la firma utilizada
+     * al momento de finalizar el reporte.
+     */
+    private function copiarFirmaHistorica(
+        ?string $rutaOriginal,
+        int|string $reporteId,
+        string $tipo
+    ): ?string {
+        if (blank($rutaOriginal)) {
+            return null;
+        }
+
+        $disk = Storage::disk('public');
+
+        if (!$disk->exists($rutaOriginal)) {
+            throw ValidationException::withMessages([
+                'firma' => 'No fue posible localizar la firma necesaria para generar el snapshot definitivo.',
+            ]);
+        }
+
+        $extension = pathinfo(
+            $rutaOriginal,
+            PATHINFO_EXTENSION
+        );
+
+        $extension = $extension
+            ? strtolower($extension)
+            : 'png';
+
+        $rutaHistorica =
+            'snapshots/reportes/' .
+            $reporteId .
+            '/' .
+            $tipo .
+            '.' .
+            $extension;
+
+        if (!$disk->exists($rutaHistorica)) {
+            $copiada = $disk->copy(
+                $rutaOriginal,
+                $rutaHistorica
+            );
+
+            if (!$copiada) {
+                throw ValidationException::withMessages([
+                    'firma' => 'No fue posible conservar la firma histórica del reporte.',
+                ]);
+            }
+        }
+
+        return $rutaHistorica;
     }
 }

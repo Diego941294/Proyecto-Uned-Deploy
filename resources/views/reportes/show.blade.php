@@ -454,6 +454,31 @@ CONTENIDO DEL REPORTE
         FIRMAS
         ========================================================== --}}
 
+        @php
+        $finalizado = in_array(
+        $reporte->estado,
+        ['aprobado', 'rechazado'],
+        true
+        );
+
+        $firmaSupervisor = $reporte->estado === 'borrador'
+        ? $reporte->usuario?->firma
+        : $reporte->firma_supervisor_snapshot;
+
+        $nombreSupervisor = $reporte->estado === 'borrador'
+        ? $reporte->usuario?->name
+        : $reporte->nombre_supervisor_snapshot;
+
+        $firmaAdministrador = $finalizado
+        ? data_get($reporte->snapshot?->datos, 'administrador.firma')
+        : null;
+
+        $nombreAdministrador = $finalizado
+        ? data_get($reporte->snapshot?->datos, 'administrador.nombre')
+        : null;
+        @endphp
+
+
         <div class="gp-signature-section">
 
             <div class="gp-detail-section-title">

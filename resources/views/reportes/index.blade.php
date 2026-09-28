@@ -16,13 +16,13 @@
             <div class="gp-header-actions">
 
                 @php
-                    if (auth()->user()->hasRole('super-admin')) {
-                        $rutaVolver = route('super-admin.dashboard');
-                    } elseif (auth()->user()->hasRole('administrador')) {
-                        $rutaVolver = route('administrador.dashboard');
-                    } else {
-                        $rutaVolver = route('supervisor.dashboard');
-                    }
+                if (auth()->user()->hasRole('super-admin')) {
+                $rutaVolver = route('super-admin.dashboard');
+                } elseif (auth()->user()->hasRole('administrador')) {
+                $rutaVolver = route('administrador.dashboard');
+                } else {
+                $rutaVolver = route('supervisor.dashboard');
+                }
                 @endphp
 
                 <a href="{{ $rutaVolver }}" class="gp-action-btn secondary">
@@ -67,9 +67,9 @@
                         <option value="">Todas las áreas</option>
 
                         @foreach($areas as $area)
-                            <option value="{{ $area->id_areas }}" @selected(request('id_areas') == $area->id_areas)>
-                                {{ $area->nombre }}
-                            </option>
+                        <option value="{{ $area->id_areas }}" @selected(request('id_areas')==$area->id_areas)>
+                            {{ $area->nombre }}
+                        </option>
                         @endforeach
                     </select>
                 </div>
@@ -77,12 +77,31 @@
                 <div class="gp-filter-field">
                     <label>Estado</label>
 
+
                     <select name="estado">
                         <option value="">Todos los estados</option>
-                        <option value="borrador" @selected(request('estado') == 'borrador')>Borrador</option>
-                        <option value="aprobado" @selected(request('estado') == 'aprobado')>Aprobado</option>
-                        <option value="rechazado" @selected(request('estado') == 'rechazado')>Rechazado</option>
+
+                        <option value="borrador"
+                            @selected(request('estado')=='borrador' )>
+                            Borrador
+                        </option>
+
+                        <option value="enviado"
+                            @selected(request('estado')=='enviado' )>
+                            Pendiente
+                        </option>
+
+                        <option value="aprobado"
+                            @selected(request('estado')=='aprobado' )>
+                            Aprobado
+                        </option>
+
+                        <option value="rechazado"
+                            @selected(request('estado')=='rechazado' )>
+                            Rechazado
+                        </option>
                     </select>
+
                 </div>
 
             </div>
@@ -114,37 +133,62 @@
 
                 <tbody>
                     @forelse($reportes as $reporte)
-                        <tr>
-                            <td data-label="Área">
-                                <strong>{{ $reporte->area->nombre }}</strong>
-                            </td>
-                            <td data-label="Fecha">
-                                {{ $reporte->fecha->format('d/m/Y') }}
-                            </td>
-                            <td data-label="Estado">
-                                @if($reporte->estado == 'aprobado')
-                                    <span class="gp-badge-success">Aprobado</span>
-                                @elseif($reporte->estado == 'rechazado')
-                                    <span class="gp-badge-danger">Rechazado</span>
-                                @else
-                                    <span class="gp-badge-secondary">Borrador</span>
-                                @endif
-                            </td>
-                            <td data-label="Supervisor">
-                                {{ $reporte->usuario->name }}
-                            </td>
-                            <td data-label="Acciones" class="text-center">
-                                <a href="{{ route('reportes.show', $reporte) }}" class="gp-view-button">
-                                    Ver detalle
-                                </a>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td data-label="Área">
+                            <strong>{{ $reporte->area->nombre }}</strong>
+                        </td>
+                        <td data-label="Fecha">
+                            {{ $reporte->fecha->format('d/m/Y') }}
+                        </td>
+                        <td data-label="Estado">
+
+                            @switch($reporte->estado)
+                            @case('borrador')
+                            <span class="gp-badge-secondary">
+                                Borrador
+                            </span>
+                            @break
+
+                            @case('enviado')
+                            <span class="gp-badge-pending">
+                                Pendiente
+                            </span>
+                            @break
+
+                            @case('aprobado')
+                            <span class="gp-badge-success">
+                                Aprobado
+                            </span>
+                            @break
+
+                            @case('rechazado')
+                            <span class="gp-badge-danger">
+                                Rechazado
+                            </span>
+                            @break
+
+                            @default
+                            <span class="gp-badge-secondary">
+                                {{ ucfirst($reporte->estado) }}
+                            </span>
+                            @endswitch
+
+                        </td>
+                        <td data-label="Supervisor">
+                            {{ $reporte->usuario->name }}
+                        </td>
+                        <td data-label="Acciones" class="text-center">
+                            <a href="{{ route('reportes.show', $reporte) }}" class="gp-view-button">
+                                Ver detalle
+                            </a>
+                        </td>
+                    </tr>
                     @empty
-                        <tr>
-                            <td colspan="5" class="gp-empty-table">
-                                No hay reportes registrados.
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="5" class="gp-empty-table">
+                            No hay reportes registrados.
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
 

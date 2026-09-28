@@ -188,14 +188,6 @@ Route::middleware([
     )->name('reportes.create');
 
 
-    /* Enviar reporte para revisión*/
-
-    Route::post(
-        '/reportes/{reporte}/enviar',
-        [ReporteController::class, 'enviar']
-    )->name('reportes.enviar');
-
-
     Route::post(
         '/reportes',
         [ReporteController::class, 'store']
@@ -387,6 +379,12 @@ Route::middleware('auth')->group(function () {
         '/reportes/{reporte}',
         [ReporteController::class, 'show']
     )->name('reportes.show');
+
+    // Enviar reporte: el controlador verifica propietario o super-admin.
+    Route::post(
+        '/reportes/{reporte}/enviar',
+        [ReporteController::class, 'enviar']
+    )->name('reportes.enviar');
 });
 
 

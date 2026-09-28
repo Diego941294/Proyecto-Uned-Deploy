@@ -238,6 +238,19 @@ body.dark-mode .gp-badge-secondary {
     color: #1e3a8a !important;
 }
 
+
+.gp-badge-pending {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background-color: #fff3cd;
+    color: #856404;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+
 /* Botones */
 body.dark-mode .gp-action-btn.primary,
 body.dark-mode .gp-logout-btn {
@@ -881,11 +894,9 @@ body.dark-mode .gp-action-btn.excel {
     padding: 12px 22px;
     border: none;
     border-radius: 10px;
-    background: linear-gradient(
-        135deg,
-        #f59e0b,
-        #d97706
-    );
+    background: linear-gradient(135deg,
+            #f59e0b,
+            #d97706);
     color: #ffffff;
     font-weight: 800;
     cursor: pointer;
@@ -2467,8 +2478,8 @@ FORMULARIOS CHECKLIST REPORTES
 
 
     .gp-card-button:hover {
-    background: #8bb4e5;
-}
+        background: #8bb4e5;
+    }
 
     /* Responsivo */
     @media (max-width: 640px) {
@@ -3055,42 +3066,69 @@ body.dark-mode .gp-file-input {
 }
 
 
-@media(max-width:768px){
-  html,body{overflow-x:hidden}
+@media(max-width:768px) {
 
-  .gp-table-modern,.gp-table-modern tbody,
-  .gp-table-modern tr,.gp-table-modern td{
-    display:block;width:100%!important;
-    min-width:0!important;box-sizing:border-box
-  }
+    html,
+    body {
+        overflow-x: hidden
+    }
 
-  .gp-table-modern thead{display:none}
+    .gp-table-modern,
+    .gp-table-modern tbody,
+    .gp-table-modern tr,
+    .gp-table-modern td {
+        display: block;
+        width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box
+    }
 
-  .gp-table-modern tr{
-    margin-bottom:15px;padding:16px;
-    border:1px solid #ddd;border-radius:12px
-  }
+    .gp-table-modern thead {
+        display: none
+    }
 
-  .gp-table-modern td{
-    padding:10px 0;border:0!important;
-    text-align:left!important;overflow-wrap:anywhere
-  }
+    .gp-table-modern tr {
+        margin-bottom: 15px;
+        padding: 16px;
+        border: 1px solid #ddd;
+        border-radius: 12px
+    }
 
-  .gp-table-modern td:before{
-    content:attr(data-label);display:block;
-    color:#0b63d8;font-weight:bold;margin-bottom:5px
-  }
+    .gp-table-modern td {
+        padding: 10px 0;
+        border: 0 !important;
+        text-align: left !important;
+        overflow-wrap: anywhere
+    }
 
-  .gp-action-group{display:flex;gap:8px}
-  .gp-action-group>*{flex:1;min-width:0}
+    .gp-table-modern td:before {
+        content: attr(data-label);
+        display: block;
+        color: #0b63d8;
+        font-weight: bold;
+        margin-bottom: 5px
+    }
 
-  .gp-action-group button,
-  .gp-action-group a,
-  .gp-action-group form{
-    width:100%;box-sizing:border-box
-  }
+    .gp-action-group {
+        display: flex;
+        gap: 8px
+    }
+
+    .gp-action-group>* {
+        flex: 1;
+        min-width: 0
+    }
+
+    .gp-action-group button,
+    .gp-action-group a,
+    .gp-action-group form {
+        width: 100%;
+        box-sizing: border-box
+    }
 }
 
-@media(max-width:520px){
-  .gp-action-group{flex-direction:column}
+@media(max-width:520px) {
+    .gp-action-group {
+        flex-direction: column
+    }
 }

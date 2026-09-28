@@ -318,7 +318,8 @@ class ReporteController extends Controller
             'area',
             'usuario',
             'aprobador',
-            'detalles.checkItem.infraestructura'
+            'detalles.checkItem.infraestructura',
+            'snapshot',
         ]);
 
         return view(
@@ -376,32 +377,32 @@ class ReporteController extends Controller
         //
     }
 
+
     /**
      * Enviar un borrador para revisión.
      */
-
     public function enviar(Reporte $reporte)
     {
+        $usuario = Auth::user();
 
-        if (blank(Auth::user()?->firma)) {
-            return redirect()
-                ->route('reportes.show', $reporte)
-                ->with(
-                    'warning',
-                    'Para enviar este reporte, primero debes registrar tu firma en tu perfil.'
-                );
-        }
-        $resultado = DB::transaction(function () use ($reporte) {
+        $esSuperAdmin = $usuario->hasRole('super-admin');
+
+        $resultado = DB::transaction(function () use ($reporte, $usuario, $esSuperAdmin) {
 
             $reporte = Reporte::query()
                 ->whereKey($reporte->getKey())
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            if ((string) $reporte->id_users !== (string) Auth::id()) {
+            // Solo el propietario o el Superadministrador pueden enviarlo.
+            $esPropietario = (string) $reporte->id_users
+                === (string) $usuario->id_users;
+
+            if (!$esSuperAdmin && !$esPropietario) {
                 return 'otro_usuario';
             }
 
+            // Únicamente se pueden enviar borradores.
             if ($reporte->estado !== 'borrador') {
                 return 'estado_invalido';
             }
@@ -410,18 +411,28 @@ class ReporteController extends Controller
                 return 'sin_detalles';
             }
 
+            // La firma histórica pertenece al creador del reporte,
+            // no necesariamente a la persona que pulsa Enviar.
+            $supervisor = $reporte->usuario;
+
+            if (!$supervisor || blank($supervisor->firma)) {
+                return 'sin_firma_supervisor';
+            }
+
             $reporte->update([
                 'estado' => 'enviado',
-                'firma_supervisor_snapshot' => Auth::user()->firma,
-                'nombre_supervisor_snapshot' => Auth::user()->name,
+                'firma_supervisor_snapshot' => $supervisor->firma,
+                'nombre_supervisor_snapshot' => $supervisor->name,
             ]);
 
             ReporteHistorialEstado::create([
                 'id_reportes' => $reporte->id_reportes,
-                'id_users' => Auth::id(),
+                'id_users' => $usuario->id_users,
                 'estado_anterior' => 'borrador',
                 'estado_nuevo' => 'enviado',
-                'comentario' => 'Reporte enviado para revisión.',
+                'comentario' => $esSuperAdmin
+                    ? 'Reporte enviado para revisión por el Superadministrador.'
+                    : 'Reporte enviado para revisión.',
             ]);
 
             return 'enviado';
@@ -429,38 +440,36 @@ class ReporteController extends Controller
 
         if ($resultado === 'otro_usuario') {
             return redirect()
-                ->route('supervisor.dashboard')
-                ->with(
-                    'warning',
-                    'No puedes enviar este reporte porque pertenece a otro usuario.'
-                );
+                ->route('reportes.show', $reporte)
+                ->with('warning', 'No tienes permiso para enviar este reporte.');
         }
 
         if ($resultado === 'estado_invalido') {
             return redirect()
-                ->route('supervisor.dashboard')
-                ->with(
-                    'warning',
-                    'Solo puedes enviar reportes que estén en estado borrador.'
-                );
+                ->route('reportes.show', $reporte)
+                ->with('warning', 'Solo se pueden enviar reportes en estado borrador.');
         }
 
         if ($resultado === 'sin_detalles') {
             return redirect()
-                ->route('supervisor.dashboard')
+                ->route('reportes.show', $reporte)
+                ->with('warning', 'El reporte debe contener elementos de inspección.');
+        }
+
+        if ($resultado === 'sin_firma_supervisor') {
+            return redirect()
+                ->route('reportes.show', $reporte)
                 ->with(
                     'warning',
-                    'Debes completar los elementos de inspección antes de enviar el reporte.'
+                    'El supervisor que creó el reporte debe registrar su firma antes del envío.'
                 );
         }
 
         return redirect()
             ->route('reportes.show', $reporte)
-            ->with(
-                'success',
-                'Reporte enviado correctamente para revisión.'
-            );
+            ->with('success', 'Reporte enviado correctamente para revisión.');
     }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -500,7 +509,6 @@ class ReporteController extends Controller
                 'fecha_aprobacion' => now(),
                 'motivo_rechazo' => null,
             ]);
-
             ReporteHistorialEstado::create([
                 'id_reportes' => $reporte->id_reportes,
                 'id_users' => Auth::id(),
@@ -509,8 +517,9 @@ class ReporteController extends Controller
                 'comentario' => 'Reporte aprobado.',
             ]);
 
-            return true;
             app(ReporteSnapshotService::class)->crear($reporte);
+
+            return true;
         });
 
         if (!$resultado) {
@@ -586,9 +595,8 @@ class ReporteController extends Controller
                 'estado_nuevo' => 'rechazado',
                 'comentario' => 'Reporte rechazado.',
             ]);
-
-            return true;
             app(ReporteSnapshotService::class)->crear($reporte);
+            return true;
         });
 
         if (!$resultado) {

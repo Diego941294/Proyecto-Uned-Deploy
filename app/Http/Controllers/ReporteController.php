@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\ReporteHistorialEstado;
 use Illuminate\Support\Facades\DB;
 use App\Services\ReporteSnapshotService;
-
+use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 use App\Exports\ReportesExport;
@@ -460,9 +460,40 @@ class ReporteController extends Controller
                 return 'sin_firma_supervisor';
             }
 
+            $disk = Storage::disk('public');
+
+            if (!$disk->exists($supervisor->firma)) {
+                return 'archivo_firma_supervisor_no_encontrado';
+            }
+
+            $extension = pathinfo(
+                $supervisor->firma,
+                PATHINFO_EXTENSION
+            );
+
+            $extension = $extension
+                ? strtolower($extension)
+                : 'png';
+
+            $firmaHistorica = 'snapshots/reportes/' .
+                $reporte->id_reportes .
+                '/supervisor.' .
+                $extension;
+
+            if (!$disk->exists($firmaHistorica)) {
+                $copiada = $disk->copy(
+                    $supervisor->firma,
+                    $firmaHistorica
+                );
+
+                if (!$copiada) {
+                    return 'error_copia_firma_supervisor';
+                }
+            }
+
             $reporte->update([
                 'estado' => 'enviado',
-                'firma_supervisor_snapshot' => $supervisor->firma,
+                'firma_supervisor_snapshot' => $firmaHistorica,
                 'nombre_supervisor_snapshot' => $supervisor->name,
             ]);
 
@@ -503,6 +534,23 @@ class ReporteController extends Controller
                 ->with(
                     'warning',
                     'El supervisor que creó el reporte debe registrar su firma antes del envío.'
+                );
+        }
+        if ($resultado === 'archivo_firma_supervisor_no_encontrado') {
+            return redirect()
+                ->route('reportes.show', $reporte)
+                ->with(
+                    'warning',
+                    'No se encontró el archivo de firma del supervisor. Debe volver a registrar su firma antes de enviar el reporte.'
+                );
+        }
+
+        if ($resultado === 'error_copia_firma_supervisor') {
+            return redirect()
+                ->route('reportes.show', $reporte)
+                ->with(
+                    'warning',
+                    'No fue posible conservar la firma histórica del supervisor. Intenta nuevamente.'
                 );
         }
 

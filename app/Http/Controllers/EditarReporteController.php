@@ -12,6 +12,16 @@ use Illuminate\Validation\ValidationException;
 
 class EditarReporteController extends Controller
 {
+
+
+    private function puedeEditarComoAdministrador(): bool
+    {
+        return Auth::user()?->hasAnyRole([
+            'administrador',
+            'super-admin',
+        ]) ?? false;
+    }
+
     /**
      * Redirigir al dashboard del supervisor.
      *
@@ -258,11 +268,21 @@ class EditarReporteController extends Controller
     /**
      * Mostrar el formulario de edición administrativa.
      */
+
     public function editAdmin(Reporte $reporte)
     {
+        if (!$this->puedeEditarComoAdministrador()) {
+            return redirect()
+                ->route('dashboard')
+                ->with(
+                    'warning',
+                    'No tienes permiso para editar reportes como Administrador.'
+                );
+        }
+
         if ($reporte->estado !== 'enviado') {
             return redirect()
-                ->route('administrador.dashboard')
+                ->route('dashboard')
                 ->with(
                     'warning',
                     'Solo se pueden corregir reportes enviados y pendientes de revisión.'
@@ -284,14 +304,25 @@ class EditarReporteController extends Controller
         );
     }
 
+
     /**
      * Guardar correcciones administrativas.
      */
+
     public function updateAdmin(Request $request, Reporte $reporte)
     {
+        if (!$this->puedeEditarComoAdministrador()) {
+            return redirect()
+                ->route('dashboard')
+                ->with(
+                    'warning',
+                    'No tienes permiso para modificar este reporte.'
+                );
+        }
+
         if ($reporte->estado !== 'enviado') {
             return redirect()
-                ->route('administrador.dashboard')
+                ->route('dashboard')
                 ->with(
                     'warning',
                     'Este reporte ya no está pendiente de revisión y no puede modificarse.'
@@ -311,12 +342,14 @@ class EditarReporteController extends Controller
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            if ($reporte->estado !== 'enviado') {
+            if (
+                !$this->puedeEditarComoAdministrador() ||
+                $reporte->estado !== 'enviado'
+            ) {
                 return false;
             }
 
             $detalles = $validated['detalles'];
-
             $ids = array_keys($detalles);
 
             $cantidadValidos = CheckItem::whereIn('id_check_items', $ids)
@@ -350,10 +383,10 @@ class EditarReporteController extends Controller
 
         if (!$resultado) {
             return redirect()
-                ->route('administrador.dashboard')
+                ->route('dashboard')
                 ->with(
                     'warning',
-                    'El reporte cambió de estado y ya no puede modificarse.'
+                    'El reporte ya no puede modificarse o no tienes permiso.'
                 );
         }
 

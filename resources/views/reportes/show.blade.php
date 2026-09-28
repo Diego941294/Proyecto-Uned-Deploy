@@ -233,12 +233,16 @@ CONTENIDO DEL REPORTE
                 </strong>
             </div>
 
+
             <div class="gp-detail-card">
-                <span>Supervisor</span>
+                <span>Creado por</span>
+
                 <strong>
-                    {{ $reporte->usuario?->name ?? 'Usuario no disponible' }}
+                    {{ $reporte->nombre_supervisor_snapshot
+            ?: ($reporte->usuario?->name ?? 'Usuario no disponible') }}
                 </strong>
             </div>
+
 
             <div class="gp-detail-card">
                 <span>Fecha</span>
@@ -503,7 +507,7 @@ CONTENIDO DEL REPORTE
                         </label>
 
                         <div class="gp-input">
-                            {{ $reporte->usuario?->name ?? 'No registrado' }}
+                            {{ $nombreSupervisor ?? 'No registrado' }}
                         </div>
 
                     </div>
@@ -534,49 +538,47 @@ CONTENIDO DEL REPORTE
                 </div>
 
 
+
                 {{-- CONTROL DE CALIDAD --}}
                 <div class="gp-signature-card">
 
-                    <h3>
-                        Control de Calidad
-                    </h3>
+                    <h3>Control de Calidad</h3>
 
                     <div class="gp-form-group">
-
                         <label class="gp-label">
                             Nombre
                         </label>
 
                         <div class="gp-input">
-                            {{ $reporte->aprobador?->name ?? 'No registrado' }}
+                            {{ $nombreAdministrador ?? 'Pendiente de revisión' }}
                         </div>
-
                     </div>
 
-                    @if($reporte->aprobador?->firma)
-
+                    @if($firmaAdministrador)
                     <div class="gp-current-signature">
+                        <p>Firma registrada:</p>
 
-                        <p>
-                            Firma registrada:
-                        </p>
-
-                        <img src="{{ asset('storage/' . $reporte->aprobador->firma) }}" class="gp-signature-img"
-                            alt="Firma de control de calidad">
-
+                        <img
+                            src="{{ asset('storage/' . $firmaAdministrador) }}"
+                            class="gp-signature-img"
+                            alt="Firma del administrador de calidad">
                     </div>
-
                     @else
-
                     <div class="gp-current-signature">
                         <p>
+                            @if($reporte->estado === 'borrador')
+                            Reporte pendiente de envío.
+                            @elseif($reporte->estado === 'enviado')
+                            Pendiente de revisión.
+                            @else
                             Firma no registrada.
+                            @endif
                         </p>
                     </div>
-
                     @endif
 
                 </div>
+
 
             </div>
 

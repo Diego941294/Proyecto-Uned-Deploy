@@ -35,19 +35,19 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/dashboard', function () {
 
+Route::get('/dashboard', function () {
     $user = Auth::user();
 
-    if ($user && $user->hasRole('Super Administrador')) {
+    if ($user->hasRole('super-admin')) {
         return redirect()->route('super-admin.dashboard');
     }
 
-    if ($user && $user->hasRole('Administrador')) {
+    if ($user->hasRole('administrador')) {
         return redirect()->route('administrador.dashboard');
     }
 
-    if ($user && $user->hasRole('Supervisor')) {
+    if ($user->hasRole('supervisor')) {
         return redirect()->route('supervisor.dashboard');
     }
 
@@ -55,11 +55,9 @@ Route::get('/dashboard', function () {
 
     return redirect()
         ->route('login')
-        ->with(
-            'error',
-            'El usuario no tiene un rol asignado.'
-        );
-})->middleware(['auth'])->name('dashboard');
+        ->with('error', 'El usuario no tiene un rol asignado.');
+})->middleware('auth')->name('dashboard');
+
 
 
 /*
@@ -318,48 +316,47 @@ Route::middleware([
     )->name('check-items.toggle-activo');
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Gestión de Reportes
-    |--------------------------------------------------------------------------
-    */
+   /*
+|--------------------------------------------------------------------------
+| Gestión de Reportes
+|--------------------------------------------------------------------------
+*/
 
-    Route::post(
-        '/reportes/{reporte}/aprobar',
-        [ReporteController::class, 'aprobar']
-    )->name('reportes.aprobar');
+Route::post(
+    '/reportes/{reporte}/aprobar',
+    [ReporteController::class, 'aprobar']
+)->name('reportes.aprobar');
 
-
-    Route::post(
-        '/reportes/{reporte}/rechazar',
-        [ReporteController::class, 'rechazar']
-    )->name('reportes.rechazar');
-
-
-    Route::get(
-        '/reportes/{reporte}/pdf',
-        [ReporteController::class, 'pdf']
-    )->name('reportes.pdf');
+Route::post(
+    '/reportes/{reporte}/rechazar',
+    [ReporteController::class, 'rechazar']
+)->name('reportes.rechazar');
 
 
-    Route::get(
-        '/reportes-excel',
-        [ReporteController::class, 'excel']
-    )->name('reportes.excel');
+/*
+|--------------------------------------------------------------------------
+| Exportaciones generales
+|--------------------------------------------------------------------------
+|
+| Estas rutas permanecen dentro del middleware "administrador".
+| Por lo tanto, pueden acceder:
+| - administrador
+| - super-admin
+|
+| El supervisor NO puede descargar listados generales.
+|
+*/
 
+Route::get(
+    '/reportes-excel',
+    [ReporteController::class, 'excel']
+)->name('reportes.excel');
 
-    Route::get(
-        '/reportes/{reporte}/excel',
-        [ReporteController::class, 'excelDetalle']
-    )->name('reportes.excel-detalle');
-
-
-    Route::get(
-        '/reportes-pdf',
-        [ReporteController::class, 'pdfGeneral']
-    )->name('reportes.pdf-general');
+Route::get(
+    '/reportes-pdf',
+    [ReporteController::class, 'pdfGeneral']
+)->name('reportes.pdf-general');
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -369,24 +366,73 @@ Route::middleware([
 
 Route::middleware('auth')->group(function () {
 
+    /*
+    |--------------------------------------------------------------------------
+    | Listado de reportes
+    |--------------------------------------------------------------------------
+    |
+    | El controlador determina cuáles reportes puede ver cada usuario:
+    | - supervisor: únicamente los propios
+    | - administrador: todos
+    | - super-admin: todos
+    |
+    */
+
     Route::get(
         '/reportes',
         [ReporteController::class, 'index']
     )->name('reportes.index');
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Ver reporte
+    |--------------------------------------------------------------------------
+    */
+
     Route::get(
         '/reportes/{reporte}',
         [ReporteController::class, 'show']
     )->name('reportes.show');
 
-    // Enviar reporte: el controlador verifica propietario o super-admin.
+
+    /*
+    |--------------------------------------------------------------------------
+    | Exportaciones individuales
+    |--------------------------------------------------------------------------
+    |
+    | El controlador verifica:
+    | - supervisor: únicamente sus propios reportes
+    | - administrador: cualquier reporte
+    | - super-admin: cualquier reporte
+    |
+    */
+
+    Route::get(
+        '/reportes/{reporte}/pdf',
+        [ReporteController::class, 'pdf']
+    )->name('reportes.pdf');
+
+    Route::get(
+        '/reportes/{reporte}/excel',
+        [ReporteController::class, 'excelDetalle']
+    )->name('reportes.excel-detalle');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Enviar reporte a revisión
+    |--------------------------------------------------------------------------
+    |
+    | La autorización final se verifica también en el controlador.
+    |
+    */
+
     Route::post(
         '/reportes/{reporte}/enviar',
         [ReporteController::class, 'enviar']
     )->name('reportes.enviar');
 });
-
 
 /*
 |--------------------------------------------------------------------------

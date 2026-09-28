@@ -19,60 +19,84 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ReporteController extends Controller
 {
+
+
+    private function puedeConsultarReporte(Reporte $reporte): bool
+    {
+        $usuario = Auth::user();
+
+        if (!$usuario) {
+            return false;
+        }
+
+        // Ambos administradores pueden consultar todos los reportes.
+        if ($usuario->hasAnyRole(['administrador', 'super-admin'])) {
+            return true;
+        }
+
+        // El Supervisor solo puede consultar sus propios reportes.
+        if ($usuario->hasRole('supervisor')) {
+            return (string) $reporte->id_users
+                === (string) $usuario->id_users;
+        }
+
+        return false;
+    }
+
+
     /*
     |--------------------------------------------------------------------------
     | LISTADO DE REPORTES
     |--------------------------------------------------------------------------
     */
 
+
     public function index(Request $request)
     {
-        $query = Reporte::with([
-            'area',
-            'usuario'
-        ]);
+        $usuario = Auth::user();
+
+        if (!$usuario?->hasAnyRole([
+            'supervisor',
+            'administrador',
+            'super-admin',
+        ])) {
+            return redirect()
+                ->route('dashboard')
+                ->with('warning', 'No tienes permiso para consultar reportes.');
+        }
+
+        $query = Reporte::with(['area', 'usuario']);
+
+        if (
+            $usuario->hasRole('supervisor')
+            && !$usuario->hasAnyRole(['administrador', 'super-admin'])
+        ) {
+            $query->where('id_users', $usuario->id_users);
+        }
 
         if ($request->filled('fecha')) {
-            $query->whereDate(
-                'fecha',
-                $request->fecha
-            );
+            $query->whereDate('fecha', $request->fecha);
         }
 
         if ($request->filled('id_areas')) {
-            $query->where(
-                'id_areas',
-                $request->id_areas
-            );
+            $query->where('id_areas', $request->id_areas);
         }
 
         if ($request->filled('estado')) {
-            $query->where(
-                'estado',
-                $request->estado
-            );
+            $query->where('estado', $request->estado);
         }
 
         $reportes = $query
-            ->latest()
+            ->orderByDesc('fecha')
+            ->orderByDesc('id_reportes')
             ->get();
 
-        $areas = Area::where(
-            'activo',
-            true
-        )
+        $areas = Area::where('activo', true)
             ->orderBy('nombre')
             ->get();
 
-        return view(
-            'reportes.index',
-            compact(
-                'reportes',
-                'areas'
-            )
-        );
+        return view('reportes.index', compact('reportes', 'areas'));
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -311,8 +335,17 @@ class ReporteController extends Controller
 |--------------------------------------------------------------------------
 */
 
+
     public function show(Reporte $reporte)
     {
+        if (!$this->puedeConsultarReporte($reporte)) {
+            return redirect()
+                ->route('dashboard')
+                ->with(
+                    'warning',
+                    'No tienes permiso para visualizar este reporte.'
+                );
+        }
 
         $reporte->load([
             'area',
@@ -322,10 +355,7 @@ class ReporteController extends Controller
             'snapshot',
         ]);
 
-        return view(
-            'reportes.show',
-            compact('reporte')
-        );
+        return view('reportes.show', compact('reporte'));
     }
 
     /*
@@ -334,11 +364,21 @@ class ReporteController extends Controller
     |--------------------------------------------------------------------------
     */
 
+
     public function pdfGeneral()
     {
+        if (!Auth::user()?->hasAnyRole(['administrador', 'super-admin'])) {
+            return redirect()
+                ->route('dashboard')
+                ->with(
+                    'warning',
+                    'No tienes permiso para descargar el listado general.'
+                );
+        }
+
         $reportes = Reporte::with([
             'area',
-            'usuario'
+            'usuario',
         ])
             ->latest()
             ->get();
@@ -352,6 +392,7 @@ class ReporteController extends Controller
             'reportes-preoperacionales.pdf'
         );
     }
+
 
 
     /*
@@ -541,10 +582,6 @@ class ReporteController extends Controller
     | RECHAZAR REPORTE
     |--------------------------------------------------------------------------
     */
-
-
-
-
     public function rechazar(Request $request, Reporte $reporte)
     {
 
@@ -612,19 +649,37 @@ class ReporteController extends Controller
             ->route('administrador.dashboard')
             ->with('success', 'Reporte rechazado correctamente.');
     }
+
+
+
+
+
     /*
     |--------------------------------------------------------------------------
     | EXCEL GENERAL
     |--------------------------------------------------------------------------
     */
 
+
+
+
     public function excel()
     {
+        if (!Auth::user()?->hasAnyRole(['administrador', 'super-admin'])) {
+            return redirect()
+                ->route('dashboard')
+                ->with(
+                    'warning',
+                    'No tienes permiso para descargar el listado general.'
+                );
+        }
+
         return Excel::download(
             new ReportesExport,
             'reportes.xlsx'
         );
     }
+
 
 
     /*
@@ -633,19 +688,24 @@ class ReporteController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function excelDetalle(
-        Reporte $reporte
-    ) {
-        return Excel::download(
-            new ReporteDetalleExport(
-                $reporte
-            ),
 
-            'reporte-'
-                . $reporte->id_reportes
-                . '.xlsx'
+    public function excelDetalle(Reporte $reporte)
+    {
+        if (!$this->puedeConsultarReporte($reporte)) {
+            return redirect()
+                ->route('dashboard')
+                ->with(
+                    'warning',
+                    'No tienes permiso para descargar este reporte.'
+                );
+        }
+
+        return Excel::download(
+            new ReporteDetalleExport($reporte),
+            'reporte-' . $reporte->id_reportes . '.xlsx'
         );
     }
+
 
 
     /*
@@ -654,13 +714,24 @@ class ReporteController extends Controller
     |--------------------------------------------------------------------------
     */
 
+
     public function pdf(Reporte $reporte)
     {
+        if (!$this->puedeConsultarReporte($reporte)) {
+            return redirect()
+                ->route('dashboard')
+                ->with(
+                    'warning',
+                    'No tienes permiso para descargar este reporte.'
+                );
+        }
+
         $reporte->load([
             'area',
             'usuario',
             'aprobador',
-            'detalles.checkItem.infraestructura'
+            'detalles.checkItem.infraestructura',
+            'snapshot',
         ]);
 
         $pdf = Pdf::loadView(
@@ -669,11 +740,11 @@ class ReporteController extends Controller
         );
 
         return $pdf->download(
-            'reporte-preoperacional-'
-                . $reporte->id_reportes
-                . '.pdf'
+            'reporte-preoperacional-' .
+                $reporte->id_reportes . '.pdf'
         );
     }
+
 
 
     /*
@@ -726,43 +797,63 @@ class ReporteController extends Controller
 |--------------------------------------------------------------------------
 */
 
+
     public function guardarFirmas(
         Request $request,
         Reporte $reporte
     ) {
+        $usuario = Auth::user();
+
+        $esSuperAdmin = $usuario?->hasRole('super-admin');
+
+        $esSupervisorPropietario =
+            $usuario?->hasRole('supervisor') &&
+            (string) $reporte->id_users ===
+            (string) $usuario->id_users;
+
+        if (!$esSuperAdmin && !$esSupervisorPropietario) {
+            return redirect()
+                ->route('dashboard')
+                ->with(
+                    'warning',
+                    'No tienes permiso para modificar las firmas de este reporte.'
+                );
+        }
+
+        if ($reporte->estado !== 'borrador') {
+            return redirect()
+                ->route('reportes.show', $reporte)
+                ->with(
+                    'warning',
+                    'No se pueden modificar las firmas de un reporte enviado, aprobado o rechazado.'
+                );
+        }
+
         $validated = $request->validate([
             'inspector_calidad' => [
                 'nullable',
                 'string',
-                'max:255'
+                'max:255',
             ],
-
             'firma_inspector' => [
                 'nullable',
-                'string'
+                'string',
             ],
-
             'verificador_calidad' => [
                 'nullable',
                 'string',
-                'max:255'
+                'max:255',
             ],
-
             'firma_verificador' => [
                 'nullable',
-                'string'
+                'string',
             ],
         ]);
 
-        $reporte->update(
-            $validated
-        );
+        $reporte->update($validated);
 
         return redirect()
-            ->route(
-                'reportes.show',
-                $reporte
-            )
+            ->route('reportes.show', $reporte)
             ->with(
                 'success',
                 'Se han guardado las firmas correctamente.'
@@ -775,148 +866,64 @@ class ReporteController extends Controller
     | DASHBOARD SUPERVISOR
     |--------------------------------------------------------------------------
     */
+
     public function dashboardSupervisor()
     {
-        $hoy = now()->toDateString();
-
         $user = Auth::user();
 
-        /*
-    |--------------------------------------------------------------------------
-    | CONSULTA BASE
-    |--------------------------------------------------------------------------
-    |
-    | Si el usuario es Supervisor:
-    |     solamente puede ver sus propios reportes.
-    |
-    | Si entra Super Administrador:
-    |     puede ver todos los reportes.
-    |
-    */
+        if (!$user?->hasAnyRole(['supervisor', 'super-admin'])) {
+            return redirect()
+                ->route('dashboard')
+                ->with(
+                    'warning',
+                    'No tienes permiso para acceder a este panel.'
+                );
+        }
+
+        $hoy = now()->toDateString();
 
         $queryBase = Reporte::query();
 
-        if ($user->hasRole('Supervisor')) {
-            $queryBase->where(
-                'id_users',
-                $user->id_users
-            );
+        if ($user->hasRole('supervisor')) {
+            $queryBase->where('id_users', $user->id_users);
         }
 
-
-        /*
-    |--------------------------------------------------------------------------
-    | REPORTE ÁREA CALIENTE DE HOY
-    |--------------------------------------------------------------------------
-    */
-
         $reporteCaliente = (clone $queryBase)
-            ->whereDate(
-                'fecha',
-                $hoy
-            )
-            ->whereHas(
-                'area',
-                function ($query) {
-
-                    $query->where(
-                        'nombre',
-                        'like',
-                        '%Caliente%'
-                    );
-                }
-            )
-            ->where(
-                'estado',
-                '!=',
-                'rechazado'
-            )
+            ->whereDate('fecha', $hoy)
+            ->whereHas('area', function ($query) {
+                $query->where('nombre', 'like', '%Caliente%');
+            })
+            ->where('estado', '!=', 'rechazado')
             ->exists();
-
-
-        /*
-    |--------------------------------------------------------------------------
-    | REPORTE ÁREA FRÍA DE HOY
-    |--------------------------------------------------------------------------
-    */
 
         $reporteFrio = (clone $queryBase)
-            ->whereDate(
-                'fecha',
-                $hoy
-            )
-            ->whereHas(
-                'area',
-                function ($query) {
-
-                    $query->where(
-                        'nombre',
-                        'like',
-                        '%Fría%'
-                    )
-                        ->orWhere(
-                            'nombre',
-                            'like',
-                            '%Fria%'
-                        );
-                }
-            )
-            ->where(
-                'estado',
-                '!=',
-                'rechazado'
-            )
+            ->whereDate('fecha', $hoy)
+            ->whereHas('area', function ($query) {
+                $query->where('nombre', 'like', '%Fría%')
+                    ->orWhere('nombre', 'like', '%Fria%');
+            })
+            ->where('estado', '!=', 'rechazado')
             ->exists();
 
-
-        /*
-    |--------------------------------------------------------------------------
-    | REPORTES
-    |--------------------------------------------------------------------------
-    */
-
-
+        // Se mantiene el listado de borradores que utiliza
+        // actualmente el dashboard del Supervisor.
         $reportes = (clone $queryBase)
-            ->with('area')
+            ->with(['area', 'usuario'])
             ->where('estado', 'borrador')
-            ->orderBy('fecha', 'desc')
+            ->orderByDesc('fecha')
             ->get();
 
-        /*
-    |--------------------------------------------------------------------------
-    | CONTADORES
-    |--------------------------------------------------------------------------
-    */
-
         $aprobados = (clone $queryBase)
-            ->where(
-                'estado',
-                'aprobado'
-            )
+            ->where('estado', 'aprobado')
             ->count();
-
 
         $rechazados = (clone $queryBase)
-            ->where(
-                'estado',
-                'rechazado'
-            )
+            ->where('estado', 'rechazado')
             ->count();
-
 
         $borradores = (clone $queryBase)
-            ->where(
-                'estado',
-                'borrador'
-            )
+            ->where('estado', 'borrador')
             ->count();
-
-
-        /*
-    |--------------------------------------------------------------------------
-    | VISTA
-    |--------------------------------------------------------------------------
-    */
 
         return view(
             'dashboard.supervisor',

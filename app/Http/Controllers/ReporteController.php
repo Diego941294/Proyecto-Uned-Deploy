@@ -787,10 +787,16 @@ class ReporteController extends Controller
             compact('reporte')
         );
 
-        return $pdf->download(
-            'reporte-preoperacional-' .
-                $reporte->id_reportes . '.pdf'
-        );
+        $content = $pdf->output();
+
+        $filename = 'reporte-preoperacional-' .
+            $reporte->id_reportes .
+            '.pdf';
+
+        return response($content, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
     }
 
 

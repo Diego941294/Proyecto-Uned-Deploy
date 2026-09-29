@@ -239,17 +239,6 @@ body.dark-mode .gp-badge-secondary {
 }
 
 
-.gp-badge-pending {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 999px;
-    background-color: #fff3cd;
-    color: #856404;
-    font-size: 12px;
-    font-weight: 700;
-    white-space: nowrap;
-}
-
 
 /* Botones */
 body.dark-mode .gp-action-btn.primary,
@@ -860,50 +849,7 @@ body.dark-mode .gp-action-btn.excel {
     gap: 22px;
 }
 
-.gp-dashboard-card {
 
-    background: #fff;
-    border-radius: 0;
-    /* bordes cuadrados */
-    border: 2px solid #f97316;
-    /* borde naranja */
-    padding: 1.5rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.gp-dashboard-card h3 {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: #f97316;
-    /* naranja */
-
-}
-
-.gp-dashboard-card p {
-    color: #171718;
-    font-weight: 600;
-    line-height: 1.5;
-}
-
-.gp-card-button {
-    padding: 12px 22px;
-    border: none;
-    border-radius: 10px;
-    background: linear-gradient(135deg,
-            #f59e0b,
-            #d97706);
-    color: #ffffff;
-    font-weight: 800;
-    cursor: pointer;
-    transition:
-        transform .2s ease,
-        box-shadow .2s ease;
-}
 
 
 
@@ -944,24 +890,6 @@ body.dark-mode .gp-action-btn.excel {
 
 .gp-table tr:hover {
     background: #f7fbff;
-}
-
-.gp-badge-success {
-    background: #dcfce7;
-    color: #166534;
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.gp-badge-danger {
-    background: #fee2e2;
-    color: #991b1b;
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 800;
 }
 
 .gp-table-button {
@@ -1050,18 +978,6 @@ body.dark-mode .gp-action-btn.excel {
 
 
 
-/* ==============================
-//   ESTILOS Index Blade PHP
-//============================== */
-.gp-badge-warning {
-    background: #fef3c7;
-    color: #92400e;
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 800;
-}
-
 
 /* ==============================
    CHECKLIST REPORTES
@@ -1140,32 +1056,48 @@ body.dark-mode .gp-action-btn.excel {
 
 
 /* =========================
-   BADGES ESTADOS
+   ESTADOS GLOBALES
 ========================= */
 
 .gp-badge-success,
 .gp-badge-danger,
 .gp-badge-warning,
-.gp-badge-secondary {
+.gp-badge-secondary,
+.gp-badge-pending,
+.gp-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-    display: inline-block;
-    padding: 6px 14px;
+    min-width: 96px;
+    padding: 7px 14px;
+
     border-radius: 999px;
+
+    font-family: 'Exo 2', sans-serif;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 800;
+    line-height: 1;
+
+    white-space: nowrap;
+    text-align: center;
 }
 
-.gp-badge-success {
+.gp-badge-success,
+.gp-status-badge.success {
     background: #dcfce7;
     color: #166534;
 }
 
-.gp-badge-danger {
+.gp-badge-danger,
+.gp-status-badge.danger {
     background: #fee2e2;
     color: #991b1b;
 }
 
-.gp-badge-warning {
+.gp-badge-warning,
+.gp-badge-pending,
+.gp-status-badge.warning {
     background: #fef3c7;
     color: #92400e;
 }
@@ -1175,16 +1107,6 @@ body.dark-mode .gp-action-btn.excel {
     color: #334155;
 }
 
-/* Para estados como "En revisión" o "Pendiente" */
-
-.gp-badge-secondary {
-    background: #e2e8f0;
-    color: #334155;
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 800;
-}
 
 
 /* =========================
@@ -2112,34 +2034,6 @@ FORMULARIOS CHECKLIST REPORTES
 
 
 
-/*==========================
-   evitar notas en modo borrador de reportes
-==========================*/
-.gp-status-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 7px 14px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 900;
-}
-
-.gp-status-badge.success {
-    background: #dcfce7;
-    color: #166534;
-}
-
-.gp-status-badge.danger {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-.gp-status-badge.warning {
-    background: #fef3c7;
-    color: #92400e;
-}
-
 /*
     ESTILOS PARA EL PANEL DE EDIT AREA - AJUSTES EN LA TABLA PARA DESCRIPCIONES LARGAS Y BOTONES DE ACCIÓN
     */
@@ -2466,20 +2360,6 @@ FORMULARIOS CHECKLIST REPORTES
     /* rviasr */
 
     /* Títulos y textos */
-
-
-    .gp-dashboard-card p {
-        flex-grow: 1;
-        font-size: 0.95rem;
-        color: #374151;
-        margin-bottom: 1rem;
-    }
-
-
-
-    .gp-card-button:hover {
-        background: #8bb4e5;
-    }
 
     /* Responsivo */
     @media (max-width: 640px) {

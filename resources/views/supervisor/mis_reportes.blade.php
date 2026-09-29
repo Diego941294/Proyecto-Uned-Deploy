@@ -10,14 +10,13 @@
                 </h2>
 
                 <p class="gp-header-subtitle">
-                    Listado de todos los reportes creados por ti.
+                    Listado de todos los reportes creados.
                 </p>
             </div>
 
             <a
                 href="{{ route('supervisor.dashboard') }}"
-                class="gp-action-btn secondary"
-            >
+                class="gp-action-btn secondary">
                 ← Volver
             </a>
 
@@ -28,87 +27,133 @@
 
     @if($reportes->isEmpty())
 
-        <p style="color:#991b1b; font-weight:600;">
-            ❌ No has creado ningún reporte aún.
-        </p>
+    <p style="color:#991b1b; font-weight:600;">
+      No se ha creado ningún reporte aún.
+    </p>
 
     @else
 
-        <table class="gp-table">
+    <table class="gp-table">
 
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Área</th>
-                    <th>Fecha</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Área</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
 
-            <tbody>
+        <tbody>
 
-                @foreach($reportes as $reporte)
+            @foreach($reportes as $reporte)
 
-                    <tr>
+            <tr>
 
-                        <td>
-                            #{{ $reporte->id_reportes }}
-                        </td>
+                <td>
+                    #{{ $reporte->id_reportes }}
+                </td>
 
-                        <td>
-                            {{ $reporte->area?->nombre ?? 'Área no disponible' }}
-                        </td>
+                <td>
+                    {{ $reporte->area?->nombre ?? 'Área no disponible' }}
+                </td>
 
-                        <td>
-                            {{ \Carbon\Carbon::parse($reporte->fecha)->format('d/m/Y') }}
-                        </td>
+                <td>
+                    {{ \Carbon\Carbon::parse($reporte->fecha)->format('d/m/Y') }}
+                </td>
 
-                        <td>
+                <td>
 
-                            @if($reporte->estado === 'aprobado')
+                    @if($reporte->estado === 'aprobado')
 
-                                ✅ Aprobado
+                    <span class="gp-status gp-status-approved">
+                        Aprobado
+                    </span>
 
-                            @elseif($reporte->estado === 'rechazado')
+                    @elseif($reporte->estado === 'rechazado')
 
-                                ❌ Rechazado
+                    <span class="gp-status gp-status-rejected">
+                        Rechazado
+                    </span>
 
-                            @elseif($reporte->estado === 'enviado')
+                    @elseif($reporte->estado === 'enviado')
 
-                                📤 Enviado
+                    <span class="gp-status gp-status-pending">
+                        Pendiente
+                    </span>
 
-                            @else
+                    @else
 
-                                📝 Borrador
+                    <span class="gp-status gp-status-draft">
+                        Borrador
+                    </span>
 
-                            @endif
+                    @endif
 
-                        </td>
+                </td>
 
-                    </tr>
+            </tr>
 
-                @endforeach
+            @endforeach
 
-            </tbody>
+        </tbody>
 
-        </table>
+    </table>
 
     @endif
 
-         <style>
+    <style>
+        /* ===============================
+   ESTADOS
+=============================== */
+
+        .gp-status {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7px 14px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        .gp-status-approved {
+            background: #d1fae5;
+            color: #047857;
+        }
+
+        .gp-status-pending {
+            background: #fef3c7;
+            color: #a16207;
+        }
+
+        .gp-status-rejected {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .gp-status-draft {
+            background: #e2e8f0;
+            color: #17365d;
+        }
+
         /* ===============================
            TABLA MIS REPORTES
         =============================== */
 
         .gp-table-wrapper {
             width: 100%;
-            overflow-x: hidden; /* 🔸 evita scroll horizontal */
+            overflow-x: hidden;
+            /* 🔸 evita scroll horizontal */
         }
 
         .gp-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 100%; /* 🔸 ajusta al ancho del dispositivo */
+            min-width: 100%;
+            /* 🔸 ajusta al ancho del dispositivo */
             background-color: #ffffff;
             color: #333333;
         }
@@ -135,6 +180,7 @@
            RESPONSIVE
         =============================== */
         @media (max-width: 768px) {
+
             .gp-table th,
             .gp-table td {
                 padding: 6px;

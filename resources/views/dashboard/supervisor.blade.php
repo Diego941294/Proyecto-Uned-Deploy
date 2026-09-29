@@ -241,7 +241,7 @@
         }
 
         .gp-send-button:hover {
-            background: #105735;
+            background: #00b45d;
         }
 
         .gp-dashboard-grid {

@@ -2351,10 +2351,88 @@ FORMULARIOS CHECKLIST REPORTES
         min-height: 118px;
         padding: 28px;
     }
+} /* FIN @media (min-width: 1600px) */
 
 
+    /* =========================================
+   TARJETAS DASHBOARD - DISEÑO GLOBAL
+========================================= */
 
+    .gp-dashboard-card {
+        background: #ffffff;
+        border: 1px solid #93c5fd;
+        border-radius: 14px;
+        padding: 20px;
 
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        box-shadow: 0 4px 12px rgba(15, 47, 95, 0.06);
+    }
+
+    .gp-table td {
+        vertical-align: middle;
+    }
+
+    .gp-dashboard-card h3 {
+        margin: 0 0 8px;
+        color: #0f2f5f;
+        font-family: 'Exo 2', sans-serif;
+        font-size: 18px;
+        font-weight: 800;
+        line-height: 1.25;
+    }
+
+    .gp-dashboard-card p {
+        margin: 0 0 18px;
+        color: #475569;
+        font-family: 'Exo 2', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.5;
+        flex-grow: 1;
+    }
+
+    .gp-card-button {
+        align-self: flex-start;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-height: 42px;
+        padding: 0 16px;
+
+        background: #0b63d8;
+        color: #ffffff;
+
+        border: 1px solid #0b63d8;
+        border-radius: 8px;
+
+        font-family: 'Exo 2', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1;
+
+        text-decoration: none;
+        cursor: pointer;
+
+        transition:
+            background-color .2s ease,
+            border-color .2s ease,
+            transform .15s ease;
+    }
+
+    .gp-card-button:hover {
+        background: #084fae;
+        border-color: #084fae;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .gp-card-button:active {
+        transform: translateY(1px);
+    }
 
 
     /* rviasr */
@@ -2371,6 +2449,96 @@ FORMULARIOS CHECKLIST REPORTES
             padding: 1.25rem;
         }
     }
+
+    /* =========================================
+   ACCIONES DE REPORTES
+========================================= */
+
+    .gp-report-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 0;
+    }
+
+    .gp-report-actions form {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    .gp-action-link,
+    .gp-send-button {
+        box-sizing: border-box;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        height: 42px;
+        min-width: 118px;
+        padding: 0 16px;
+
+        border-radius: 8px;
+        border: 1px solid transparent;
+
+        font-family: 'Exo 2', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1;
+
+        text-decoration: none !important;
+        white-space: nowrap;
+
+        cursor: pointer;
+
+        transition:
+            background-color .2s ease,
+            color .2s ease,
+            border-color .2s ease,
+            transform .15s ease;
+    }
+
+    /* EDITAR */
+
+    .gp-action-link {
+        background: #e8f1fc;
+        color: #0b63d8;
+        border-color: #bfdbfe;
+    }
+
+    .gp-action-link:hover,
+    .gp-action-link:focus {
+        background: #0b63d8;
+        color: #ffffff;
+        border-color: #0b63d8;
+        text-decoration: none !important;
+    }
+
+    /* ENVIAR */
+
+    .gp-send-button {
+        background: #d1fae5;
+        color: #047857;
+        border-color: #a7f3d0;
+    }
+
+    .gp-send-button:hover,
+    .gp-send-button:focus {
+        background: #047857;
+        color: #ffffff;
+        border-color: #047857;
+    }
+
+    /* CLICK */
+
+    .gp-action-link:active,
+    .gp-send-button:active {
+        transform: translateY(1px);
+    }
+
 
     /* estilo editar */
 
@@ -2440,7 +2608,7 @@ FORMULARIOS CHECKLIST REPORTES
 
 
 
-}
+
 
 /* =====================================================
    FIX FINAL - COLORES ICONOS KPI DASHBOARD ADMIN

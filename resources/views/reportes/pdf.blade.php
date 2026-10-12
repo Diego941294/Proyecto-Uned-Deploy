@@ -6,7 +6,6 @@
     <meta charset="UTF-8">
 
     <style>
-
         @page {
             margin: 28px 32px 42px 32px;
         }
@@ -147,7 +146,6 @@
             border-top: 1px solid #d1d5db;
             padding-top: 6px;
         }
-
     </style>
 
 </head>
@@ -228,7 +226,7 @@
 
         $observacionesDetalle = $reporte->detalles
             ->filter(
-                fn ($detalle) =>
+                fn($detalle) =>
                     filled($detalle->observacion)
             )
             ->values();
@@ -242,7 +240,7 @@
 
         $detallesAgrupados = $reporte->detalles
             ->groupBy(
-                fn ($detalle) =>
+                fn($detalle) =>
                     $detalle->checkItem?->infraestructura?->nombre
                     ?? 'Sin infraestructura'
             );
@@ -266,10 +264,7 @@
                 <thead>
 
                     <tr>
-                        <th
-                            colspan="3"
-                            class="category-title"
-                        >
+                        <th colspan="3" class="category-title">
                             {{ $infraestructura }}
                         </th>
                     </tr>
@@ -281,17 +276,11 @@
                             Elemento
                         </th>
 
-                        <th
-                            style="width: 15%;"
-                            class="text-center"
-                        >
+                        <th style="width: 15%;" class="text-center">
                             Estado
                         </th>
 
-                        <th
-                            style="width: 20%;"
-                            class="text-center"
-                        >
+                        <th style="width: 20%;" class="text-center">
                             ID Obs.
                         </th>
 
@@ -310,7 +299,7 @@
 
                             $indiceObservacion =
                                 $observacionesDetalle->search(
-                                    fn ($observacion) =>
+                                    fn($observacion) =>
                                         $observacion->id_reporte_detalles
                                         ===
                                         $detalle->id_reporte_detalles
@@ -320,14 +309,14 @@
                             $codigoObservacion =
                                 $indiceObservacion !== false
 
-                                    ? 'OBS-' . str_pad(
-                                        $indiceObservacion + 1,
-                                        2,
-                                        '0',
-                                        STR_PAD_LEFT
-                                    )
+                                ? 'OBS-' . str_pad(
+                                    $indiceObservacion + 1,
+                                    2,
+                                    '0',
+                                    STR_PAD_LEFT
+                                )
 
-                                    : null;
+                                : null;
 
                         @endphp
 
@@ -378,7 +367,7 @@
             $observacionesAgrupadas =
                 $observacionesDetalle->groupBy(
 
-                    fn ($detalle) =>
+                    fn($detalle) =>
                         $detalle->checkItem?->infraestructura?->nombre
                         ?? 'Sin infraestructura'
 
@@ -402,10 +391,7 @@
 
                         <tr>
 
-                            <th
-                                colspan="3"
-                                class="category-title"
-                            >
+                            <th colspan="3" class="category-title">
                                 {{ $infraestructura }}
                             </th>
 
@@ -414,10 +400,7 @@
 
                         <tr>
 
-                            <th
-                                style="width: 13%;"
-                                class="text-center"
-                            >
+                            <th style="width: 13%;" class="text-center">
                                 ID
                             </th>
 
@@ -441,52 +424,52 @@
                         @foreach($observaciones as $detalle)
 
 
-                            @php
+                                @php
 
-                                $indiceGeneral =
-                                    $observacionesDetalle->search(
+                                    $indiceGeneral =
+                                        $observacionesDetalle->search(
 
-                                        fn ($observacion) =>
-                                            $observacion->id_reporte_detalles
-                                            ===
-                                            $detalle->id_reporte_detalles
+                                            fn($observacion) =>
+                                                $observacion->id_reporte_detalles
+                                                ===
+                                                $detalle->id_reporte_detalles
 
-                                    );
+                                        );
 
-                            @endphp
-
-
-                            <tr>
+                                @endphp
 
 
-                                <td class="text-center observation-id">
-
-                                    OBS-{{ str_pad(
-                                        $indiceGeneral + 1,
-                                        2,
-                                        '0',
-                                        STR_PAD_LEFT
-                                    ) }}
-
-                                </td>
+                                <tr>
 
 
-                                <td>
+                                    <td class="text-center observation-id">
 
-                                    {{ $detalle->checkItem?->nombre
-                                        ?? 'Elemento no disponible' }}
+                                        OBS-{{ str_pad(
+                                $indiceGeneral + 1,
+                                2,
+                                '0',
+                                STR_PAD_LEFT
+                            ) }}
 
-                                </td>
-
-
-                                <td>
-
-                                    {{ $detalle->observacion }}
-
-                                </td>
+                                    </td>
 
 
-                            </tr>
+                                    <td>
+
+                                        {{ $detalle->checkItem?->nombre
+                                ?? 'Elemento no disponible' }}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ $detalle->observacion }}
+
+                                    </td>
+
+
+                                </tr>
 
 
                         @endforeach
@@ -520,9 +503,9 @@
 
 
     @if(
-        $reporte->estado === 'rechazado' &&
-        filled($reporte->motivo_rechazo)
-    )
+            $reporte->estado === 'rechazado' &&
+            filled($reporte->motivo_rechazo)
+        )
 
         <div class="section-title">
             Motivo del rechazo
@@ -537,8 +520,8 @@
 
 
     <div class="footer">
-    Generado el {{ now()->format('d/m/Y H:i:s') }}
-    
+        Generado el {{ now()->format('d/m/Y H:i:s') }}
+
 
     </div>
 

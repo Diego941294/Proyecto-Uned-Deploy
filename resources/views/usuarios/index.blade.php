@@ -17,13 +17,18 @@
                 <a
                     href="{{ route('super-admin.dashboard') }}"
                     class="gp-action-btn secondary">
-                    ← Volver
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><title>Arrow left</title>
+                    <polygon points="14 26 15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26"/>
+                     </svg>Volver
                 </a>
 
                 <a
                     href="{{ route('usuarios.create') }}"
                     class="gp-action-btn primary">
-                    + Nuevo Usuario
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	                width="32px" height="32px" viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve"><title>Add</title>
+                    <polygon points="17,15 17,8 15,8 15,15 8,15 8,17 15,17 15,24 17,24 17,17 24,17 24,15 "/>
+                    </svg> Nuevo Usuario
                 </a>
             </div>
         </div>
@@ -205,12 +210,8 @@
 
                                 @else
 
-                                <span
-                                    style="
-                                                    font-size: 12px;
-                                                    color: #64748b;
-                                                ">
-                                    Tu cuenta
+                               <span class="gp-account-badge">
+                                Tu cuenta
                                 </span>
 
                                 @endif
@@ -267,125 +268,149 @@
 
     </div>
 
-    <style>
+<style>
+/* ACCIONES - GESTIÓN DE USUARIOS */
 
-/* ==========================================
-   ACCIONES - GESTIÓN DE USUARIOS
-========================================== */
+.gp-action-group {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    white-space: nowrap;
+}
 
-        .gp-action-group {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
+.gp-action-group > * {
+    flex-shrink: 0;
+}
 
-        .gp-action-group form {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            align-items: center;
-        }
+.gp-action-group form {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
 
-        /* Tamaño idéntico para todas las acciones */
-        .gp-action-group .gp-view-button,
-        .gp-action-group .gp-delete-button,
-        .gp-action-group .gp-enable-button,
-        .gp-action-group .gp-account-badge {
-            box-sizing: border-box;
+/* TAMAÑO UNIFORME */
 
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+.gp-action-group .gp-view-button,
+.gp-action-group .gp-delete-button,
+.gp-action-group .gp-enable-button,
+.gp-action-group .gp-account-badge {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 106px;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none !important;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
 
-            width: 106px;
-            height: 38px;
-            padding: 0 12px;
+/* EDITAR */
 
-            border: 1px solid transparent;
-            border-radius: 999px;
+.gp-action-group .gp-view-button {
+    background: #e8f1fc;
+    color: #0b63d8;
+    border-color: #e8f1fc;
+    cursor: pointer;
+}
 
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 700;
-            line-height: 1;
+.gp-action-group .gp-view-button:hover {
+    background: #d7e8fa;
+    color: #084fae;
+}
 
-            text-decoration: none !important;
-            white-space: nowrap;
+/* DESHABILITAR */
 
-            transition:
-                background-color .2s ease,
-                color .2s ease,
-                border-color .2s ease,
-                transform .15s ease;
-        }
+.gp-action-group .gp-delete-button {
+    background: #fee2e2;
+    color: #b91c1c;
+    border-color: #fee2e2;
+    cursor: pointer;
+}
 
-        /* EDITAR */
-        .gp-action-group .gp-view-button {
-            background: #e8f1fc;
-            color: #0b63d8;
-            border-color: #e8f1fc;
-            cursor: pointer;
-        }
+.gp-action-group .gp-delete-button:hover {
+    background: #fecaca;
+    color: #991b1b;
+}
 
-        .gp-action-group .gp-view-button:hover,
-        .gp-action-group .gp-view-button:focus,
-        .gp-action-group .gp-view-button:active,
-        .gp-action-group .gp-view-button:visited {
-            text-decoration: none !important;
-        }
+/* HABILITAR */
 
-        .gp-action-group .gp-view-button:hover {
-            background: #d7e8fa;
-            color: #084fae;
-            border-color: #d7e8fa;
-        }
+.gp-action-group .gp-enable-button {
+    background: #d1fae5;
+    color: #047857;
+    border-color: #d1fae5;
+    cursor: pointer;
+}
 
-        /* DESHABILITAR */
-        .gp-action-group .gp-delete-button {
-            background: #fee2e2;
-            color: #b91c1c;
-            border-color: #fee2e2;
-            cursor: pointer;
-        }
+/* TU CUENTA - GRIS */
 
-        .gp-action-group .gp-delete-button:hover,
-        .gp-action-group .gp-delete-button:focus,
-        .gp-action-group .gp-delete-button:active {
-            background: #fecaca;
-            color: #991b1b;
-            border-color: #fecaca;
-            text-decoration: none !important;
-        }
+.gp-action-group .gp-account-badge {
+    background: #e2e8f0;
+    color: #475569;
+    border-color: #e2e8f0;
+    cursor: default;
+}
 
-        /* HABILITAR */
-        .gp-action-group .gp-enable-button {
-            background: #d1fae5;
-            color: #047857;
-            border-color: #d1fae5;
-            cursor: pointer;
-        }
+/* EFECTO AL PRESIONAR */
 
-        .gp-action-group .gp-enable-button:hover {
-            background: #a7f3d0;
-            color: #065f46;
-            border-color: #a7f3d0;
-        }
+.gp-action-group .gp-view-button:active,
+.gp-action-group .gp-delete-button:active,
+.gp-action-group .gp-enable-button:active {
+    transform: translateY(1px);
+}
 
-        /* TU CUENTA */
-        .gp-action-group .gp-account-badge {
-            background: #fef3c7;
-            color: #a16207;
-            border-color: #fef3c7;
-        }
+ 
+@media (max-width: 768px) {
 
-        /* Al presionar  */
-        .gp-action-group .gp-view-button:active,
-        .gp-action-group .gp-delete-button:active,
-        .gp-action-group .gp-enable-button:active {
-            transform: translateY(1px);
-        }
-    </style>
+    .gp-action-group {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .gp-action-group > a,
+    .gp-action-group > form,
+    .gp-action-group > .gp-account-badge {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .gp-action-group form {
+        display: flex;
+        margin: 0;
+    }
+
+    .gp-action-group .gp-view-button,
+    .gp-action-group .gp-delete-button,
+    .gp-action-group .gp-enable-button,
+    .gp-action-group .gp-account-badge {
+        width: 100%;
+        min-width: 0;
+        height: 38px;
+        padding: 0 6px;
+        box-sizing: border-box;
+        white-space: nowrap;
+        text-align: center;
+        font-size: 12px;
+        border-radius: 999px;
+    }
+}
+</style>
 
 
 

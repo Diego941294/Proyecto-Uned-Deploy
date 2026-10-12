@@ -21,7 +21,9 @@
             <div class="gp-header-actions">
 
                 <a href="{{ route('reportes.index') }}" class="gp-action-btn secondary">
-                    ← Volver
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><title>Arrow left</title>
+                  <polygon points="14 26 15.41 24.59 7.83 17 28 17 28 15 7.83 15 15.41 7.41 14 6 4 16 14 26"/>
+                 </svg> Volver
                 </a>
 
                 @if(
@@ -33,13 +35,24 @@
                 )
 
                 <a href="{{ route('reportes.pdf', $reporte) }}" class="gp-action-btn pdf">
-                    📄 PDF
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	             width="32px" height="32px" viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve"><title>Document</title>
+                 <title>document</title>
+                 <path d="M25.7,9.3l-7-7C18.5,2.1,18.3,2,18,2H8C6.9,2,6,2.9,6,4v24c0,1.1,0.9,2,2,2h16c1.1,0,2-0.9,2-2V10C26,9.7,25.9,9.5,25.7,9.3
+	             z M18,4.4l5.6,5.6H18V4.4z M24,28H8V4h8v6c0,1.1,0.9,2,2,2h6V28z"/>
+                 <rect x="10" y="22" width="12" height="2"/>
+                 <rect x="10" y="16" width="12" height="2"/>
+                 </svg> PDF
                 </a>
 
                 @endif
 
                 <a href="{{ route('reportes.excel-detalle', $reporte) }}" class="gp-action-btn excel">
-                    📊 Excel
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><title>Document download</title>
+                 <title>document--download</title>
+                 <polygon points="30 25 28.586 23.586 26 26.172 26 18 24 18 24 26.172 21.414 23.586 20 25 25 30 30 25"/>
+                 <path d="M18,28H8V4h8v6a2.0058,2.0058,0,0,0,2,2h6v3l2,0V10a.9092.9092,0,0,0-.3-.7l-7-7A.9087.9087,0,0,0,18,2H8A2.0058,2.0058,0,0,0,6,4V28a2.0058,2.0058,0,0,0,2,2H18ZM18,4.4,23.6,10H18Z"/>
+                 </svg> Excel
                 </a>
 
 
@@ -57,7 +70,13 @@ ACCIONES ADMINISTRATIVAS
                 <a
                     href="{{ route('administrador.reportes.edit', $reporte) }}"
                     class="gp-action-btn secondary">
-                    ✎ Editar
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	                width="32px" height="32px" viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve"><title>Edit</title>
+                  <title>edit</title>
+                    <                 rect x="2" y="26" width="28" height="2"/>
+                  <path d="M25.4,9c0.8-0.8,0.8-2,0-2.8c0,0,0,0,0,0l-3.6-3.6c-0.8-0.8-2-0.8-2.8,0c0,0,0,0,0,0l-15,15V24h6.4L25.4,9z M20.4,4L24,7.6
+	                   l-3,3L17.4,7L20.4,4z M6,22v-3.6l10-10l3.6,3.6l-10,10H6z"/>
+                     </svg> Editar
                 </a>
 
                 {{-- APROBAR --}}
@@ -68,7 +87,10 @@ ACCIONES ADMINISTRATIVAS
                     @csrf
 
                     <button type="submit" class="gp-action-btn success">
-                        ✓ Aprobar
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><title>Document tasks</title>
+                      <polygon points="22 27.18 19.41 24.59 18 26 22 30 30 22 28.59 20.59 22 27.18"/>
+                     <path d="M15,28H8V4h8v6a2.0058,2.0058,0,0,0,2,2h6v6h2V10a.9092.9092,0,0,0-.3-.7l-7-7A.9087.9087,0,0,0,18,2H8A2.0058,2.0058,0,0,0,6,4V28a2.0058,2.0058,0,0,0,2,2h7ZM18,4.4,23.6,10H18Z"/>
+                      </svg> Aprobar
                     </button>
                 </form>
 
@@ -80,7 +102,9 @@ ACCIONES ADMINISTRATIVAS
             document.getElementById('gp-rechazo-panel').hidden = false;
             document.getElementById('motivo_rechazo').focus();
         ">
-                    ✕ Rechazar
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><title>Close large</title>
+                  <polygon points="17.4141 16 26 7.4141 24.5859 6 16 14.5859 7.4143 6 6 7.4141 14.5859 16 6 24.5859 7.4143 26 16 17.4141 24.5859 26 26 24.5859 17.4141 16"/>
+                   </svg> Rechazar
                 </button>
 
                 @endif

@@ -52,9 +52,17 @@ class GmailController extends Controller
             );
         }
 
-        return response(
-            'Autorización correcta. Ya se obtuvo el refresh token. No cierres esta configuración todavía.',
-            200
-        );
+       $tokenPath = '/data/google-refresh-token.tmp';
+
+if (!is_dir('/data') || file_put_contents($tokenPath, $refreshToken, LOCK_EX) === false) {
+    abort(500, 'No se pudo guardar el token de forma segura.');
+}
+
+chmod($tokenPath, 0600);
+
+return response(
+    'Autorización correcta. El token se guardó temporalmente en el servidor.',
+    200
+);
     }
 }

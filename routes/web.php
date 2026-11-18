@@ -28,6 +28,12 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Política de privacidad de Guana Pollo
+Route::get('/politica-de-privacidad', function () {
+    return view('politica-privacidad');
+})->name('politica.privacidad');
+
+
 
 /*
 |--------------------------------------------------------------------------
